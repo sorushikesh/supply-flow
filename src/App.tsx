@@ -6,7 +6,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { TopHeader } from "@/components/TopHeader";
-import { FuturisticBackground } from "@/components/FuturisticBackground";
 import NotFound from "@/pages/not-found";
 import Dashboard from "@/pages/Dashboard";
 import Inventory from "@/pages/Inventory";
@@ -55,12 +54,11 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <SidebarProvider style={style as React.CSSProperties}>
-          <FuturisticBackground />
-          <div className="flex h-screen w-full relative z-10">
+          <div className="flex h-screen w-full">
             <AppSidebar />
             <div className="flex flex-col flex-1 min-w-0">
               <TopHeader />
-              <main className="flex-1 overflow-auto bg-background/95 backdrop-blur-sm transition-smooth">
+              <main className="flex-1 overflow-auto bg-background">
                 <Router />
               </main>
             </div>

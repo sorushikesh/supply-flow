@@ -28,7 +28,7 @@ export function TopHeader({ breadcrumb }: TopHeaderProps) {
   const [searchValue, setSearchValue] = useState("");
 
   return (
-    <header className="h-14 border-b flex items-center justify-between gap-4 px-4 bg-background/80 backdrop-blur-md sticky top-0 z-50 border-primary/10 shadow-sm transition-smooth">
+    <header className="h-14 border-b flex items-center justify-between gap-4 px-4 bg-card sticky top-0 z-50 shadow-sm">
       <div className="flex items-center gap-4">
         <SidebarTrigger data-testid="button-sidebar-toggle" />
         {breadcrumb && (
