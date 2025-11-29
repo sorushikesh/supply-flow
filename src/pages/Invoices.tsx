@@ -74,8 +74,8 @@ export default function Invoices() {
       render: (invoice) => (
         <span className={`text-xs font-medium px-2 py-1 rounded ${
           invoice.type === "vendor" 
-            ? "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300" 
-            : "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300"
+            ? "bg-orange-100 text-orange-700" 
+            : "bg-green-100 text-green-700"
         }`}>
           {invoice.type === "vendor" ? "Payable" : "Receivable"}
         </span>
@@ -97,7 +97,7 @@ export default function Invoices() {
       render: (invoice) => {
         const balance = invoice.amount - invoice.paidAmount;
         return (
-          <span className={balance > 0 ? "text-destructive" : "text-green-600 dark:text-green-400"}>
+          <span className={balance > 0 ? "text-destructive" : "text-green-600"}>
             ${balance.toLocaleString()}
           </span>
         );
@@ -179,7 +179,7 @@ export default function Invoices() {
             <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
               Receivable
             </p>
-            <p className="text-2xl font-bold mt-1 font-mono text-green-600 dark:text-green-400">
+            <p className="text-2xl font-bold mt-1 font-mono text-green-600">
               ${totalReceivable.toLocaleString()}
             </p>
           </CardContent>
@@ -189,7 +189,7 @@ export default function Invoices() {
             <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
               Payable
             </p>
-            <p className="text-2xl font-bold mt-1 font-mono text-orange-600 dark:text-orange-400">
+            <p className="text-2xl font-bold mt-1 font-mono text-orange-600">
               ${totalPayable.toLocaleString()}
             </p>
           </CardContent>

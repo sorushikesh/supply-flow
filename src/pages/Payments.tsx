@@ -77,13 +77,13 @@ export default function Payments() {
         <div className="flex items-center gap-2">
           {payment.type === "received" ? (
             <>
-              <ArrowDownLeft className="h-4 w-4 text-green-600 dark:text-green-400" />
-              <span className="text-green-600 dark:text-green-400 text-sm font-medium">Received</span>
+              <ArrowDownLeft className="h-4 w-4 text-green-600" />
+              <span className="text-green-600 text-sm font-medium">Received</span>
             </>
           ) : (
             <>
-              <ArrowUpRight className="h-4 w-4 text-orange-600 dark:text-orange-400" />
-              <span className="text-orange-600 dark:text-orange-400 text-sm font-medium">Made</span>
+              <ArrowUpRight className="h-4 w-4 text-orange-600" />
+              <span className="text-orange-600 text-sm font-medium">Made</span>
             </>
           )}
         </div>
@@ -97,7 +97,7 @@ export default function Payments() {
       header: "Amount",
       className: "text-right font-mono font-medium",
       render: (payment) => (
-        <span className={payment.type === "received" ? "text-green-600 dark:text-green-400" : ""}>
+        <span className={payment.type === "received" ? "text-green-600" : ""}>
           ${payment.amount.toLocaleString()}
         </span>
       ),
@@ -153,7 +153,7 @@ export default function Payments() {
             <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
               Total Received
             </p>
-            <p className="text-2xl font-bold mt-1 font-mono text-green-600 dark:text-green-400">
+            <p className="text-2xl font-bold mt-1 font-mono text-green-600">
               ${totalReceived.toLocaleString()}
             </p>
           </CardContent>
@@ -163,7 +163,7 @@ export default function Payments() {
             <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
               Total Paid Out
             </p>
-            <p className="text-2xl font-bold mt-1 font-mono text-orange-600 dark:text-orange-400">
+            <p className="text-2xl font-bold mt-1 font-mono text-orange-600">
               ${totalMade.toLocaleString()}
             </p>
           </CardContent>

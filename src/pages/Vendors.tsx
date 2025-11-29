@@ -144,7 +144,7 @@ export default function Vendors() {
             <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
               Active Vendors
             </p>
-            <p className="text-2xl font-bold mt-1 text-green-600 dark:text-green-400">
+            <p className="text-2xl font-bold mt-1 text-green-600">
               {activeVendors}
             </p>
           </CardContent>

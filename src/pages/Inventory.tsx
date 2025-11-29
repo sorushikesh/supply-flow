@@ -14,7 +14,19 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
+import { Pencil, Trash2 } from "lucide-react";
 
 // todo: remove mock functionality
 interface InventoryItem {
@@ -49,6 +61,9 @@ export default function Inventory() {
   const [category, setCategory] = useState("All");
   const [location, setLocation] = useState("All");
   const [modalOpen, setModalOpen] = useState(false);
+  const [editingItem, setEditingItem] = useState<InventoryItem | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<InventoryItem | null>(null);
   const [formData, setFormData] = useState({
     sku: "",
     name: "",
@@ -105,14 +120,78 @@ export default function Inventory() {
     },
     { key: "location", header: "Location" },
     { key: "lastUpdated", header: "Last Updated", className: "text-muted-foreground" },
+    {
+      key: "id",
+      header: "Actions",
+      render: (item) => (
+        <div className="flex items-center gap-1">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => handleEdit(item)}
+            data-testid={`button-edit-${item.id}`}
+          >
+            <Pencil className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => handleDeleteClick(item)}
+            data-testid={`button-delete-${item.id}`}
+            className="text-destructive hover:text-destructive hover:bg-destructive/10"
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
+      ),
+    },
   ];
 
-  const handleSubmit = () => {
-    toast({
-      title: "Product Added",
-      description: `${formData.name} has been added to inventory.`,
+  const handleEdit = (item: InventoryItem) => {
+    setEditingItem(item);
+    setFormData({
+      sku: item.sku,
+      name: item.name,
+      category: item.category,
+      currentStock: item.currentStock.toString(),
+      reorderLevel: item.reorderLevel.toString(),
+      unitPrice: item.unitPrice.toString(),
+      location: item.location,
     });
+    setModalOpen(true);
+  };
+
+  const handleDeleteClick = (item: InventoryItem) => {
+    setItemToDelete(item);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDelete = () => {
+    if (itemToDelete) {
+      toast({
+        title: "Product Deleted",
+        description: `${itemToDelete.name} has been removed from inventory.`,
+        variant: "destructive",
+      });
+      setDeleteDialogOpen(false);
+      setItemToDelete(null);
+    }
+  };
+
+  const handleSubmit = () => {
+    if (editingItem) {
+      toast({
+        title: "Product Updated",
+        description: `${formData.name} has been updated successfully.`,
+      });
+    } else {
+      toast({
+        title: "Product Added",
+        description: `${formData.name} has been added to inventory.`,
+      });
+    }
     setModalOpen(false);
+    setEditingItem(null);
     setFormData({
       sku: "",
       name: "",
@@ -122,6 +201,22 @@ export default function Inventory() {
       unitPrice: "",
       location: "",
     });
+  };
+
+  const handleModalClose = (open: boolean) => {
+    setModalOpen(open);
+    if (!open) {
+      setEditingItem(null);
+      setFormData({
+        sku: "",
+        name: "",
+        category: "",
+        currentStock: "",
+        reorderLevel: "",
+        unitPrice: "",
+        location: "",
+      });
+    }
   };
 
   const handleExport = () => {
@@ -213,11 +308,11 @@ export default function Inventory() {
 
       <FormModal
         open={modalOpen}
-        onOpenChange={setModalOpen}
-        title="Add New Product"
-        description="Enter the details of the new inventory item."
+        onOpenChange={handleModalClose}
+        title={editingItem ? "Edit Product" : "Add New Product"}
+        description={editingItem ? "Update the product details." : "Enter the details of the new inventory item."}
         onSubmit={handleSubmit}
-        submitLabel="Add Product"
+        submitLabel={editingItem ? "Update Product" : "Add Product"}
       >
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
@@ -312,6 +407,27 @@ export default function Inventory() {
           </div>
         </div>
       </FormModal>
+
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Product</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete <strong>{itemToDelete?.name}</strong>?
+              This action cannot be undone and will permanently remove this product from your inventory.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

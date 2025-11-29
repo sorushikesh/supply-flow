@@ -76,7 +76,7 @@ export default function GRN() {
       header: "Received",
       className: "text-right font-mono",
       render: (grn) => (
-        <span className={grn.receivedQty < grn.orderedQty ? "text-amber-600 dark:text-amber-400" : ""}>
+        <span className={grn.receivedQty < grn.orderedQty ? "text-amber-600" : ""}>
           {grn.receivedQty}
         </span>
       ),
@@ -138,7 +138,7 @@ export default function GRN() {
             <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
               Complete Receipts
             </p>
-            <p className="text-2xl font-bold mt-1 text-green-600 dark:text-green-400">
+            <p className="text-2xl font-bold mt-1 text-green-600">
               {completedGRNs}
             </p>
           </CardContent>
@@ -148,7 +148,7 @@ export default function GRN() {
             <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
               Partial Receipts
             </p>
-            <p className="text-2xl font-bold mt-1 text-amber-600 dark:text-amber-400">
+            <p className="text-2xl font-bold mt-1 text-amber-600">
               {partialGRNs}
             </p>
           </CardContent>
