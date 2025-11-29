@@ -1,16 +1,15 @@
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Bell, Search, X } from "lucide-react";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Bell, Settings, LogOut } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { useState } from "react";
 
 // todo: remove mock functionality
 const mockNotifications = [
@@ -24,9 +23,6 @@ interface TopHeaderProps {
 }
 
 export function TopHeader({ breadcrumb }: TopHeaderProps) {
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [searchValue, setSearchValue] = useState("");
-
   return (
     <header className="h-14 border-b flex items-center justify-between gap-4 px-4 bg-card sticky top-0 z-50 shadow-sm">
       <div className="flex items-center gap-4">
@@ -41,41 +37,6 @@ export function TopHeader({ breadcrumb }: TopHeaderProps) {
       </div>
 
       <div className="flex items-center gap-2">
-        {searchOpen ? (
-          <div className="relative">
-            <Input
-              type="search"
-              placeholder="Search anything..."
-              value={searchValue}
-              onChange={(e) => setSearchValue(e.target.value)}
-              className="w-64 pr-8"
-              autoFocus
-              data-testid="input-global-search"
-            />
-            <Button
-              size="icon"
-              variant="ghost"
-              className="absolute right-0 top-0 h-full"
-              onClick={() => {
-                setSearchOpen(false);
-                setSearchValue("");
-              }}
-              data-testid="button-close-search"
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          </div>
-        ) : (
-          <Button
-            size="icon"
-            variant="ghost"
-            onClick={() => setSearchOpen(true)}
-            data-testid="button-open-search"
-          >
-            <Search className="h-4 w-4" />
-          </Button>
-        )}
-
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button size="icon" variant="ghost" className="relative" data-testid="button-notifications">
@@ -106,7 +67,36 @@ export function TopHeader({ breadcrumb }: TopHeaderProps) {
           </DropdownMenuContent>
         </DropdownMenu>
 
-        <ThemeToggle />
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              className="flex items-center gap-2 h-9 px-2"
+              data-testid="button-user-menu"
+            >
+              <Avatar className="h-7 w-7">
+                <AvatarFallback className="bg-primary text-primary-foreground text-xs">
+                  JD
+                </AvatarFallback>
+              </Avatar>
+              <div className="text-left hidden sm:block">
+                <p className="text-sm font-medium leading-none">John Doe</p>
+                <p className="text-xs text-muted-foreground leading-none mt-0.5">Admin</p>
+              </div>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-48">
+            <DropdownMenuItem data-testid="menu-settings">
+              <Settings className="h-4 w-4 mr-2" />
+              Settings
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="text-destructive" data-testid="menu-logout">
+              <LogOut className="h-4 w-4 mr-2" />
+              Logout
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </header>
   );

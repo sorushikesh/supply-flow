@@ -155,7 +155,7 @@ export default function SalesOrders() {
             <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
               Pending Fulfillment
             </p>
-            <p className="text-2xl font-bold mt-1 text-amber-600 dark:text-amber-400">
+            <p className="text-2xl font-bold mt-1 text-amber-600">
               {pendingOrders}
             </p>
           </CardContent>
@@ -283,6 +283,7 @@ export default function SalesOrders() {
                   )}
                   <Input
                     type="number"
+                    min="0"
                     value={item.quantity}
                     onChange={(e) => updateLineItem(item.id, "quantity", e.target.value)}
                     placeholder="0"
