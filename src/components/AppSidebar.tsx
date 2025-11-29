@@ -91,9 +91,9 @@ export function AppSidebar() {
 
   return (
     <Sidebar>
-      <SidebarHeader className="p-4 border-b border-sidebar-border">
+      <SidebarHeader className="p-4 border-b border-sidebar-border/50">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-primary">
+          <div className="p-2 rounded-lg bg-primary shadow-glow-sm">
             <Package className="h-5 w-5 text-primary-foreground" />
           </div>
           <div>
@@ -110,15 +110,15 @@ export function AppSidebar() {
         {renderNavGroup("Finance", financeNavItems, "nav-finance")}
       </SidebarContent>
 
-      <SidebarFooter className="p-4 border-t border-sidebar-border">
+      <SidebarFooter className="p-4 border-t border-sidebar-border/50">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button
-              className="flex items-center gap-3 w-full p-2 rounded-lg hover-elevate"
+              className="flex items-center gap-3 w-full p-2 rounded-lg hover-elevate transition-smooth"
               data-testid="button-user-menu"
             >
-              <Avatar className="h-8 w-8">
-                <AvatarFallback className="bg-primary text-primary-foreground text-xs">
+              <Avatar className="h-8 w-8 ring-2 ring-primary/20">
+                <AvatarFallback className="bg-gradient-to-br from-primary to-secondary text-primary-foreground text-xs font-semibold">
                   JD
                 </AvatarFallback>
               </Avatar>
