@@ -32,7 +32,7 @@ export function FormModal({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto animate-scale-in backdrop-blur-sm">
-        <DialogHeader>
+        <DialogHeader className="animate-slide-up-fade">
           <DialogTitle data-testid="modal-title">{title}</DialogTitle>
           {description && <DialogDescription>{description}</DialogDescription>}
         </DialogHeader>

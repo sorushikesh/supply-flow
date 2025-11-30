@@ -1,5 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowUp, ArrowDown, type LucideIcon } from "lucide-react";
+import { AnimatedCounter } from "@/components/AnimatedCounter";
+import { useEffect, useState } from "react";
 
 interface StatsCardProps {
   title: string;
@@ -12,42 +14,92 @@ interface StatsCardProps {
 export function StatsCard({ title, value, change, changeLabel, icon: Icon }: StatsCardProps) {
   const isPositive = change && change > 0;
   const isNegative = change && change < 0;
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+    }, 100);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Parse numeric value for animation
+  const numericValue = typeof value === "string" 
+    ? parseFloat(value.replace(/[^0-9.-]+/g, ""))
+    : value;
+  
+  const isNumeric = !isNaN(numericValue);
+  const prefix = typeof value === "string" && value.includes("$") ? "$" : "";
 
   return (
-    <Card data-testid={`stats-card-${title.toLowerCase().replace(/\s+/g, "-")}`} className="transition-all duration-200 hover:shadow-md hover:-translate-y-1 cursor-pointer">
-      <CardContent className="p-6">
+    <Card 
+      data-testid={`stats-card-${title.toLowerCase().replace(/\s+/g, "-")}`} 
+      className="relative transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 cursor-pointer group overflow-hidden border-2 hover:border-primary/20"
+    >
+      {/* Animated gradient background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-blue-500/5 to-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      
+      {/* Scan line effect */}
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none overflow-hidden">
+        <div className="absolute w-full h-1/3 bg-gradient-to-b from-transparent via-primary/10 to-transparent animate-scan" 
+             style={{ animation: "scan 3s ease-in-out infinite" }} />
+      </div>
+      
+      {/* Glow corner accent */}
+      <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 -translate-y-16 translate-x-16" />
+      
+      <CardContent className="p-6 relative z-10">
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1 min-w-0">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+            <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-1 group-hover:text-primary transition-colors duration-300">
               {title}
             </p>
-            <p className="text-3xl font-bold mt-2 font-mono">{value}</p>
-            {change !== undefined && (
-              <div className="flex items-center gap-1 mt-2">
-                {isPositive && <ArrowUp className="h-3 w-3 text-green-600 dark:text-green-400" />}
-                {isNegative && <ArrowDown className="h-3 w-3 text-red-600 dark:text-red-400" />}
-                <span
-                  className={`text-xs font-medium ${
-                    isPositive
-                      ? "text-green-600 dark:text-green-400"
-                      : isNegative
-                      ? "text-red-600 dark:text-red-400"
-                      : "text-muted-foreground"
-                  }`}
-                >
-                  {Math.abs(change)}%
+            <div className="text-3xl font-bold mt-2 font-mono overflow-hidden">
+              {isVisible && isNumeric ? (
+                <AnimatedCounter 
+                  value={numericValue} 
+                  prefix={prefix}
+                  duration={1500}
+                  decimals={prefix ? 0 : 0}
+                  className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent group-hover:from-primary group-hover:to-cyan-500 transition-all duration-500"
+                />
+              ) : (
+                <span className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent group-hover:from-primary group-hover:to-cyan-500 transition-all duration-500">
+                  {value}
                 </span>
+              )}
+            </div>
+            {change !== undefined && (
+              <div className={`flex items-center gap-1 mt-3 transition-all duration-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
+                <div className={`flex items-center gap-1 px-2 py-1 rounded-md ${
+                  isPositive
+                    ? "bg-green-500/10 text-green-600 dark:text-green-400"
+                    : isNegative
+                    ? "bg-red-500/10 text-red-600 dark:text-red-400"
+                    : "bg-muted text-muted-foreground"
+                }`}>
+                  {isPositive && <ArrowUp className="h-3 w-3 animate-bounce-subtle" />}
+                  {isNegative && <ArrowDown className="h-3 w-3 animate-bounce-subtle" />}
+                  <span className="text-xs font-bold font-mono">
+                    {Math.abs(change)}%
+                  </span>
+                </div>
                 {changeLabel && (
-                  <span className="text-xs text-muted-foreground">{changeLabel}</span>
+                  <span className="text-xs text-muted-foreground ml-1">{changeLabel}</span>
                 )}
               </div>
             )}
           </div>
-          <div className="p-3 rounded-lg bg-primary/10 transition-all duration-200 hover:bg-primary/20 hover:scale-110">
-            <Icon className="h-5 w-5 text-primary" />
+          <div className="relative p-3 rounded-xl bg-gradient-to-br from-primary/10 to-cyan-500/10 transition-all duration-300 group-hover:scale-110 group-hover:rotate-12 group-hover:shadow-lg group-hover:shadow-primary/20">
+            {/* Icon glow effect */}
+            <div className="absolute inset-0 rounded-xl bg-primary/20 blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <Icon className="h-6 w-6 text-primary relative z-10 transition-all duration-300 group-hover:drop-shadow-[0_0_8px_rgba(6,182,212,0.8)]" />
           </div>
         </div>
       </CardContent>
+      
+      {/* Bottom glow line */}
+      <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-primary to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
     </Card>
   );
 }

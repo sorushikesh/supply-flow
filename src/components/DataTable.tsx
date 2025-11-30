@@ -25,6 +25,7 @@ interface DataTableProps<T> {
   onRowClick?: (item: T) => void;
   pageSize?: number;
   testIdPrefix?: string;
+  isLoading?: boolean;
 }
 
 export function DataTable<T extends { id: string | number }>({
@@ -34,6 +35,7 @@ export function DataTable<T extends { id: string | number }>({
   onRowClick,
   pageSize = 10,
   testIdPrefix = "table",
+  isLoading = false,
 }: DataTableProps<T>) {
   const [selectedIds, setSelectedIds] = useState<Set<string | number>>(new Set());
   const [currentPage, setCurrentPage] = useState(1);
@@ -72,23 +74,24 @@ export function DataTable<T extends { id: string | number }>({
 
   return (
     <div className="space-y-4" data-testid={`${testIdPrefix}-container`}>
-      <div className="rounded-lg border">
+      <div className="rounded-lg border border-card-border overflow-hidden backdrop-blur-sm bg-card/50 shadow-lg hover:shadow-xl transition-all duration-300">
         <Table>
           <TableHeader>
-            <TableRow>
+            <TableRow className="bg-gradient-to-r from-primary/5 to-cyan-500/5 hover:from-primary/10 hover:to-cyan-500/10 transition-all duration-300">
               {selectable && (
                 <TableHead className="w-12">
                   <Checkbox
                     checked={selectedIds.size === data.length && data.length > 0}
                     onCheckedChange={toggleAll}
                     data-testid={`${testIdPrefix}-select-all`}
+                    className="transition-all duration-200 hover:scale-110"
                   />
                 </TableHead>
               )}
               {columns.map((col) => (
                 <TableHead
                   key={String(col.key)}
-                  className={`text-xs font-medium uppercase tracking-wide ${col.className || ""}`}
+                  className={`text-xs font-semibold uppercase tracking-widest ${col.className || ""}`}
                 >
                   {col.header}
                 </TableHead>
@@ -109,8 +112,12 @@ export function DataTable<T extends { id: string | number }>({
               currentData.map((item, idx) => (
                 <TableRow
                   key={item.id}
-                  className={`${onRowClick ? "hover-elevate cursor-pointer" : ""} animate-fade-in`}
-                  style={{ animationDelay: `${idx * 30}ms` }}
+                  className={`${
+                    onRowClick 
+                      ? "hover:bg-primary/5 cursor-pointer transition-all duration-200 hover:shadow-md" 
+                      : ""
+                  } animate-fade-in-up border-b border-card-border/50 hover:border-primary/20`}
+                  style={{ animationDelay: `${idx * 40}ms` }}
                   onClick={() => onRowClick?.(item)}
                   data-testid={`${testIdPrefix}-row-${idx}`}
                 >
@@ -120,11 +127,15 @@ export function DataTable<T extends { id: string | number }>({
                         checked={selectedIds.has(item.id)}
                         onCheckedChange={() => toggleOne(item.id)}
                         data-testid={`${testIdPrefix}-select-${idx}`}
+                        className="transition-all duration-200 hover:scale-110"
                       />
                     </TableCell>
                   )}
                   {columns.map((col) => (
-                    <TableCell key={String(col.key)} className={col.className}>
+                    <TableCell 
+                      key={String(col.key)} 
+                      className={`${col.className || ""} transition-all duration-200`}
+                    >
                       {col.render
                         ? col.render(item)
                         : String(getValue(item, String(col.key)) ?? "")}
@@ -138,9 +149,11 @@ export function DataTable<T extends { id: string | number }>({
       </div>
 
       {totalPages > 1 && (
-        <div className="flex items-center justify-between">
-          <p className="text-sm text-muted-foreground">
-            Showing {startIndex + 1} to {Math.min(endIndex, data.length)} of {data.length} entries
+        <div className="flex items-center justify-between animate-fade-in">
+          <p className="text-sm text-muted-foreground font-medium">
+            Showing <span className="text-primary font-semibold">{startIndex + 1}</span> to{" "}
+            <span className="text-primary font-semibold">{Math.min(endIndex, data.length)}</span> of{" "}
+            <span className="text-primary font-semibold">{data.length}</span> entries
           </p>
           <div className="flex items-center gap-1">
             <Button
@@ -149,6 +162,7 @@ export function DataTable<T extends { id: string | number }>({
               disabled={currentPage === 1}
               onClick={() => setCurrentPage(1)}
               data-testid={`${testIdPrefix}-first-page`}
+              className="transition-all duration-200 hover:scale-110"
             >
               <ChevronsLeft className="h-4 w-4" />
             </Button>
@@ -158,10 +172,11 @@ export function DataTable<T extends { id: string | number }>({
               disabled={currentPage === 1}
               onClick={() => setCurrentPage((p) => p - 1)}
               data-testid={`${testIdPrefix}-prev-page`}
+              className="transition-all duration-200 hover:scale-110"
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
-            <span className="px-3 text-sm">
+            <span className="px-4 py-2 text-sm font-semibold bg-primary/10 rounded-md border border-primary/20">
               Page {currentPage} of {totalPages}
             </span>
             <Button
@@ -170,6 +185,7 @@ export function DataTable<T extends { id: string | number }>({
               disabled={currentPage === totalPages}
               onClick={() => setCurrentPage((p) => p + 1)}
               data-testid={`${testIdPrefix}-next-page`}
+              className="transition-all duration-200 hover:scale-110"
             >
               <ChevronRight className="h-4 w-4" />
             </Button>
@@ -179,6 +195,7 @@ export function DataTable<T extends { id: string | number }>({
               disabled={currentPage === totalPages}
               onClick={() => setCurrentPage(totalPages)}
               data-testid={`${testIdPrefix}-last-page`}
+              className="transition-all duration-200 hover:scale-110"
             >
               <ChevronsRight className="h-4 w-4" />
             </Button>

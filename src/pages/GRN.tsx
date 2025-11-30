@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { PageHeader } from "@/components/PageHeader";
+import { PageBackground } from "@/components/PageBackground";
 import { SearchFilter } from "@/components/SearchFilter";
 import { DataTable, type Column } from "@/components/DataTable";
 import { StatusBadge, type StatusType } from "@/components/StatusBadge";
@@ -116,13 +117,14 @@ export default function GRN() {
   const partialGRNs = mockGRNs.filter((grn) => grn.status === "partial").length;
 
   return (
-    <div className="p-6 lg:p-8 max-w-7xl mx-auto">
-      <PageHeader
-        title="Goods Received Notes"
-        description="Record and track goods received from vendors"
-        actionLabel="Record GRN"
-        onAction={() => setModalOpen(true)}
-      />
+    <PageBackground>
+      <div className="p-6 lg:p-8 max-w-7xl mx-auto animate-fade-in">
+        <PageHeader
+          title="Goods Received Notes"
+          description="Record and track goods received from vendors"
+          actionLabel="Record GRN"
+          onAction={() => setModalOpen(true)}
+        />
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <Card>
@@ -247,6 +249,7 @@ export default function GRN() {
           </div>
         </div>
       </FormModal>
-    </div>
+      </div>
+    </PageBackground>
   );
 }

@@ -6,6 +6,9 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { TopHeader } from "@/components/TopHeader";
+import { FuturisticBackground } from "@/components/FuturisticBackground";
+import { FloatingParticles } from "@/components/FloatingParticles";
+import { useGlobalShortcuts } from "@/components/KeyboardShortcuts";
 import NotFound from "@/pages/not-found";
 import Dashboard from "@/pages/Dashboard";
 import Inventory from "@/pages/Inventory";
@@ -52,15 +55,24 @@ function App() {
     "--sidebar-width-icon": "3rem",
   };
 
+  // Enable global keyboard shortcuts
+  useGlobalShortcuts();
+
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <SidebarProvider style={style as React.CSSProperties}>
-          <div className="flex h-screen w-full">
+          {/* Futuristic animated background */}
+          <FuturisticBackground />
+          
+          {/* Optional: Floating particles for extra effect */}
+          <FloatingParticles count={15} className="opacity-30" />
+          
+          <div className="flex h-screen w-full relative z-10">
             <AppSidebar />
             <div className="flex flex-col flex-1 min-w-0">
               <TopHeader />
-              <main className="flex-1 overflow-auto bg-background">
+              <main className="flex-1 overflow-auto bg-background/80 backdrop-blur-sm">
                 <Router />
               </main>
             </div>

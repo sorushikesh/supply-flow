@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { PageHeader } from "@/components/PageHeader";
+import { PageBackground } from "@/components/PageBackground";
 import { SearchFilter } from "@/components/SearchFilter";
 import { DataTable, type Column } from "@/components/DataTable";
 import { StatusBadge, type StatusType } from "@/components/StatusBadge";
@@ -133,8 +134,9 @@ export default function SalesOrders() {
     .reduce((sum, so) => sum + so.totalAmount, 0);
 
   return (
-    <div className="p-6 lg:p-8 max-w-7xl mx-auto animate-fade-in">
-      <PageHeader
+    <PageBackground>
+      <div className="p-6 lg:p-8 max-w-7xl mx-auto animate-fade-in">
+        <PageHeader
         title="Sales Orders"
         description="Manage orders from your customers"
         actionLabel="New Sales Order"
@@ -348,9 +350,10 @@ export default function SalesOrders() {
                 </p>
               </div>
             </div>
+            </div>
           </div>
-        </div>
-      </FormModal>
-    </div>
+        </FormModal>
+      </div>
+    </PageBackground>
   );
 }

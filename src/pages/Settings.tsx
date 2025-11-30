@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { PageHeader } from "@/components/PageHeader";
+import { PageBackground } from "@/components/PageBackground";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
@@ -307,8 +308,9 @@ export default function Settings() {
   };
 
   return (
-    <div className="p-6 lg:p-8 max-w-7xl mx-auto animate-fade-in">
-      <PageHeader
+    <PageBackground>
+      <div className="p-6 lg:p-8 max-w-5xl mx-auto animate-fade-in">
+        <PageHeader
         title="Settings"
         description="Manage categories, locations, and product types"
       />
@@ -714,6 +716,7 @@ export default function Settings() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
+      </div>
+    </PageBackground>
   );
 }

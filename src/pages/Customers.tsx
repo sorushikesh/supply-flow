@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { PageHeader } from "@/components/PageHeader";
+import { PageBackground } from "@/components/PageBackground";
 import { SearchFilter } from "@/components/SearchFilter";
 import { DataTable, type Column } from "@/components/DataTable";
 import { FormModal } from "@/components/FormModal";
@@ -127,8 +128,9 @@ export default function Customers() {
   const activeCustomers = mockCustomers.filter((c) => c.status === "active").length;
 
   return (
-    <div className="p-6 lg:p-8 max-w-7xl mx-auto animate-fade-in">
-      <PageHeader
+    <PageBackground>
+      <div className="p-6 lg:p-8 max-w-7xl mx-auto animate-fade-in">
+        <PageHeader
         title="Customers"
         description="Manage your customer relationships"
         actionLabel="Add Customer"
@@ -312,6 +314,7 @@ export default function Customers() {
           </div>
         </div>
       </FormModal>
-    </div>
+      </div>
+    </PageBackground>
   );
 }

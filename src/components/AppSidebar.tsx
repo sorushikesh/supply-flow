@@ -70,9 +70,9 @@ export function AppSidebar() {
                 isActive={location === item.url}
                 data-testid={`${testIdPrefix}-${item.title.toLowerCase().replace(/\s+/g, "-")}`}
                 onClick={() => setLocation(item.url)}
-                className="transition-all duration-200 hover:translate-x-1 hover:bg-accent/80 active:scale-95"
+                className="transition-all duration-200 hover:translate-x-1 hover:bg-accent/80 active:scale-95 group"
               >
-                <item.icon className="h-4 w-4" />
+                <item.icon className="h-4 w-4 group-hover:animate-wiggle" />
                 <span>{item.title}</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -83,17 +83,25 @@ export function AppSidebar() {
   );
 
   return (
-    <Sidebar className="transition-all duration-300 ease-in-out">
-      <SidebarHeader className="p-4 border-b border-sidebar-border">
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-primary">
-            <Package className="h-5 w-5 text-primary-foreground" />
+    <Sidebar className="transition-all duration-300 ease-in-out backdrop-blur-md">
+      <SidebarHeader className="p-4 border-b border-sidebar-border relative overflow-hidden group">
+        {/* Animated gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        
+        <div className="flex items-center gap-3 relative z-10">
+          <div className="p-2 rounded-lg bg-primary relative overflow-hidden group/icon">
+            {/* Icon glow effect */}
+            <div className="absolute inset-0 bg-primary/50 blur-md opacity-0 group-hover/icon:opacity-100 transition-opacity duration-300" />
+            <Package className="h-5 w-5 text-primary-foreground relative z-10 transition-transform duration-300 group-hover/icon:rotate-12 group-hover/icon:scale-110" />
           </div>
-          <div>
-            <h2 className="font-semibold text-base">SupplyFlow</h2>
-            <p className="text-xs text-muted-foreground">Management System</p>
+          <div className="transition-all duration-300 group-hover:translate-x-1">
+            <h2 className="font-semibold text-base bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent group-hover:from-primary group-hover:to-cyan-500 transition-all duration-500">SupplyFlow</h2>
+            <p className="text-xs text-muted-foreground group-hover:text-primary/70 transition-colors duration-300">Management System</p>
           </div>
         </div>
+        
+        {/* Bottom accent line */}
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
       </SidebarHeader>
 
       <SidebarContent className="px-2">
