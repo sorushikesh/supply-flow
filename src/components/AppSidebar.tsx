@@ -70,7 +70,7 @@ export function AppSidebar() {
                 isActive={location === item.url}
                 data-testid={`${testIdPrefix}-${item.title.toLowerCase().replace(/\s+/g, "-")}`}
                 onClick={() => setLocation(item.url)}
-                className="transition-all duration-200 hover:translate-x-1"
+                className="transition-all duration-200 hover:translate-x-1 hover:bg-accent/80 active:scale-95"
               >
                 <item.icon className="h-4 w-4" />
                 <span>{item.title}</span>

@@ -264,7 +264,7 @@ export default function Inventory() {
             <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
               Total Products
             </p>
-            <p className="text-2xl font-bold mt-1">{mockInventory.length}</p>
+            <p className="text-2xl font-bold mt-1 transition-all duration-300 hover:scale-105">{mockInventory.length}</p>
           </CardContent>
         </Card>
         <Card>
@@ -272,7 +272,7 @@ export default function Inventory() {
             <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
               Low Stock Items
             </p>
-            <p className="text-2xl font-bold mt-1 text-destructive">{lowStockCount}</p>
+            <p className="text-2xl font-bold mt-1 text-destructive animate-pulse transition-all duration-300 hover:scale-105">{lowStockCount}</p>
           </CardContent>
         </Card>
         <Card>
@@ -280,7 +280,7 @@ export default function Inventory() {
             <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
               Total Value
             </p>
-            <p className="text-2xl font-bold mt-1 font-mono">
+            <p className="text-2xl font-bold mt-1 font-mono transition-all duration-300 hover:scale-105">
               ${totalValue.toLocaleString(undefined, { minimumFractionDigits: 2 })}
             </p>
           </CardContent>
