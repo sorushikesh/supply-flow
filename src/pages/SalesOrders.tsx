@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { PageHeader } from "@/components/PageHeader";
 import { PageBackground } from "@/components/PageBackground";
 import { SearchFilter } from "@/components/SearchFilter";
 import { DataTable, type Column } from "@/components/DataTable";
@@ -16,10 +15,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
-import { Trash2, Plus } from "lucide-react";
+import { Trash2, Plus, ShoppingCart, FileText, DollarSign } from "lucide-react";
 
-// todo: remove mock functionality
 interface SalesOrder {
   id: string;
   soNumber: string;
@@ -38,6 +41,20 @@ const mockSalesOrders: SalesOrder[] = [
   { id: "4", soNumber: "SO-2024-0120", customer: "Express Outlets", orderDate: "2024-01-12", deliveryDate: "2024-01-17", totalAmount: 23400, status: "completed", items: 8 },
   { id: "5", soNumber: "SO-2024-0119", customer: "Wholesale Partners", orderDate: "2024-01-11", deliveryDate: "2024-01-16", totalAmount: 34500, status: "completed", items: 12 },
   { id: "6", soNumber: "SO-2024-0118", customer: "TechStart Inc", orderDate: "2024-01-10", deliveryDate: "2024-01-15", totalAmount: 12300, status: "pending", items: 4 },
+  { id: "7", soNumber: "SO-2024-0117", customer: "Prime Electronics", orderDate: "2024-01-09", deliveryDate: "2024-01-14", totalAmount: 19800, status: "approved", items: 6 },
+  { id: "8", soNumber: "SO-2024-0116", customer: "Global Trade Corp", orderDate: "2024-01-08", deliveryDate: "2024-01-13", totalAmount: 28900, status: "in_transit", items: 9 },
+  { id: "9", soNumber: "SO-2024-0115", customer: "Downtown Supermarket", orderDate: "2024-01-07", deliveryDate: "2024-01-12", totalAmount: 6700, status: "delivered", items: 3 },
+  { id: "10", soNumber: "SO-2024-0114", customer: "Coastal Distributors", orderDate: "2024-01-06", deliveryDate: "2024-01-11", totalAmount: 14500, status: "completed", items: 5 },
+  { id: "11", soNumber: "SO-2024-0113", customer: "Mountain Retail Chain", orderDate: "2024-01-05", deliveryDate: "2024-01-10", totalAmount: 31200, status: "completed", items: 11 },
+  { id: "12", soNumber: "SO-2024-0112", customer: "Urban Solutions LLC", orderDate: "2024-01-04", deliveryDate: "2024-01-09", totalAmount: 9600, status: "pending", items: 4 },
+  { id: "13", soNumber: "SO-2024-0111", customer: "Northern Supplies", orderDate: "2024-01-03", deliveryDate: "2024-01-08", totalAmount: 17300, status: "approved", items: 7 },
+  { id: "14", soNumber: "SO-2024-0110", customer: "Eastern Markets", orderDate: "2024-01-02", deliveryDate: "2024-01-07", totalAmount: 22100, status: "in_transit", items: 8 },
+  { id: "15", soNumber: "SO-2024-0109", customer: "Central Warehouse Hub", orderDate: "2024-01-01", deliveryDate: "2024-01-06", totalAmount: 38700, status: "delivered", items: 13 },
+  { id: "16", soNumber: "SO-2024-0108", customer: "Pacific Retailers", orderDate: "2023-12-31", deliveryDate: "2024-01-05", totalAmount: 26500, status: "completed", items: 10 },
+  { id: "17", soNumber: "SO-2024-0107", customer: "TechStart Inc", orderDate: "2023-12-30", deliveryDate: "2024-01-04", totalAmount: 11400, status: "completed", items: 5 },
+  { id: "18", soNumber: "SO-2024-0106", customer: "Metro Retail Group", orderDate: "2023-12-29", deliveryDate: "2024-01-03", totalAmount: 18900, status: "pending", items: 6 },
+  { id: "19", soNumber: "SO-2024-0105", customer: "Express Outlets", orderDate: "2023-12-28", deliveryDate: "2024-01-02", totalAmount: 29300, status: "approved", items: 9 },
+  { id: "20", soNumber: "SO-2024-0104", customer: "Wholesale Partners", orderDate: "2023-12-27", deliveryDate: "2024-01-01", totalAmount: 41800, status: "completed", items: 14 },
 ];
 
 const mockCustomers = ["TechStart Inc", "Metro Retail Group", "City Stores Ltd", "Express Outlets", "Wholesale Partners"];
@@ -70,7 +87,25 @@ export default function SalesOrders() {
   });
 
   const columns: Column<SalesOrder>[] = [
-    { key: "soNumber", header: "SO Number", className: "font-mono text-sm font-medium" },
+    { 
+      key: "soNumber", 
+      header: "SO Number", 
+      className: "font-mono text-sm font-medium",
+      render: (so) => (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <span className="cursor-help">{so.soNumber}</span>
+          </TooltipTrigger>
+          <TooltipContent side="top">
+            <div className="space-y-1">
+              <p className="text-xs font-semibold">{so.soNumber}</p>
+              <p className="text-xs text-muted-foreground">Order Date: {so.orderDate}</p>
+              <p className="text-xs text-muted-foreground">Items: {so.items}</p>
+            </div>
+          </TooltipContent>
+        </Tooltip>
+      ),
+    },
     { key: "customer", header: "Customer" },
     { key: "orderDate", header: "Order Date" },
     { key: "deliveryDate", header: "Delivery Date" },
@@ -135,15 +170,23 @@ export default function SalesOrders() {
 
   return (
     <PageBackground>
-      <div className="p-6 lg:p-8 max-w-7xl mx-auto animate-fade-in">
-        <PageHeader
-        title="Sales Orders"
-        description="Manage orders from your customers"
-        actionLabel="New Sales Order"
-        onAction={() => setModalOpen(true)}
-      />
+      <div className="p-4 lg:p-6 max-w-[1600px] mx-auto space-y-6">
+        {/* Page Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent">
+              Sales Orders
+            </h1>
+            <p className="text-muted-foreground mt-1">Manage orders from your customers</p>
+          </div>
+          <Button onClick={() => setModalOpen(true)} className="gap-2">
+            <ShoppingCart className="h-4 w-4" />
+            New Sales Order
+          </Button>
+        </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Card>
           <CardContent className="p-4">
             <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
@@ -174,29 +217,32 @@ export default function SalesOrders() {
         </Card>
       </div>
 
-      <Card>
+      {/* Main Content */}
+      <Card className="border-primary/20">
         <CardContent className="p-6">
-          <SearchFilter
-            searchPlaceholder="Search by SO number or customer..."
-            searchValue={search}
-            onSearchChange={setSearch}
-            filters={[
-              {
-                key: "status",
-                label: "Status",
-                options: [
-                  { value: "All", label: "All Status" },
-                  { value: "Pending", label: "Pending" },
-                  { value: "Approved", label: "Approved" },
-                  { value: "In Transit", label: "In Transit" },
-                  { value: "Delivered", label: "Delivered" },
-                  { value: "Completed", label: "Completed" },
-                ],
-                value: statusFilter,
-                onChange: setStatusFilter,
-              },
-            ]}
-          />
+          <div className="space-y-4">
+            <SearchFilter
+              searchPlaceholder="Search by SO number or customer..."
+              searchValue={search}
+              onSearchChange={setSearch}
+              filters={[
+                {
+                  key: "status",
+                  label: "Status",
+                  options: [
+                    { value: "All", label: "All Status" },
+                    { value: "Pending", label: "Pending" },
+                    { value: "Approved", label: "Approved" },
+                    { value: "In Transit", label: "In Transit" },
+                    { value: "Delivered", label: "Delivered" },
+                    { value: "Completed", label: "Completed" },
+                  ],
+                  value: statusFilter,
+                  onChange: setStatusFilter,
+                },
+              ]}
+            />
+          </div>
 
           <DataTable
             columns={columns}
@@ -205,6 +251,7 @@ export default function SalesOrders() {
           />
         </CardContent>
       </Card>
+      </div>
 
       <FormModal
         open={modalOpen}
@@ -350,10 +397,9 @@ export default function SalesOrders() {
                 </p>
               </div>
             </div>
-            </div>
           </div>
-        </FormModal>
-      </div>
+        </div>
+      </FormModal>
     </PageBackground>
   );
 }

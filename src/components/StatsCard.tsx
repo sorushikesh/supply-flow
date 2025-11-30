@@ -1,6 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowUp, ArrowDown, type LucideIcon } from "lucide-react";
-import { AnimatedCounter } from "@/components/AnimatedCounter";
 import { useEffect, useState } from "react";
 
 interface StatsCardProps {
@@ -22,14 +21,6 @@ export function StatsCard({ title, value, change, changeLabel, icon: Icon }: Sta
     }, 100);
     return () => clearTimeout(timer);
   }, []);
-
-  // Parse numeric value for animation
-  const numericValue = typeof value === "string" 
-    ? parseFloat(value.replace(/[^0-9.-]+/g, ""))
-    : value;
-  
-  const isNumeric = !isNaN(numericValue);
-  const prefix = typeof value === "string" && value.includes("$") ? "$" : "";
 
   return (
     <Card 
@@ -55,19 +46,9 @@ export function StatsCard({ title, value, change, changeLabel, icon: Icon }: Sta
               {title}
             </p>
             <div className="text-3xl font-bold mt-2 font-mono overflow-hidden">
-              {isVisible && isNumeric ? (
-                <AnimatedCounter 
-                  value={numericValue} 
-                  prefix={prefix}
-                  duration={1500}
-                  decimals={prefix ? 0 : 0}
-                  className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent group-hover:from-primary group-hover:to-cyan-500 transition-all duration-500"
-                />
-              ) : (
-                <span className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent group-hover:from-primary group-hover:to-cyan-500 transition-all duration-500">
-                  {value}
-                </span>
-              )}
+              <span className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent group-hover:from-primary group-hover:to-cyan-500 transition-all duration-500">
+                {value}
+              </span>
             </div>
             {change !== undefined && (
               <div className={`flex items-center gap-1 mt-3 transition-all duration-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>

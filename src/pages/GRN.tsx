@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { PageHeader } from "@/components/PageHeader";
 import { PageBackground } from "@/components/PageBackground";
 import { SearchFilter } from "@/components/SearchFilter";
 import { DataTable, type Column } from "@/components/DataTable";
@@ -16,10 +15,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Package, CheckCircle2, AlertTriangle } from "lucide-react";
 
-// todo: remove mock functionality
 interface GRNRecord {
   id: string;
   grnNumber: string;
@@ -37,6 +42,16 @@ const mockGRNs: GRNRecord[] = [
   { id: "3", grnNumber: "GRN-2024-0028", poNumber: "PO-2024-0042", vendor: "Tech Components", receivedDate: "2024-01-13", orderedQty: 50, receivedQty: 50, status: "completed" },
   { id: "4", grnNumber: "GRN-2024-0027", poNumber: "PO-2024-0040", vendor: "Acme Corporation", receivedDate: "2024-01-12", orderedQty: 200, receivedQty: 200, status: "completed" },
   { id: "5", grnNumber: "GRN-2024-0026", poNumber: "PO-2024-0039", vendor: "Prime Materials Ltd", receivedDate: "2024-01-11", orderedQty: 75, receivedQty: 70, status: "partial" },
+  { id: "6", grnNumber: "GRN-2024-0025", poNumber: "PO-2024-0038", vendor: "Mega Manufacturing", receivedDate: "2024-01-10", orderedQty: 180, receivedQty: 180, status: "completed" },
+  { id: "7", grnNumber: "GRN-2024-0024", poNumber: "PO-2024-0037", vendor: "Alpha Distributors", receivedDate: "2024-01-09", orderedQty: 120, receivedQty: 115, status: "partial" },
+  { id: "8", grnNumber: "GRN-2024-0023", poNumber: "PO-2024-0036", vendor: "Beta Supplies Ltd", receivedDate: "2024-01-08", orderedQty: 95, receivedQty: 95, status: "completed" },
+  { id: "9", grnNumber: "GRN-2024-0022", poNumber: "PO-2024-0035", vendor: "Gamma Industries", receivedDate: "2024-01-07", orderedQty: 150, receivedQty: 150, status: "completed" },
+  { id: "10", grnNumber: "GRN-2024-0021", poNumber: "PO-2024-0034", vendor: "Epsilon Materials", receivedDate: "2024-01-06", orderedQty: 220, receivedQty: 210, status: "partial" },
+  { id: "11", grnNumber: "GRN-2024-0020", poNumber: "PO-2024-0033", vendor: "Zeta Trading Co", receivedDate: "2024-01-05", orderedQty: 65, receivedQty: 65, status: "completed" },
+  { id: "12", grnNumber: "GRN-2024-0019", poNumber: "PO-2024-0032", vendor: "Theta Wholesale", receivedDate: "2024-01-04", orderedQty: 135, receivedQty: 135, status: "completed" },
+  { id: "13", grnNumber: "GRN-2024-0018", poNumber: "PO-2024-0031", vendor: "Omega Solutions", receivedDate: "2024-01-03", orderedQty: 280, receivedQty: 270, status: "partial" },
+  { id: "14", grnNumber: "GRN-2024-0017", poNumber: "PO-2024-0030", vendor: "Acme Corporation", receivedDate: "2024-01-02", orderedQty: 110, receivedQty: 110, status: "completed" },
+  { id: "15", grnNumber: "GRN-2024-0016", poNumber: "PO-2024-0029", vendor: "Global Supply Co", receivedDate: "2024-01-01", orderedQty: 160, receivedQty: 160, status: "completed" },
 ];
 
 const mockPendingPOs = [
@@ -63,7 +78,26 @@ export default function GRN() {
   });
 
   const columns: Column<GRNRecord>[] = [
-    { key: "grnNumber", header: "GRN Number", className: "font-mono text-sm font-medium" },
+    { 
+      key: "grnNumber", 
+      header: "GRN Number", 
+      className: "font-mono text-sm font-medium",
+      render: (grn) => (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <span className="cursor-help">{grn.grnNumber}</span>
+          </TooltipTrigger>
+          <TooltipContent side="top">
+            <div className="space-y-1">
+              <p className="text-xs font-semibold">{grn.grnNumber}</p>
+              <p className="text-xs text-muted-foreground">PO: {grn.poNumber}</p>
+              <p className="text-xs text-muted-foreground">Vendor: {grn.vendor}</p>
+              <p className="text-xs text-muted-foreground">Received: {grn.receivedDate}</p>
+            </div>
+          </TooltipContent>
+        </Tooltip>
+      ),
+    },
     { key: "poNumber", header: "PO Number", className: "font-mono text-sm" },
     { key: "vendor", header: "Vendor" },
     { key: "receivedDate", header: "Received Date" },
@@ -118,46 +152,54 @@ export default function GRN() {
 
   return (
     <PageBackground>
-      <div className="p-6 lg:p-8 max-w-7xl mx-auto animate-fade-in">
-        <PageHeader
-          title="Goods Received Notes"
-          description="Record and track goods received from vendors"
-          actionLabel="Record GRN"
-          onAction={() => setModalOpen(true)}
-        />
+      <div className="p-4 lg:p-6 max-w-[1600px] mx-auto space-y-6">
+        {/* Page Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent">
+              Goods Receipt Notes
+            </h1>
+            <p className="text-muted-foreground mt-1">Record incoming inventory</p>
+          </div>
+          <Button onClick={() => setModalOpen(true)} className="gap-2">
+            <Package className="h-4 w-4" />
+            Create GRN
+          </Button>
+        </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-        <Card>
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <Card className="border-primary/20">
           <CardContent className="p-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              Total GRNs
-            </p>
+            <div className="flex items-center justify-between mb-2">
+              <Package className="h-4 w-4 text-primary" />
+            </div>
+            <p className="text-xs text-muted-foreground font-medium">Total GRNs</p>
             <p className="text-2xl font-bold mt-1">{mockGRNs.length}</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-green-500/30 bg-gradient-to-br from-green-500/10 to-transparent">
           <CardContent className="p-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              Complete Receipts
-            </p>
-            <p className="text-2xl font-bold mt-1 text-green-600">
-              {completedGRNs}
-            </p>
+            <div className="flex items-center justify-between mb-2">
+              <CheckCircle2 className="h-4 w-4 text-green-500" />
+            </div>
+            <p className="text-xs text-muted-foreground font-medium">Complete Receipts</p>
+            <p className="text-2xl font-bold mt-1 text-green-600">{completedGRNs}</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-amber-500/30 bg-gradient-to-br from-amber-500/10 to-transparent">
           <CardContent className="p-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              Partial Receipts
-            </p>
-            <p className="text-2xl font-bold mt-1 text-amber-600">
-              {partialGRNs}
-            </p>
+            <div className="flex items-center justify-between mb-2">
+              <AlertTriangle className="h-4 w-4 text-amber-500" />
+            </div>
+            <p className="text-xs text-muted-foreground font-medium">Partial Receipts</p>
+            <p className="text-2xl font-bold mt-1 text-amber-600">{partialGRNs}</p>
           </CardContent>
         </Card>
       </div>
 
-      <Card>
+      {/* Main Content */}
+      <Card className="border-primary/20">
         <CardContent className="p-6">
           <SearchFilter
             searchPlaceholder="Search by GRN, PO number or vendor..."

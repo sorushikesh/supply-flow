@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { PageHeader } from "@/components/PageHeader";
 import { PageBackground } from "@/components/PageBackground";
 import { SearchFilter } from "@/components/SearchFilter";
 import { DataTable, type Column } from "@/components/DataTable";
@@ -16,10 +15,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
-import { Trash2, Plus } from "lucide-react";
+import { Trash2, Plus, ShoppingCart, FileText, DollarSign } from "lucide-react";
 
-// todo: remove mock functionality
 interface PurchaseOrder {
   id: string;
   poNumber: string;
@@ -38,6 +41,20 @@ const mockPurchaseOrders: PurchaseOrder[] = [
   { id: "4", poNumber: "PO-2024-0042", vendor: "Tech Components", orderDate: "2024-01-12", expectedDate: "2024-01-22", totalAmount: 15600, status: "completed", items: 4 },
   { id: "5", poNumber: "PO-2024-0041", vendor: "Prime Materials Ltd", orderDate: "2024-01-11", expectedDate: "2024-01-21", totalAmount: 4800, status: "cancelled", items: 2 },
   { id: "6", poNumber: "PO-2024-0040", vendor: "Acme Corporation", orderDate: "2024-01-10", expectedDate: "2024-01-20", totalAmount: 22300, status: "completed", items: 6 },
+  { id: "7", poNumber: "PO-2024-0039", vendor: "Supreme Electronics", orderDate: "2024-01-09", expectedDate: "2024-01-19", totalAmount: 18900, status: "pending", items: 7 },
+  { id: "8", poNumber: "PO-2024-0038", vendor: "Mega Manufacturing", orderDate: "2024-01-08", expectedDate: "2024-01-18", totalAmount: 29400, status: "approved", items: 9 },
+  { id: "9", poNumber: "PO-2024-0037", vendor: "Alpha Distributors", orderDate: "2024-01-07", expectedDate: "2024-01-17", totalAmount: 11200, status: "completed", items: 4 },
+  { id: "10", poNumber: "PO-2024-0036", vendor: "Beta Supplies Ltd", orderDate: "2024-01-06", expectedDate: "2024-01-16", totalAmount: 16700, status: "completed", items: 6 },
+  { id: "11", poNumber: "PO-2024-0035", vendor: "Gamma Industries", orderDate: "2024-01-05", expectedDate: "2024-01-15", totalAmount: 24300, status: "pending", items: 8 },
+  { id: "12", poNumber: "PO-2024-0034", vendor: "Epsilon Materials", orderDate: "2024-01-04", expectedDate: "2024-01-14", totalAmount: 31800, status: "approved", items: 11 },
+  { id: "13", poNumber: "PO-2024-0033", vendor: "Zeta Trading Co", orderDate: "2024-01-03", expectedDate: "2024-01-13", totalAmount: 9600, status: "completed", items: 5 },
+  { id: "14", poNumber: "PO-2024-0032", vendor: "Theta Wholesale", orderDate: "2024-01-02", expectedDate: "2024-01-12", totalAmount: 19200, status: "completed", items: 7 },
+  { id: "15", poNumber: "PO-2024-0031", vendor: "Omega Solutions", orderDate: "2024-01-01", expectedDate: "2024-01-11", totalAmount: 35600, status: "pending", items: 12 },
+  { id: "16", poNumber: "PO-2024-0030", vendor: "Acme Corporation", orderDate: "2023-12-31", expectedDate: "2024-01-10", totalAmount: 14800, status: "approved", items: 6 },
+  { id: "17", poNumber: "PO-2024-0029", vendor: "Global Supply Co", orderDate: "2023-12-30", expectedDate: "2024-01-09", totalAmount: 21400, status: "completed", items: 8 },
+  { id: "18", poNumber: "PO-2024-0028", vendor: "Quality Parts Inc", orderDate: "2023-12-29", expectedDate: "2024-01-08", totalAmount: 7900, status: "completed", items: 4 },
+  { id: "19", poNumber: "PO-2024-0027", vendor: "Tech Components", orderDate: "2023-12-28", expectedDate: "2024-01-07", totalAmount: 28500, status: "cancelled", items: 10 },
+  { id: "20", poNumber: "PO-2024-0026", vendor: "Supreme Electronics", orderDate: "2023-12-27", expectedDate: "2024-01-06", totalAmount: 33700, status: "completed", items: 13 },
 ];
 
 const mockVendors = ["Acme Corporation", "Global Supply Co", "Quality Parts Inc", "Tech Components", "Prime Materials Ltd"];
@@ -70,7 +87,25 @@ export default function PurchaseOrders() {
   });
 
   const columns: Column<PurchaseOrder>[] = [
-    { key: "poNumber", header: "PO Number", className: "font-mono text-sm font-medium" },
+    { 
+      key: "poNumber", 
+      header: "PO Number", 
+      className: "font-mono text-sm font-medium",
+      render: (po) => (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <span className="cursor-help">{po.poNumber}</span>
+          </TooltipTrigger>
+          <TooltipContent side="top">
+            <div className="space-y-1">
+              <p className="text-xs font-semibold">{po.poNumber}</p>
+              <p className="text-xs text-muted-foreground">Order Date: {po.orderDate}</p>
+              <p className="text-xs text-muted-foreground">Items: {po.items}</p>
+            </div>
+          </TooltipContent>
+        </Tooltip>
+      ),
+    },
     { key: "vendor", header: "Vendor" },
     { key: "orderDate", header: "Order Date" },
     { key: "expectedDate", header: "Expected Date" },
@@ -135,67 +170,78 @@ export default function PurchaseOrders() {
 
   return (
     <PageBackground>
-      <div className="p-6 lg:p-8 max-w-7xl mx-auto animate-fade-in">
-        <PageHeader
-        title="Purchase Orders"
-        description="Manage orders to your vendors"
-        actionLabel="New Purchase Order"
-        onAction={() => setModalOpen(true)}
-      />
+      <div className="p-4 lg:p-6 max-w-[1600px] mx-auto space-y-6">
+        {/* Page Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent">
+              Purchase Orders
+            </h1>
+            <p className="text-muted-foreground mt-1">Manage orders to suppliers</p>
+          </div>
+          <Button onClick={() => setModalOpen(true)} className="gap-2">
+            <ShoppingCart className="h-4 w-4" />
+            New Purchase Order
+          </Button>
+        </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-        <Card>
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <Card className="border-primary/20">
           <CardContent className="p-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              Total POs
-            </p>
+            <div className="flex items-center justify-between mb-2">
+              <FileText className="h-4 w-4 text-primary" />
+            </div>
+            <p className="text-xs text-muted-foreground font-medium">Total POs</p>
             <p className="text-2xl font-bold mt-1">{mockPurchaseOrders.length}</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-amber-500/30 bg-gradient-to-br from-amber-500/10 to-transparent">
           <CardContent className="p-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              Pending Approval
-            </p>
-            <p className="text-2xl font-bold mt-1 text-amber-600">
-              {pendingOrders}
-            </p>
+            <div className="flex items-center justify-between mb-2">
+              <ShoppingCart className="h-4 w-4 text-amber-500" />
+            </div>
+            <p className="text-xs text-muted-foreground font-medium">Pending Approval</p>
+            <p className="text-2xl font-bold mt-1 text-amber-600">{pendingOrders}</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-blue-500/20">
           <CardContent className="p-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              Total Value
-            </p>
-            <p className="text-2xl font-bold mt-1 font-mono">
-              ${totalValue.toLocaleString()}
+            <div className="flex items-center justify-between mb-2">
+              <DollarSign className="h-4 w-4 text-blue-500" />
+            </div>
+            <p className="text-xs text-muted-foreground font-medium">Total Value</p>
+            <p className="text-2xl font-bold mt-1 font-mono">${totalValue.toLocaleString()}
             </p>
           </CardContent>
         </Card>
       </div>
 
-      <Card>
+      {/* Main Content */}
+      <Card className="border-primary/20">
         <CardContent className="p-6">
-          <SearchFilter
-            searchPlaceholder="Search by PO number or vendor..."
-            searchValue={search}
-            onSearchChange={setSearch}
-            filters={[
-              {
-                key: "status",
-                label: "Status",
-                options: [
-                  { value: "All", label: "All Status" },
-                  { value: "Pending", label: "Pending" },
-                  { value: "Approved", label: "Approved" },
-                  { value: "Completed", label: "Completed" },
-                  { value: "Cancelled", label: "Cancelled" },
-                ],
-                value: statusFilter,
-                onChange: setStatusFilter,
-              },
-            ]}
-          />
+          <div className="space-y-4">
+            <SearchFilter
+              searchPlaceholder="Search by PO number or vendor..."
+              searchValue={search}
+              onSearchChange={setSearch}
+              filters={[
+                {
+                  key: "status",
+                  label: "Status",
+                  options: [
+                    { value: "All", label: "All Status" },
+                    { value: "Pending", label: "Pending" },
+                    { value: "Approved", label: "Approved" },
+                    { value: "Completed", label: "Completed" },
+                    { value: "Cancelled", label: "Cancelled" },
+                  ],
+                  value: statusFilter,
+                  onChange: setStatusFilter,
+                },
+              ]}
+            />
+          </div>
 
           <DataTable
             columns={columns}
@@ -204,6 +250,7 @@ export default function PurchaseOrders() {
           />
         </CardContent>
       </Card>
+      </div>
 
       <FormModal
         open={modalOpen}
@@ -327,10 +374,9 @@ export default function PurchaseOrders() {
                 </p>
               </div>
             </div>
-            </div>
           </div>
-        </FormModal>
-      </div>
+        </div>
+      </FormModal>
     </PageBackground>
   );
 }
