@@ -122,7 +122,7 @@ export default function Dashboard() {
         <div className="relative overflow-hidden rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/10 via-blue-500/5 to-purple-500/10 p-8">
           <div className="absolute inset-0 bg-grid-white/5" />
           <div className="relative z-10">
-            <div className="flex items-start justify-between mb-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-start justify-between gap-4 mb-6\">
               <div>
                 <h1 className="text-5xl font-bold mb-3">
                   <span className="bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent">

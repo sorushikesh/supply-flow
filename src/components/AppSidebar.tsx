@@ -49,7 +49,7 @@ const financeNavItems = [
 ];
 
 const systemNavItems = [
-  { title: "Settings", url: "/settings", icon: Settings },
+  { title: "Control Panel", url: "/control-panel", icon: Settings },
 ];
 
 export function AppSidebar() {
