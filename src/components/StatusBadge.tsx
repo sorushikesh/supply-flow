@@ -39,7 +39,7 @@ export function StatusBadge({ status, className }: StatusBadgeProps) {
   return (
     <Badge 
       variant={config.variant} 
-      className={`transition-all duration-200 hover:scale-105 hover:shadow-sm cursor-default ${className || ''}`}
+      className={`transition-all duration-200 hover:scale-105 hover:shadow-sm cursor-default animate-fade-in ${className || ''}`}
       data-testid={`status-badge-${status}`}
     >
       {config.label}

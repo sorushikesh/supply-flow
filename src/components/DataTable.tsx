@@ -25,6 +25,7 @@ interface DataTableProps<T> {
   onRowClick?: (item: T) => void;
   pageSize?: number;
   testIdPrefix?: string;
+  isLoading?: boolean;
 }
 
 export function DataTable<T extends { id: string | number }>({
@@ -34,6 +35,7 @@ export function DataTable<T extends { id: string | number }>({
   onRowClick,
   pageSize = 10,
   testIdPrefix = "table",
+  isLoading = false,
 }: DataTableProps<T>) {
   const [selectedIds, setSelectedIds] = useState<Set<string | number>>(new Set());
   const [currentPage, setCurrentPage] = useState(1);

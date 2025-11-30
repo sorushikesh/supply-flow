@@ -14,8 +14,9 @@ export function StatsCard({ title, value, change, changeLabel, icon: Icon }: Sta
   const isNegative = change && change < 0;
 
   return (
-    <Card data-testid={`stats-card-${title.toLowerCase().replace(/\s+/g, "-")}`} className="transition-all duration-200 hover:shadow-md hover:-translate-y-1 cursor-pointer">
-      <CardContent className="p-6">
+    <Card data-testid={`stats-card-${title.toLowerCase().replace(/\s+/g, "-")}`} className="transition-all duration-200 hover:shadow-md hover:-translate-y-1 cursor-pointer group relative overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      <CardContent className="p-6 relative z-10">
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1 min-w-0">
             <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
