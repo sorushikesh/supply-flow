@@ -12,7 +12,9 @@ export type StatusType =
   | "delivered"
   | "draft"
   | "cancelled"
-  | "processing";
+  | "processing"
+  | "pending_approval"
+  | "changes_requested";
 
 interface StatusBadgeProps {
   status: StatusType;
@@ -32,10 +34,27 @@ const statusConfig: Record<StatusType, { label: string; variant: "default" | "se
   draft: { label: "Draft", variant: "outline" },
   cancelled: { label: "Cancelled", variant: "destructive" },
   processing: { label: "Processing", variant: "secondary" },
+  pending_approval: { label: "Pending Approval", variant: "secondary" },
+  changes_requested: { label: "Changes Requested", variant: "outline" },
 };
 
 export function StatusBadge({ status, className }: StatusBadgeProps) {
   const config = statusConfig[status];
+  
+  // Fallback for undefined status
+  if (!config) {
+    console.error(`StatusBadge: Unknown status "${status}"`);
+    return (
+      <Badge 
+        variant="outline" 
+        className={`transition-all duration-200 hover:scale-105 hover:shadow-sm cursor-default animate-fade-in ${className || ''}`}
+        data-testid={`status-badge-${status}`}
+      >
+        {status}
+      </Badge>
+    );
+  }
+  
   return (
     <Badge 
       variant={config.variant} 

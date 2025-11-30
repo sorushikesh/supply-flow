@@ -19,10 +19,11 @@ import {
   ClipboardList,
   FileCheck,
   Truck,
-  FileText,
-  CreditCard,
+  DollarSign,
   BarChart3,
+  CheckCircle2,
   Settings,
+  Keyboard,
 } from "lucide-react";
 
 const mainNavItems = [
@@ -43,13 +44,14 @@ const ordersNavItems = [
 ];
 
 const financeNavItems = [
-  { title: "Invoices", url: "/invoices", icon: FileText },
-  { title: "Payments", url: "/payments", icon: CreditCard },
+  { title: "Financial Management", url: "/financial", icon: DollarSign },
   { title: "Analytics", url: "/analytics", icon: BarChart3 },
+  { title: "Approvals", url: "/approvals", icon: CheckCircle2 },
 ];
 
 const systemNavItems = [
   { title: "Control Panel", url: "/control-panel", icon: Settings },
+  { title: "Settings", url: "/settings", icon: Keyboard },
 ];
 
 export function AppSidebar() {

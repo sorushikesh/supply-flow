@@ -15,16 +15,7 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { ConfirmDialog } from "@/components/ConfirmDialog";
 import {
   Dialog,
   DialogContent,
@@ -38,80 +29,21 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
-import { Pencil, Trash2, Package, ArrowUp, ArrowDown, Calendar, TrendingUp, DollarSign } from "lucide-react";
+import { Pencil, Trash2, Package, ArrowUp, ArrowDown, Calendar, TrendingUp, DollarSign, PackageX, History, Download, Filter, Plus } from "lucide-react";
+import { EmptyState } from "@/components/EmptyState";
+import { BulkActions } from "@/components/BulkActions";
+import { ExportDialog } from "@/components/ExportDialog";
+import { ActivityLogDialog, generateMockActivityLogs, type ActivityLog } from "@/components/ActivityLog";
+import { AdvancedFilterDialog, applyAdvancedFilters, type FilterCondition, type SavedFilter } from "@/components/AdvancedFilter";
+import { getInventoryData, getStockMovements, type InventoryItem, type StockMovement } from "@/data/dataTransformers";
 
-interface InventoryItem {
-  id: string;
-  sku: string;
-  name: string;
-  category: string;
-  currentStock: number;
-  reorderLevel: number;
-  unitPrice: number;
-  location: string;
-  lastUpdated: string;
-}
+const mockInventory = getInventoryData();
+const mockStockMovements = getStockMovements();
 
-interface StockMovement {
-  id: string;
-  date: string;
-  type: "in" | "out";
-  quantity: number;
-  reference: string;
-  notes: string;
-  performedBy: string;
-}
-
-const mockInventory: InventoryItem[] = [
-  { id: "1", sku: "WDG-001", name: "Widget Alpha", category: "Widgets", currentStock: 12, reorderLevel: 50, unitPrice: 25.99, location: "Warehouse A", lastUpdated: "2024-01-15" },
-  { id: "2", sku: "GDG-023", name: "Gadget Pro", category: "Gadgets", currentStock: 8, reorderLevel: 25, unitPrice: 149.99, location: "Warehouse B", lastUpdated: "2024-01-14" },
-  { id: "3", sku: "CMP-045", name: "Component X", category: "Components", currentStock: 3, reorderLevel: 20, unitPrice: 12.50, location: "Warehouse A", lastUpdated: "2024-01-14" },
-  { id: "4", sku: "WDG-002", name: "Widget Beta", category: "Widgets", currentStock: 156, reorderLevel: 30, unitPrice: 32.00, location: "Warehouse A", lastUpdated: "2024-01-13" },
-  { id: "5", sku: "GDG-024", name: "Gadget Lite", category: "Gadgets", currentStock: 89, reorderLevel: 40, unitPrice: 89.99, location: "Warehouse C", lastUpdated: "2024-01-12" },
-  { id: "6", sku: "CMP-046", name: "Component Y", category: "Components", currentStock: 234, reorderLevel: 100, unitPrice: 8.75, location: "Warehouse B", lastUpdated: "2024-01-11" },
-  { id: "7", sku: "ACC-001", name: "Accessory Pack", category: "Accessories", currentStock: 45, reorderLevel: 20, unitPrice: 15.00, location: "Warehouse A", lastUpdated: "2024-01-10" },
-  { id: "8", sku: "WDG-003", name: "Widget Gamma", category: "Widgets", currentStock: 67, reorderLevel: 25, unitPrice: 45.50, location: "Warehouse C", lastUpdated: "2024-01-09" },
-  { id: "9", sku: "GDG-025", name: "Gadget Ultra", category: "Gadgets", currentStock: 145, reorderLevel: 50, unitPrice: 199.99, location: "Warehouse A", lastUpdated: "2024-01-08" },
-  { id: "10", sku: "CMP-047", name: "Component Z", category: "Components", currentStock: 5, reorderLevel: 15, unitPrice: 18.75, location: "Warehouse B", lastUpdated: "2024-01-07" },
-  { id: "11", sku: "WDG-004", name: "Widget Delta", category: "Widgets", currentStock: 203, reorderLevel: 40, unitPrice: 28.50, location: "Warehouse C", lastUpdated: "2024-01-06" },
-  { id: "12", sku: "ACC-002", name: "Premium Cable Set", category: "Accessories", currentStock: 78, reorderLevel: 30, unitPrice: 22.00, location: "Warehouse A", lastUpdated: "2024-01-05" },
-  { id: "13", sku: "GDG-026", name: "Gadget Mini", category: "Gadgets", currentStock: 112, reorderLevel: 35, unitPrice: 59.99, location: "Warehouse B", lastUpdated: "2024-01-04" },
-  { id: "14", sku: "CMP-048", name: "Component Alpha", category: "Components", currentStock: 18, reorderLevel: 25, unitPrice: 14.25, location: "Warehouse C", lastUpdated: "2024-01-03" },
-  { id: "15", sku: "WDG-005", name: "Widget Omega", category: "Widgets", currentStock: 189, reorderLevel: 45, unitPrice: 38.75, location: "Warehouse A", lastUpdated: "2024-01-02" },
-  { id: "16", sku: "ACC-003", name: "Connector Kit", category: "Accessories", currentStock: 6, reorderLevel: 18, unitPrice: 12.50, location: "Warehouse B", lastUpdated: "2024-01-01" },
-  { id: "17", sku: "GDG-027", name: "Gadget Max", category: "Gadgets", currentStock: 167, reorderLevel: 60, unitPrice: 299.99, location: "Warehouse C", lastUpdated: "2023-12-31" },
-  { id: "18", sku: "CMP-049", name: "Component Beta", category: "Components", currentStock: 298, reorderLevel: 80, unitPrice: 9.99, location: "Warehouse A", lastUpdated: "2023-12-30" },
-  { id: "19", sku: "WDG-006", name: "Widget Prime", category: "Widgets", currentStock: 4, reorderLevel: 22, unitPrice: 42.00, location: "Warehouse B", lastUpdated: "2023-12-29" },
-  { id: "20", sku: "ACC-004", name: "Adapter Bundle", category: "Accessories", currentStock: 134, reorderLevel: 28, unitPrice: 19.99, location: "Warehouse C", lastUpdated: "2023-12-28" },
-  { id: "21", sku: "GDG-028", name: "Gadget Flex", category: "Gadgets", currentStock: 56, reorderLevel: 45, unitPrice: 129.99, location: "Warehouse A", lastUpdated: "2023-12-27" },
-  { id: "22", sku: "CMP-050", name: "Component Gamma", category: "Components", currentStock: 423, reorderLevel: 120, unitPrice: 7.50, location: "Warehouse B", lastUpdated: "2023-12-26" },
-  { id: "23", sku: "WDG-007", name: "Widget Express", category: "Widgets", currentStock: 91, reorderLevel: 33, unitPrice: 34.99, location: "Warehouse C", lastUpdated: "2023-12-25" },
-  { id: "24", sku: "ACC-005", name: "Mount Bracket Set", category: "Accessories", currentStock: 12, reorderLevel: 24, unitPrice: 16.75, location: "Warehouse A", lastUpdated: "2023-12-24" },
-  { id: "25", sku: "GDG-029", name: "Gadget Swift", category: "Gadgets", currentStock: 178, reorderLevel: 52, unitPrice: 174.99, location: "Warehouse B", lastUpdated: "2023-12-23" },
-];
-
-const mockStockMovements: Record<string, StockMovement[]> = {
-  "1": [
-    { id: "1", date: "2024-11-25", type: "out", quantity: 50, reference: "SO-2024-0098", notes: "Sales order fulfillment", performedBy: "John Doe" },
-    { id: "2", date: "2024-11-20", type: "in", quantity: 100, reference: "PO-2024-0045", notes: "Purchase order received", performedBy: "Jane Smith" },
-    { id: "3", date: "2024-11-15", type: "out", quantity: 38, reference: "SO-2024-0087", notes: "Customer order", performedBy: "John Doe" },
-    { id: "4", date: "2024-11-10", type: "in", quantity: 200, reference: "PO-2024-0038", notes: "Stock replenishment", performedBy: "Jane Smith" },
-  ],
-  "2": [
-    { id: "5", date: "2024-11-22", type: "out", quantity: 30, reference: "SO-2024-0115", notes: "Bulk order", performedBy: "John Doe" },
-    { id: "6", date: "2024-11-18", type: "in", quantity: 50, reference: "PO-2024-0042", notes: "Restock", performedBy: "Jane Smith" },
-    { id: "7", date: "2024-11-12", type: "out", quantity: 12, reference: "ADJ-001", notes: "Inventory adjustment - damaged items", performedBy: "Admin" },
-  ],
-  "3": [
-    { id: "8", date: "2024-11-24", type: "out", quantity: 100, reference: "SO-2024-0122", notes: "Large customer order", performedBy: "John Doe" },
-    { id: "9", date: "2024-11-19", type: "in", quantity: 500, reference: "PO-2024-0043", notes: "Bulk purchase", performedBy: "Jane Smith" },
-    { id: "10", date: "2024-11-14", type: "out", quantity: 297, reference: "SO-2024-0095", notes: "Multiple orders", performedBy: "John Doe" },
-  ],
-};
-
-const categories = ["All", "Widgets", "Gadgets", "Components", "Accessories"];
-const locations = ["All", "Warehouse A", "Warehouse B", "Warehouse C"];
+const categories = ["All", "Laptops", "Monitors", "Power Supplies", "Accessories"];
+const locations = ["All", "Main Warehouse", "Electronics Depot", "Regional Storage"];
 
 export default function Inventory() {
   const { toast } = useToast();
@@ -124,6 +56,28 @@ export default function Inventory() {
   const [editingItem, setEditingItem] = useState<InventoryItem | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<InventoryItem | null>(null);
+  
+  // New features state
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [exportDialogOpen, setExportDialogOpen] = useState(false);
+  const [activityLogOpen, setActivityLogOpen] = useState(false);
+  const [advancedFilterOpen, setAdvancedFilterOpen] = useState(false);
+  const [activityLogs] = useState<ActivityLog[]>(generateMockActivityLogs());
+  const [filterConditions, setFilterConditions] = useState<FilterCondition[]>([]);
+  const [savedFilters, setSavedFilters] = useState<SavedFilter[]>([
+    {
+      id: "1",
+      name: "Low Stock Items",
+      conditions: [{ id: "1", field: "currentStock", operator: "less", value: "20", fieldType: "number" }],
+      isFavorite: true,
+    },
+    {
+      id: "2",
+      name: "High Value Products",
+      conditions: [{ id: "1", field: "unitPrice", operator: "greater", value: "100", fieldType: "number" }],
+    },
+  ]);
+  
   const [formData, setFormData] = useState({
     sku: "",
     name: "",
@@ -143,7 +97,39 @@ export default function Inventory() {
     return matchesSearch && matchesCategory && matchesLocation;
   });
 
+  // Apply advanced filters if any
+  const finalData = filterConditions.length > 0 
+    ? applyAdvancedFilters(filteredData, filterConditions)
+    : filteredData;
+
   const columns: Column<InventoryItem>[] = [
+    {
+      key: "select",
+      header: () => (
+        <Checkbox
+          checked={selectedItems.length === finalData.length && finalData.length > 0}
+          onCheckedChange={(checked) => {
+            if (checked) {
+              setSelectedItems(finalData.map((item) => item.id));
+            } else {
+              setSelectedItems([]);
+            }
+          }}
+        />
+      ),
+      render: (item) => (
+        <Checkbox
+          checked={selectedItems.includes(item.id)}
+          onCheckedChange={(checked) => {
+            if (checked) {
+              setSelectedItems([...selectedItems, item.id]);
+            } else {
+              setSelectedItems(selectedItems.filter((id) => id !== item.id));
+            }
+          }}
+        />
+      ),
+    },
     { key: "sku", header: "SKU", className: "font-mono text-sm" },
     { 
       key: "name", 
@@ -331,6 +317,64 @@ export default function Inventory() {
     });
   };
 
+  // Bulk operation handlers
+  const handleBulkExport = () => {
+    setExportDialogOpen(true);
+  };
+
+  const handleBulkEmail = () => {
+    toast({
+      title: "Email Sent",
+      description: `Report for ${selectedItems.length} items has been sent to your email.`,
+    });
+  };
+
+  const handleBulkStatusChange = (newStatus: string) => {
+    toast({
+      title: "Status Updated",
+      description: `${selectedItems.length} items have been updated to ${newStatus}.`,
+    });
+    setSelectedItems([]);
+  };
+
+  const handleBulkDelete = () => {
+    toast({
+      title: "Items Deleted",
+      description: `${selectedItems.length} items have been deleted successfully.`,
+      variant: "destructive",
+    });
+    setSelectedItems([]);
+  };
+
+  const handleExport = (format: "csv" | "json", selectedColumns: string[], includeHeaders: boolean) => {
+    const selectedData = finalData.filter((item) => selectedItems.length === 0 || selectedItems.includes(item.id));
+    toast({
+      title: "Export Successful",
+      description: `Exported ${selectedData.length} items in ${format.toUpperCase()} format.`,
+    });
+  };
+
+  const handleApplyFilters = (conditions: FilterCondition[]) => {
+    setFilterConditions(conditions);
+    toast({
+      title: "Filters Applied",
+      description: `Applied ${conditions.length} filter condition(s).`,
+    });
+  };
+
+  const handleSaveFilter = (name: string, conditions: FilterCondition[]) => {
+    const newFilter: SavedFilter = {
+      id: String(Date.now()),
+      name,
+      conditions,
+    };
+    setSavedFilters([...savedFilters, newFilter]);
+    toast({
+      title: "Filter Saved",
+      description: `Filter "${name}" has been saved successfully.`,
+    });
+  };
+
   const handleModalClose = (open: boolean) => {
     setModalOpen(open);
     if (!open) {
@@ -353,6 +397,9 @@ export default function Inventory() {
   const inStockCount = mockInventory.filter(
     (item) => item.currentStock > item.reorderLevel
   ).length;
+  const outOfStockCount = mockInventory.filter(
+    (item) => item.currentStock === 0
+  ).length;
   const totalValue = mockInventory.reduce(
     (sum, item) => sum + item.currentStock * item.unitPrice,
     0
@@ -360,97 +407,193 @@ export default function Inventory() {
 
   return (
     <PageBackground>
-      <div className="p-4 lg:p-6 max-w-[1600px] mx-auto space-y-6">
+      <div className="relative z-10 p-6">
         {/* Page Header */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent">
-              Inventory Management
-            </h1>
-            <p className="text-muted-foreground mt-1 text-sm sm:text-base">Track and manage your product inventory</p>
-          </div>
-          <Button 
-            onClick={() => setModalOpen(true)} 
-            className="gap-2 hover:shadow-lg hover:scale-105 transition-all duration-200"
-            aria-label="Add new product"
-          >
-            <Package className="h-4 w-4" />
-            Add Product
-          </Button>
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold mb-2">Inventory Management</h1>
+          <p className="text-muted-foreground">Track and manage your product inventory levels</p>
         </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="border-primary/20 hover:border-primary/40 hover:shadow-md transition-all duration-200 cursor-pointer" onClick={() => {/* Navigate to all products */}}>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-2">
-              <Package className="h-4 w-4 text-primary" aria-hidden="true" />
-            </div>
-            <p className="text-xs text-muted-foreground font-medium">Total Products</p>
-            <p className="text-2xl font-bold mt-1" aria-label={`${mockInventory.length} total products`}>{mockInventory.length}</p>
-          </CardContent>
-        </Card>
-        <Card className="border-blue-500/20 hover:border-blue-500/40 hover:shadow-md transition-all duration-200 cursor-pointer">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-2">
-              <DollarSign className="h-4 w-4 text-blue-500" aria-hidden="true" />
-            </div>
-            <p className="text-xs text-muted-foreground font-medium">Total Stock Value</p>
-            <p className="text-2xl font-bold mt-1 font-mono" aria-label={`Total value $${totalValue.toLocaleString()}`}>${totalValue.toLocaleString()}</p>
-          </CardContent>
-        </Card>
-        <Card className="border-amber-500/30 bg-gradient-to-br from-amber-500/10 to-transparent hover:border-amber-500/50 hover:shadow-md transition-all duration-200 cursor-pointer">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-2">
-              <TrendingUp className="h-4 w-4 text-amber-500" aria-hidden="true" />
-            </div>
-            <p className="text-xs text-muted-foreground font-medium">Low Stock Items</p>
-            <p className="text-2xl font-bold mt-1 text-amber-600" aria-label={`${lowStockCount} items with low stock`}>{lowStockCount}</p>
-          </CardContent>
-        </Card>
-        <Card className="border-green-500/30 bg-gradient-to-br from-green-500/10 to-transparent hover:border-green-500/50 hover:shadow-md transition-all duration-200 cursor-pointer">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-2">
-              <Package className="h-4 w-4 text-green-500" aria-hidden="true" />
-            </div>
-            <p className="text-xs text-muted-foreground font-medium">In Stock Items</p>
-            <p className="text-2xl font-bold mt-1 text-green-600" aria-label={`${inStockCount} items in stock`}>{inStockCount}</p>
-          </CardContent>
-        </Card>
-      </div>
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Total Products
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <p className="text-2xl font-bold">{mockInventory.length}</p>
+                <Package className="h-8 w-8 text-blue-500" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Low Stock
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <p className="text-2xl font-bold">{lowStockCount}</p>
+                <TrendingUp className="h-8 w-8 text-yellow-500" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Out of Stock
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <p className="text-2xl font-bold">{outOfStockCount}</p>
+                <PackageX className="h-8 w-8 text-red-500" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                In Stock
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <p className="text-2xl font-bold">{inStockCount}</p>
+                <Package className="h-8 w-8 text-green-500" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Total Value
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <p className="text-2xl font-bold text-green-600">${(totalValue / 1000).toFixed(1)}k</p>
+                <DollarSign className="h-8 w-8 text-green-500" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
-      {/* Main Content */}
-      <Card className="border-primary/20">
-        <CardContent className="p-6">
-          <SearchFilter
-            searchPlaceholder="Search by SKU or product name..."
-            searchValue={search}
-            onSearchChange={setSearch}
-            filters={[
-              {
-                key: "category",
-                label: "Category",
-                options: categories.map((c) => ({ value: c, label: c })),
-                value: category,
-                onChange: setCategory,
-              },
-              {
-                key: "location",
-                label: "Location",
-                options: locations.map((l) => ({ value: l, label: l })),
-                value: location,
-                onChange: setLocation,
-              },
-            ]}
-          />
+        {/* Toolbar */}
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex flex-col lg:flex-row gap-4">
+              {/* Search */}
+              <div className="flex-1">
+                <SearchFilter
+                  searchValue={search}
+                  onSearchChange={setSearch}
+                  searchPlaceholder="Search by SKU or product name..."
+                />
+              </div>
 
-          <DataTable
-            columns={columns}
-            data={filteredData}
-            testIdPrefix="inventory"
+              {/* Filters */}
+              <div className="flex flex-wrap gap-2">
+                <Select value={category} onValueChange={setCategory}>
+                  <SelectTrigger className="w-[150px]">
+                    <SelectValue placeholder="Category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="All">All Categories</SelectItem>
+                    {categories.filter(c => c !== "All").map((c) => (
+                      <SelectItem key={c} value={c}>{c}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                <Select value={location} onValueChange={setLocation}>
+                  <SelectTrigger className="w-[150px]">
+                    <SelectValue placeholder="Location" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="All">All Locations</SelectItem>
+                    {locations.filter(l => l !== "All").map((l) => (
+                      <SelectItem key={l} value={l}>{l}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                <Button
+                  variant="outline"
+                  onClick={() => setAdvancedFilterOpen(true)}
+                >
+                  <Filter className="h-4 w-4 mr-2" />
+                  Advanced
+                  {filterConditions.length > 0 && (
+                    <Badge variant="secondary" className="ml-2">
+                      {filterConditions.length}
+                    </Badge>
+                  )}
+                </Button>
+
+                <Button
+                  variant="outline"
+                  onClick={() => setActivityLogOpen(true)}
+                >
+                  <History className="h-4 w-4 mr-2" />
+                  Activity Log
+                </Button>
+              </div>
+
+              {/* Actions */}
+              <div className="flex gap-2">
+                <Button onClick={() => setModalOpen(true)}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Product
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Bulk Actions */}
+        {selectedItems.length > 0 && (
+          <BulkActions
+            selectedCount={selectedItems.length}
+            onExport={handleBulkExport}
+            onEmail={handleBulkEmail}
+            onStatusChange={handleBulkStatusChange}
+            onDelete={handleBulkDelete}
+            statusOptions={["In Stock", "Low Stock", "Out of Stock", "Discontinued"]}
           />
-        </CardContent>
-      </Card>
+        )}
+
+        {/* Data Table */}
+        <Card>
+          <CardContent className="pt-6">
+            {filteredData.length === 0 ? (
+            <EmptyState
+              icon={PackageX}
+              title={search || category !== "All" || location !== "All" ? "No products found" : "No inventory items yet"}
+              description={
+                search || category !== "All" || location !== "All"
+                  ? "No products match your search criteria. Try adjusting your filters."
+                  : "Get started by adding your first product to the inventory."
+              }
+              action={{
+                label: "Add Product",
+                onClick: () => setModalOpen(true),
+                icon: Package,
+              }}
+            />
+            ) : (
+              <DataTable
+                columns={columns}
+                data={finalData}
+                testIdPrefix="inventory"
+              />
+            )}
+          </CardContent>
+        </Card>
       </div>
 
       <FormModal
@@ -628,26 +771,16 @@ export default function Inventory() {
         </div>
       </FormModal>
 
-      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete Product</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to delete <strong>{itemToDelete?.name}</strong>?
-              This action cannot be undone and will permanently remove this product from your inventory.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDelete}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <ConfirmDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        onConfirm={handleDelete}
+        title="Delete Product"
+        description="Are you sure you want to delete this product? This action cannot be undone and will permanently remove this product from your inventory."
+        variant="destructive"
+        confirmLabel="Delete Product"
+        itemName={itemToDelete?.name}
+      />
 
       {/* Item Details Dialog */}
       <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
@@ -827,6 +960,51 @@ export default function Inventory() {
           </Tabs>
         </DialogContent>
       </Dialog>
+
+      {/* Export Dialog */}
+      <ExportDialog
+        open={exportDialogOpen}
+        onOpenChange={setExportDialogOpen}
+        columns={[
+          { key: "sku", label: "SKU" },
+          { key: "name", label: "Product Name" },
+          { key: "category", label: "Category" },
+          { key: "currentStock", label: "Stock" },
+          { key: "reorderLevel", label: "Reorder Level" },
+          { key: "unitPrice", label: "Unit Price" },
+          { key: "location", label: "Location" },
+          { key: "lastUpdated", label: "Last Updated" },
+        ]}
+        data={finalData.filter((item) => selectedItems.length === 0 || selectedItems.includes(item.id))}
+        filename="inventory"
+      />
+
+      {/* Activity Log Dialog */}
+      <ActivityLogDialog
+        open={activityLogOpen}
+        onOpenChange={setActivityLogOpen}
+        logs={activityLogs}
+        title="Inventory Activity Log"
+      />
+
+      {/* Advanced Filter Dialog */}
+      <AdvancedFilterDialog
+        open={advancedFilterOpen}
+        onOpenChange={setAdvancedFilterOpen}
+        fields={[
+          { value: "sku", label: "SKU", type: "text" },
+          { value: "name", label: "Product Name", type: "text" },
+          { value: "category", label: "Category", type: "select" },
+          { value: "currentStock", label: "Current Stock", type: "number" },
+          { value: "reorderLevel", label: "Reorder Level", type: "number" },
+          { value: "unitPrice", label: "Unit Price", type: "number" },
+          { value: "location", label: "Location", type: "select" },
+          { value: "lastUpdated", label: "Last Updated", type: "date" },
+        ]}
+        onApplyFilters={handleApplyFilters}
+        savedFilters={savedFilters}
+        onSaveFilter={handleSaveFilter}
+      />
     </PageBackground>
   );
 }

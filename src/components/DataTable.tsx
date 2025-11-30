@@ -13,7 +13,7 @@ import { useState } from "react";
 
 export interface Column<T> {
   key: keyof T | string;
-  header: string;
+  header: string | (() => React.ReactNode);
   render?: (item: T) => React.ReactNode;
   className?: string;
 }
@@ -99,7 +99,7 @@ export function DataTable<T extends { id: string | number }>({
                   className={`text-xs font-semibold uppercase tracking-wider bg-gradient-to-r from-transparent to-transparent hover:from-primary/5 hover:to-primary/5 transition-colors ${col.className || ""}`}
                   scope="col"
                 >
-                  {col.header}
+                  {typeof col.header === "function" ? col.header() : col.header}
                 </TableHead>
               ))}
             </TableRow>

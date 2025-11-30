@@ -4,10 +4,12 @@ import { SearchFilter } from "@/components/SearchFilter";
 import { DataTable, type Column } from "@/components/DataTable";
 import { StatusBadge, type StatusType } from "@/components/StatusBadge";
 import { FormModal } from "@/components/FormModal";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -21,7 +23,13 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
-import { Trash2, Plus, ShoppingCart, FileText, DollarSign, Package } from "lucide-react";
+import { Trash2, Plus, ShoppingCart, FileText, DollarSign, Package, PackageX, History, Download, Filter } from "lucide-react";
+import { EmptyState } from "@/components/EmptyState";
+import { BulkActions } from "@/components/BulkActions";
+import { ExportDialog } from "@/components/ExportDialog";
+import { ActivityLogDialog, generateMockActivityLogs, type ActivityLog } from "@/components/ActivityLog";
+import { AdvancedFilterDialog, applyAdvancedFilters, type FilterCondition, type SavedFilter } from "@/components/AdvancedFilter";
+import { getPurchaseOrdersData, getVendorNames, getProductNames } from "@/data/dataTransformers";
 
 interface PurchaseOrder {
   id: string;
@@ -34,31 +42,11 @@ interface PurchaseOrder {
   items: number;
 }
 
-const mockPurchaseOrders: PurchaseOrder[] = [
-  { id: "1", poNumber: "PO-2024-0045", vendor: "Acme Corporation", orderDate: "2024-01-15", expectedDate: "2024-01-25", totalAmount: 12500, status: "pending", items: 5 },
-  { id: "2", poNumber: "PO-2024-0044", vendor: "Global Supply Co", orderDate: "2024-01-14", expectedDate: "2024-01-24", totalAmount: 8750, status: "approved", items: 3 },
-  { id: "3", poNumber: "PO-2024-0043", vendor: "Quality Parts Inc", orderDate: "2024-01-13", expectedDate: "2024-01-23", totalAmount: 3200, status: "completed", items: 8 },
-  { id: "4", poNumber: "PO-2024-0042", vendor: "Tech Components", orderDate: "2024-01-12", expectedDate: "2024-01-22", totalAmount: 15600, status: "completed", items: 4 },
-  { id: "5", poNumber: "PO-2024-0041", vendor: "Prime Materials Ltd", orderDate: "2024-01-11", expectedDate: "2024-01-21", totalAmount: 4800, status: "cancelled", items: 2 },
-  { id: "6", poNumber: "PO-2024-0040", vendor: "Acme Corporation", orderDate: "2024-01-10", expectedDate: "2024-01-20", totalAmount: 22300, status: "completed", items: 6 },
-  { id: "7", poNumber: "PO-2024-0039", vendor: "Supreme Electronics", orderDate: "2024-01-09", expectedDate: "2024-01-19", totalAmount: 18900, status: "pending", items: 7 },
-  { id: "8", poNumber: "PO-2024-0038", vendor: "Mega Manufacturing", orderDate: "2024-01-08", expectedDate: "2024-01-18", totalAmount: 29400, status: "approved", items: 9 },
-  { id: "9", poNumber: "PO-2024-0037", vendor: "Alpha Distributors", orderDate: "2024-01-07", expectedDate: "2024-01-17", totalAmount: 11200, status: "completed", items: 4 },
-  { id: "10", poNumber: "PO-2024-0036", vendor: "Beta Supplies Ltd", orderDate: "2024-01-06", expectedDate: "2024-01-16", totalAmount: 16700, status: "completed", items: 6 },
-  { id: "11", poNumber: "PO-2024-0035", vendor: "Gamma Industries", orderDate: "2024-01-05", expectedDate: "2024-01-15", totalAmount: 24300, status: "pending", items: 8 },
-  { id: "12", poNumber: "PO-2024-0034", vendor: "Epsilon Materials", orderDate: "2024-01-04", expectedDate: "2024-01-14", totalAmount: 31800, status: "approved", items: 11 },
-  { id: "13", poNumber: "PO-2024-0033", vendor: "Zeta Trading Co", orderDate: "2024-01-03", expectedDate: "2024-01-13", totalAmount: 9600, status: "completed", items: 5 },
-  { id: "14", poNumber: "PO-2024-0032", vendor: "Theta Wholesale", orderDate: "2024-01-02", expectedDate: "2024-01-12", totalAmount: 19200, status: "completed", items: 7 },
-  { id: "15", poNumber: "PO-2024-0031", vendor: "Omega Solutions", orderDate: "2024-01-01", expectedDate: "2024-01-11", totalAmount: 35600, status: "pending", items: 12 },
-  { id: "16", poNumber: "PO-2024-0030", vendor: "Acme Corporation", orderDate: "2023-12-31", expectedDate: "2024-01-10", totalAmount: 14800, status: "approved", items: 6 },
-  { id: "17", poNumber: "PO-2024-0029", vendor: "Global Supply Co", orderDate: "2023-12-30", expectedDate: "2024-01-09", totalAmount: 21400, status: "completed", items: 8 },
-  { id: "18", poNumber: "PO-2024-0028", vendor: "Quality Parts Inc", orderDate: "2023-12-29", expectedDate: "2024-01-08", totalAmount: 7900, status: "completed", items: 4 },
-  { id: "19", poNumber: "PO-2024-0027", vendor: "Tech Components", orderDate: "2023-12-28", expectedDate: "2024-01-07", totalAmount: 28500, status: "cancelled", items: 10 },
-  { id: "20", poNumber: "PO-2024-0026", vendor: "Supreme Electronics", orderDate: "2023-12-27", expectedDate: "2024-01-06", totalAmount: 33700, status: "completed", items: 13 },
-];
+const mockPurchaseOrders: PurchaseOrder[] = getPurchaseOrdersData();
 
-const mockVendors = ["Acme Corporation", "Global Supply Co", "Quality Parts Inc", "Tech Components", "Prime Materials Ltd"];
-const mockProducts = ["Widget Alpha", "Widget Beta", "Gadget Pro", "Component X", "Component Y"];
+// Vendor and product lists now imported from centralized data
+const mockVendors = getVendorNames();
+const mockProducts = getProductNames();
 
 interface LineItem {
   id: string;
@@ -77,6 +65,27 @@ export default function PurchaseOrders() {
   const [lineItems, setLineItems] = useState<LineItem[]>([
     { id: "1", product: "", quantity: "", unitPrice: "" },
   ]);
+  
+  // New features state
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [exportDialogOpen, setExportDialogOpen] = useState(false);
+  const [activityLogOpen, setActivityLogOpen] = useState(false);
+  const [advancedFilterOpen, setAdvancedFilterOpen] = useState(false);
+  const [activityLogs] = useState<ActivityLog[]>(generateMockActivityLogs());
+  const [filterConditions, setFilterConditions] = useState<FilterCondition[]>([]);
+  const [savedFilters, setSavedFilters] = useState<SavedFilter[]>([
+    {
+      id: "1",
+      name: "Pending Orders",
+      conditions: [{ id: "1", field: "status", operator: "equals", value: "pending", fieldType: "select" }],
+      isFavorite: true,
+    },
+    {
+      id: "2",
+      name: "High Value Orders",
+      conditions: [{ id: "1", field: "totalAmount", operator: "greater", value: "20000", fieldType: "number" }],
+    },
+  ]);
 
   const filteredData = mockPurchaseOrders.filter((po) => {
     const matchesSearch =
@@ -86,7 +95,39 @@ export default function PurchaseOrders() {
     return matchesSearch && matchesStatus;
   });
 
+  // Apply advanced filters if any
+  const finalData = filterConditions.length > 0 
+    ? applyAdvancedFilters(filteredData, filterConditions)
+    : filteredData;
+
   const columns: Column<PurchaseOrder>[] = [
+    {
+      key: "select",
+      header: () => (
+        <Checkbox
+          checked={selectedItems.length === finalData.length && finalData.length > 0}
+          onCheckedChange={(checked) => {
+            if (checked) {
+              setSelectedItems(finalData.map((item) => item.id));
+            } else {
+              setSelectedItems([]);
+            }
+          }}
+        />
+      ),
+      render: (po) => (
+        <Checkbox
+          checked={selectedItems.includes(po.id)}
+          onCheckedChange={(checked) => {
+            if (checked) {
+              setSelectedItems([...selectedItems, po.id]);
+            } else {
+              setSelectedItems(selectedItems.filter((id) => id !== po.id));
+            }
+          }}
+        />
+      ),
+    },
     { 
       key: "poNumber", 
       header: "PO Number", 
@@ -163,93 +204,242 @@ export default function PurchaseOrders() {
     setLineItems([{ id: "1", product: "", quantity: "", unitPrice: "" }]);
   };
 
+  // Bulk operation handlers
+  const handleBulkExport = () => {
+    setExportDialogOpen(true);
+  };
+
+  const handleBulkEmail = () => {
+    toast({
+      title: "Email Sent",
+      description: `Report for ${selectedItems.length} purchase orders has been sent to your email.`,
+    });
+  };
+
+  const handleBulkStatusChange = (newStatus: string) => {
+    toast({
+      title: "Status Updated",
+      description: `${selectedItems.length} purchase orders have been updated to ${newStatus}.`,
+    });
+    setSelectedItems([]);
+  };
+
+  const handleBulkDelete = () => {
+    toast({
+      title: "Orders Deleted",
+      description: `${selectedItems.length} purchase orders have been deleted successfully.`,
+      variant: "destructive",
+    });
+    setSelectedItems([]);
+  };
+
+  const handleApplyFilters = (conditions: FilterCondition[]) => {
+    setFilterConditions(conditions);
+    toast({
+      title: "Filters Applied",
+      description: `Applied ${conditions.length} filter condition(s).`,
+    });
+  };
+
+  const handleSaveFilter = (name: string, conditions: FilterCondition[]) => {
+    const newFilter: SavedFilter = {
+      id: String(Date.now()),
+      name,
+      conditions,
+    };
+    setSavedFilters([...savedFilters, newFilter]);
+    toast({
+      title: "Filter Saved",
+      description: `Filter "${name}" has been saved successfully.`,
+    });
+  };
+
   const pendingOrders = mockPurchaseOrders.filter((po) => po.status === "pending").length;
   const totalValue = mockPurchaseOrders
     .filter((po) => po.status !== "cancelled")
     .reduce((sum, po) => sum + po.totalAmount, 0);
 
+  const approvedOrders = mockPurchaseOrders.filter((po) => po.status === "approved").length;
+  const completedOrders = mockPurchaseOrders.filter((po) => po.status === "completed").length;
+
   return (
     <PageBackground>
-      <div className="p-4 lg:p-6 max-w-[1600px] mx-auto space-y-6">
+      <div className="relative z-10 p-6">
         {/* Page Header */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent">
-              Purchase Orders
-            </h1>
-            <p className="text-muted-foreground mt-1">Manage orders to suppliers</p>
-          </div>
-          <Button onClick={() => setModalOpen(true)} className="gap-2">
-            <ShoppingCart className="h-4 w-4" />
-            New Purchase Order
-          </Button>
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold mb-2">Purchase Orders</h1>
+          <p className="text-muted-foreground">Manage and track purchase orders from suppliers</p>
         </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Card className="border-primary/20">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-2">
-              <FileText className="h-4 w-4 text-primary" />
-            </div>
-            <p className="text-xs text-muted-foreground font-medium">Total POs</p>
-            <p className="text-2xl font-bold mt-1">{mockPurchaseOrders.length}</p>
-          </CardContent>
-        </Card>
-        <Card className="border-amber-500/30 bg-gradient-to-br from-amber-500/10 to-transparent">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-2">
-              <ShoppingCart className="h-4 w-4 text-amber-500" />
-            </div>
-            <p className="text-xs text-muted-foreground font-medium">Pending Approval</p>
-            <p className="text-2xl font-bold mt-1 text-amber-600">{pendingOrders}</p>
-          </CardContent>
-        </Card>
-        <Card className="border-blue-500/20">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-2">
-              <DollarSign className="h-4 w-4 text-blue-500" />
-            </div>
-            <p className="text-xs text-muted-foreground font-medium">Total Value</p>
-            <p className="text-2xl font-bold mt-1 font-mono">${totalValue.toLocaleString()}
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Total Orders
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <p className="text-2xl font-bold">{mockPurchaseOrders.length}</p>
+                <FileText className="h-8 w-8 text-blue-500" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Pending
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <p className="text-2xl font-bold">{pendingOrders}</p>
+                <ShoppingCart className="h-8 w-8 text-yellow-500" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Approved
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <p className="text-2xl font-bold">{approvedOrders}</p>
+                <Package className="h-8 w-8 text-green-500" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Completed
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <p className="text-2xl font-bold">{completedOrders}</p>
+                <PackageX className="h-8 w-8 text-blue-500" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Total Value
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <p className="text-2xl font-bold text-green-600">${(totalValue / 1000).toFixed(1)}k</p>
+                <DollarSign className="h-8 w-8 text-green-500" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
-      {/* Main Content */}
-      <Card className="border-primary/20">
-        <CardContent className="p-6">
-          <div className="space-y-4">
-            <SearchFilter
-              searchPlaceholder="Search by PO number or vendor..."
-              searchValue={search}
-              onSearchChange={setSearch}
-              filters={[
-                {
-                  key: "status",
-                  label: "Status",
-                  options: [
-                    { value: "All", label: "All Status" },
-                    { value: "Pending", label: "Pending" },
-                    { value: "Approved", label: "Approved" },
-                    { value: "Completed", label: "Completed" },
-                    { value: "Cancelled", label: "Cancelled" },
-                  ],
-                  value: statusFilter,
-                  onChange: setStatusFilter,
-                },
-              ]}
-            />
-          </div>
+        {/* Toolbar */}
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex flex-col lg:flex-row gap-4">
+              {/* Search */}
+              <div className="flex-1">
+                <SearchFilter
+                  searchValue={search}
+                  onSearchChange={setSearch}
+                  searchPlaceholder="Search by PO number or vendor..."
+                />
+              </div>
 
-          <DataTable
-            columns={columns}
-            data={filteredData}
-            testIdPrefix="purchase-orders"
+              {/* Filters */}
+              <div className="flex flex-wrap gap-2">
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger className="w-[150px]">
+                    <SelectValue placeholder="Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="All">All Status</SelectItem>
+                    <SelectItem value="Pending">Pending</SelectItem>
+                    <SelectItem value="Approved">Approved</SelectItem>
+                    <SelectItem value="Completed">Completed</SelectItem>
+                    <SelectItem value="Cancelled">Cancelled</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                <Button
+                  variant="outline"
+                  onClick={() => setAdvancedFilterOpen(true)}
+                >
+                  <Filter className="h-4 w-4 mr-2" />
+                  Advanced
+                  {filterConditions.length > 0 && (
+                    <Badge variant="secondary" className="ml-2">
+                      {filterConditions.length}
+                    </Badge>
+                  )}
+                </Button>
+
+                <Button
+                  variant="outline"
+                  onClick={() => setActivityLogOpen(true)}
+                >
+                  <History className="h-4 w-4 mr-2" />
+                  Activity Log
+                </Button>
+              </div>
+
+              {/* Actions */}
+              <div className="flex gap-2">
+                <Button onClick={() => setModalOpen(true)}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Create PO
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Bulk Actions */}
+        {selectedItems.length > 0 && (
+          <BulkActions
+            selectedCount={selectedItems.length}
+            onExport={handleBulkExport}
+            onEmail={handleBulkEmail}
+            onStatusChange={handleBulkStatusChange}
+            onDelete={handleBulkDelete}
+            statusOptions={["Draft", "Sent", "Confirmed", "Received", "Cancelled"]}
           />
-        </CardContent>
-      </Card>
+        )}
+
+        {/* Data Table */}
+        <Card>
+          <CardContent className="pt-6">
+            {filteredData.length === 0 ? (
+            <EmptyState
+              icon={PackageX}
+              title={search || statusFilter !== "All" ? "No orders found" : "No purchase orders yet"}
+              description={
+                search || statusFilter !== "All"
+                  ? "No purchase orders match your search criteria. Try adjusting your filters."
+                  : "Create your first purchase order to start ordering from vendors."
+              }
+              action={{
+                label: "Create Purchase Order",
+                onClick: () => setModalOpen(true),
+                icon: ShoppingCart,
+              }}
+            />
+            ) : (
+              <DataTable
+                columns={columns}
+                data={finalData}
+                testIdPrefix="purchase-orders"
+              />
+            )}
+          </CardContent>
+        </Card>
       </div>
 
       <FormModal
@@ -425,6 +615,47 @@ export default function PurchaseOrders() {
           </div>
         </div>
       </FormModal>
+
+      {/* Export Dialog */}
+      <ExportDialog
+        open={exportDialogOpen}
+        onOpenChange={setExportDialogOpen}
+        columns={[
+          { key: "poNumber", label: "PO Number" },
+          { key: "orderDate", label: "Order Date" },
+          { key: "vendor", label: "Vendor" },
+          { key: "items", label: "Items" },
+          { key: "totalAmount", label: "Total Amount" },
+          { key: "status", label: "Status" },
+          { key: "expectedDate", label: "Expected Date" },
+        ]}
+        data={finalData.filter((item) => selectedItems.length === 0 || selectedItems.includes(item.id))}
+        filename="purchase-orders"
+      />
+
+      {/* Activity Log Dialog */}
+      <ActivityLogDialog
+        open={activityLogOpen}
+        onOpenChange={setActivityLogOpen}
+        logs={activityLogs}
+        title="Purchase Orders Activity Log"
+      />
+
+      {/* Advanced Filter Dialog */}
+      <AdvancedFilterDialog
+        open={advancedFilterOpen}
+        onOpenChange={setAdvancedFilterOpen}
+        fields={[
+          { value: "poNumber", label: "PO Number", type: "text" },
+          { value: "vendor", label: "Vendor", type: "text" },
+          { value: "orderDate", label: "Order Date", type: "date" },
+          { value: "totalAmount", label: "Total Amount", type: "number" },
+          { value: "status", label: "Status", type: "select" },
+        ]}
+        onApplyFilters={handleApplyFilters}
+        savedFilters={savedFilters}
+        onSaveFilter={handleSaveFilter}
+      />
     </PageBackground>
   );
 }
