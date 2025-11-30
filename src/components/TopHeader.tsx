@@ -49,6 +49,7 @@ export function TopHeader({ breadcrumb }: TopHeaderProps) {
               size="sm"
               className="gap-1.5 h-8 px-2.5 font-medium hover:bg-accent transition-all text-xs"
               data-testid="button-quick-actions"
+              aria-label="Quick actions menu"
             >
               <Zap className="h-3.5 w-3.5" />
               <span className="hidden lg:inline">Quick Actions</span>
@@ -125,11 +126,13 @@ export function TopHeader({ breadcrumb }: TopHeaderProps) {
               variant="ghost" 
               className="relative h-8 w-8 hover:bg-accent transition-colors" 
               data-testid="button-notifications"
+              aria-label="Notifications (3 unread)"
             >
               <Bell className="h-4 w-4" />
               <Badge
                 variant="destructive"
                 className="absolute -top-0.5 -right-0.5 h-4 w-4 p-0 flex items-center justify-center text-[9px] font-bold"
+                aria-label="3 unread notifications"
               >
                 3
               </Badge>
@@ -168,6 +171,7 @@ export function TopHeader({ breadcrumb }: TopHeaderProps) {
               variant="ghost"
               className="flex items-center gap-2 h-8 px-2 hover:bg-accent transition-colors"
               data-testid="button-user-menu"
+              aria-label="User menu - John Doe"
             >
               <Avatar className="h-6 w-6 ring-1 ring-border">
                 <AvatarFallback className="bg-gradient-to-br from-primary via-blue-600 to-purple-600 text-primary-foreground text-[10px] font-bold">

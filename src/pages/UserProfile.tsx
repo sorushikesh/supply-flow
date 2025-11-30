@@ -66,6 +66,26 @@ export default function UserProfile() {
   };
 
   const handleSave = () => {
+    // Basic validation
+    if (!userName.trim()) {
+      toast({
+        title: "Validation Error",
+        description: "Name cannot be empty.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (userEmail && !emailRegex.test(userEmail)) {
+      toast({
+        title: "Validation Error",
+        description: "Please enter a valid email address.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     toast({
       title: "Profile Updated",
       description: "Your profile information has been saved successfully.",
@@ -89,23 +109,36 @@ export default function UserProfile() {
         {/* Page Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent">
               User Profile
             </h1>
-            <p className="text-muted-foreground mt-1">View and manage your profile information</p>
+            <p className="text-muted-foreground mt-1 text-sm sm:text-base">View and manage your profile information</p>
           </div>
           {!isEditing ? (
-            <Button onClick={handleEdit} className="gap-2">
+            <Button 
+              onClick={handleEdit} 
+              className="gap-2 hover:shadow-lg hover:scale-105 transition-all duration-200"
+              aria-label="Edit profile"
+            >
               <Pencil className="h-4 w-4" />
               Edit Profile
             </Button>
           ) : (
             <div className="flex flex-wrap gap-2">
-              <Button variant="outline" onClick={handleCancel} className="gap-2">
+              <Button 
+                variant="outline" 
+                onClick={handleCancel} 
+                className="gap-2 hover:bg-muted transition-all duration-200"
+                aria-label="Cancel editing"
+              >
                 <X className="h-4 w-4" />
                 Cancel
               </Button>
-              <Button onClick={handleSave} className="gap-2">
+              <Button 
+                onClick={handleSave} 
+                className="gap-2 hover:shadow-lg hover:scale-105 transition-all duration-200"
+                aria-label="Save profile changes"
+              >
                 <Save className="h-4 w-4" />
                 Save Changes
               </Button>

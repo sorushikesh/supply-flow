@@ -119,17 +119,17 @@ export default function Dashboard() {
     <PageBackground>
       <div className="p-4 lg:p-6 max-w-[1600px] mx-auto space-y-6">
         {/* Hero Header Section */}
-        <div className="relative overflow-hidden rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/10 via-blue-500/5 to-purple-500/10 p-8">
-          <div className="absolute inset-0 bg-grid-white/5" />
+        <div className="relative overflow-hidden rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/10 via-blue-500/5 to-purple-500/10 p-6 sm:p-8">
+          <div className="absolute inset-0 bg-grid-white/5" aria-hidden="true" />
           <div className="relative z-10">
-            <div className="flex flex-col sm:flex-row items-start sm:items-start justify-between gap-4 mb-6\">
+            <div className="flex flex-col sm:flex-row items-start sm:items-start justify-between gap-4 mb-6">
               <div>
-                <h1 className="text-5xl font-bold mb-3">
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-3">
                   <span className="bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent">
                     Supply Flow
                   </span>
                 </h1>
-                <p className="text-lg text-muted-foreground max-w-2xl">
+                <p className="text-base sm:text-lg text-muted-foreground max-w-2xl">
                   Real-time supply chain intelligence and operational insights
                 </p>
               </div>
@@ -146,73 +146,73 @@ export default function Dashboard() {
 
             {/* Key Metrics Row */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="group relative overflow-hidden rounded-xl border border-primary/30 bg-background/50 backdrop-blur-xl p-4 hover:shadow-lg hover:shadow-primary/20 transition-all duration-300">
+              <Link href="/inventory" className="group relative overflow-hidden rounded-xl border border-primary/30 bg-background/50 backdrop-blur-xl p-4 hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" aria-label="View inventory details">
                 <div className="flex items-start justify-between mb-3">
                   <div className="p-2.5 rounded-lg bg-primary/10">
-                    <Package className="h-5 w-5 text-primary" />
+                    <Package className="h-5 w-5 text-primary" aria-hidden="true" />
                   </div>
-                  <ArrowUpRight className="h-4 w-4 text-green-500" />
+                  <ArrowUpRight className="h-4 w-4 text-green-500" aria-hidden="true" />
                 </div>
                 <div className="space-y-1">
                   <p className="text-xs text-muted-foreground font-medium">Total Inventory</p>
                   <p className="text-2xl font-bold">$284.5K</p>
                   <div className="flex items-center gap-2 text-xs">
-                    <span className="text-green-500 font-medium">+12.5%</span>
+                    <span className="text-green-500 font-medium" aria-label="Increased by 12.5 percent">+12.5%</span>
                     <span className="text-muted-foreground">vs last month</span>
                   </div>
                 </div>
-              </div>
+              </Link>
 
-              <div className="group relative overflow-hidden rounded-xl border border-blue-500/30 bg-background/50 backdrop-blur-xl p-4 hover:shadow-lg hover:shadow-blue-500/20 transition-all duration-300">
+              <Link href="/purchase-orders" className="group relative overflow-hidden rounded-xl border border-blue-500/30 bg-background/50 backdrop-blur-xl p-4 hover:shadow-lg hover:shadow-blue-500/20 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" aria-label="View active orders">
                 <div className="flex items-start justify-between mb-3">
                   <div className="p-2.5 rounded-lg bg-blue-500/10">
-                    <ShoppingCart className="h-5 w-5 text-blue-500" />
+                    <ShoppingCart className="h-5 w-5 text-blue-500" aria-hidden="true" />
                   </div>
-                  <ArrowDownRight className="h-4 w-4 text-orange-500" />
+                  <ArrowDownRight className="h-4 w-4 text-orange-500" aria-hidden="true" />
                 </div>
                 <div className="space-y-1">
                   <p className="text-xs text-muted-foreground font-medium">Active Orders</p>
                   <p className="text-2xl font-bold">23</p>
                   <div className="flex items-center gap-2 text-xs">
-                    <span className="text-orange-500 font-medium">-8%</span>
+                    <span className="text-orange-500 font-medium" aria-label="Decreased by 8 percent">-8%</span>
                     <span className="text-muted-foreground">vs last week</span>
                   </div>
                 </div>
-              </div>
+              </Link>
 
-              <div className="group relative overflow-hidden rounded-xl border border-purple-500/30 bg-background/50 backdrop-blur-xl p-4 hover:shadow-lg hover:shadow-purple-500/20 transition-all duration-300">
+              <Link href="/invoices" className="group relative overflow-hidden rounded-xl border border-purple-500/30 bg-background/50 backdrop-blur-xl p-4 hover:shadow-lg hover:shadow-purple-500/20 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2" aria-label="View open invoices">
                 <div className="flex items-start justify-between mb-3">
                   <div className="p-2.5 rounded-lg bg-purple-500/10">
-                    <FileText className="h-5 w-5 text-purple-500" />
+                    <FileText className="h-5 w-5 text-purple-500" aria-hidden="true" />
                   </div>
-                  <ArrowUpRight className="h-4 w-4 text-green-500" />
+                  <ArrowUpRight className="h-4 w-4 text-green-500" aria-hidden="true" />
                 </div>
                 <div className="space-y-1">
                   <p className="text-xs text-muted-foreground font-medium">Open Invoices</p>
                   <p className="text-2xl font-bold">$67.9K</p>
                   <div className="flex items-center gap-2 text-xs">
-                    <span className="text-green-500 font-medium">+5.2%</span>
+                    <span className="text-green-500 font-medium" aria-label="Increased by 5.2 percent">+5.2%</span>
                     <span className="text-muted-foreground">12 pending</span>
                   </div>
                 </div>
-              </div>
+              </Link>
 
-              <div className="group relative overflow-hidden rounded-xl border border-green-500/30 bg-background/50 backdrop-blur-xl p-4 hover:shadow-lg hover:shadow-green-500/20 transition-all duration-300">
+              <Link href="/analytics" className="group relative overflow-hidden rounded-xl border border-green-500/30 bg-background/50 backdrop-blur-xl p-4 hover:shadow-lg hover:shadow-green-500/20 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2" aria-label="View revenue analytics">
                 <div className="flex items-start justify-between mb-3">
                   <div className="p-2.5 rounded-lg bg-green-500/10">
-                    <DollarSign className="h-5 w-5 text-green-500" />
+                    <DollarSign className="h-5 w-5 text-green-500" aria-hidden="true" />
                   </div>
-                  <ArrowUpRight className="h-4 w-4 text-green-500" />
+                  <ArrowUpRight className="h-4 w-4 text-green-500" aria-hidden="true" />
                 </div>
                 <div className="space-y-1">
                   <p className="text-xs text-muted-foreground font-medium">Revenue MTD</p>
                   <p className="text-2xl font-bold">$156.3K</p>
                   <div className="flex items-center gap-2 text-xs">
-                    <span className="text-green-500 font-medium">+18.3%</span>
+                    <span className="text-green-500 font-medium" aria-label="Increased by 18.3 percent">+18.3%</span>
                     <span className="text-muted-foreground">trending up</span>
                   </div>
                 </div>
-              </div>
+              </Link>
             </div>
           </div>
         </div>

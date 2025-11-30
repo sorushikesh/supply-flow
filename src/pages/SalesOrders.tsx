@@ -21,7 +21,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
-import { Trash2, Plus, ShoppingCart, FileText, DollarSign } from "lucide-react";
+import { Trash2, Plus, ShoppingCart, FileText, DollarSign, Package } from "lucide-react";
 
 interface SalesOrder {
   id: string;
@@ -257,15 +257,19 @@ export default function SalesOrders() {
         open={modalOpen}
         onOpenChange={setModalOpen}
         title="Create Sales Order"
-        description="Select a customer and add line items."
+        description="Create a new sales order for your customer."
         onSubmit={handleSubmit}
-        submitLabel="Create SO"
+        submitLabel="Create Sales Order"
+        maxWidth="xl"
       >
         {/* Order Information Section */}
         <div className="space-y-4">
-          <div className="pb-2 border-b">
-            <h3 className="text-sm font-semibold text-foreground">Order Information</h3>
-            <p className="text-xs text-muted-foreground mt-1">Basic order details</p>
+          <div className="pb-3 border-b">
+            <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+              <ShoppingCart className="h-4 w-4 text-primary" />
+              Order Information
+            </h3>
+            <p className="text-xs text-muted-foreground mt-1">Select customer and delivery details</p>
           </div>
           
           <div className="grid grid-cols-2 gap-4">
@@ -274,8 +278,8 @@ export default function SalesOrders() {
                 Customer <span className="text-destructive">*</span>
               </Label>
               <Select value={customer} onValueChange={setCustomer}>
-                <SelectTrigger data-testid="select-customer">
-                  <SelectValue placeholder="Select customer" />
+                <SelectTrigger data-testid="select-customer" className="transition-all duration-200">
+                  <SelectValue placeholder="Choose a customer" />
                 </SelectTrigger>
                 <SelectContent>
                   {mockCustomers.map((c) => (
@@ -285,7 +289,7 @@ export default function SalesOrders() {
                   ))}
                 </SelectContent>
               </Select>
-              <p className="text-xs text-muted-foreground">Select customer for this order</p>
+              <p className="text-xs text-muted-foreground">Who is this order for?</p>
             </div>
             <div className="space-y-2">
               <Label className="text-sm font-medium flex items-center gap-1">
@@ -297,6 +301,7 @@ export default function SalesOrders() {
                 onChange={(e) => setDeliveryDate(e.target.value)}
                 data-testid="input-delivery-date"
                 className="transition-all duration-200"
+                min={new Date().toISOString().split('T')[0]}
               />
               <p className="text-xs text-muted-foreground">Expected delivery date</p>
             </div>
@@ -305,11 +310,14 @@ export default function SalesOrders() {
 
         {/* Line Items Section */}
         <div className="space-y-4 pt-4">
-          <div className="pb-2 border-b">
+          <div className="pb-3 border-b">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-semibold text-foreground">Line Items</h3>
-                <p className="text-xs text-muted-foreground mt-1">Products and quantities</p>
+                <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                  <Package className="h-4 w-4 text-primary" />
+                  Line Items
+                </h3>
+                <p className="text-xs text-muted-foreground mt-1">Add products to this order</p>
               </div>
               <Button
                 type="button"
@@ -317,27 +325,27 @@ export default function SalesOrders() {
                 size="sm"
                 onClick={addLineItem}
                 data-testid="button-add-line-item"
+                className="gap-1.5 hover:bg-primary/10 hover:text-primary hover:border-primary/30 transition-all duration-200"
               >
-                <Plus className="h-4 w-4 mr-1" />
+                <Plus className="h-4 w-4" />
                 Add Item
               </Button>
             </div>
           </div>
 
-          <div className="space-y-3">
-
+          <div className="space-y-3 bg-muted/30 p-4 rounded-lg border">
             {lineItems.map((item, index) => (
-              <div key={item.id} className="grid grid-cols-12 gap-2 items-end">
+              <div key={item.id} className="grid grid-cols-12 gap-2 items-end p-3 bg-background rounded-md border hover:border-primary/30 transition-all duration-200">
                 <div className="col-span-5">
                   {index === 0 && (
-                    <Label className="text-xs text-muted-foreground">Product</Label>
+                    <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">Product</Label>
                   )}
                   <Select
                     value={item.product}
                     onValueChange={(v) => updateLineItem(item.id, "product", v)}
                   >
-                    <SelectTrigger data-testid={`select-product-${index}`}>
-                      <SelectValue placeholder="Select product" />
+                    <SelectTrigger data-testid={`select-product-${index}`} className="h-9">
+                      <SelectValue placeholder="Choose product" />
                     </SelectTrigger>
                     <SelectContent>
                       {mockProducts.map((p) => (
@@ -350,7 +358,7 @@ export default function SalesOrders() {
                 </div>
                 <div className="col-span-2">
                   {index === 0 && (
-                    <Label className="text-xs text-muted-foreground">Qty</Label>
+                    <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">Qty</Label>
                   )}
                   <Input
                     type="number"
@@ -359,41 +367,57 @@ export default function SalesOrders() {
                     onChange={(e) => updateLineItem(item.id, "quantity", e.target.value)}
                     placeholder="0"
                     data-testid={`input-quantity-${index}`}
+                    className="h-9"
                   />
                 </div>
                 <div className="col-span-3">
                   {index === 0 && (
-                    <Label className="text-xs text-muted-foreground">Unit Price</Label>
+                    <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">Unit Price</Label>
                   )}
-                  <Input
-                    type="number"
-                    step="0.01"
-                    value={item.unitPrice}
-                    onChange={(e) => updateLineItem(item.id, "unitPrice", e.target.value)}
-                    placeholder="0.00"
-                    data-testid={`input-unit-price-${index}`}
-                  />
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">$</span>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      value={item.unitPrice}
+                      onChange={(e) => updateLineItem(item.id, "unitPrice", e.target.value)}
+                      placeholder="0.00"
+                      data-testid={`input-unit-price-${index}`}
+                      className="pl-6 h-9"
+                    />
+                  </div>
                 </div>
                 <div className="col-span-2 flex justify-end">
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => removeLineItem(item.id)}
-                    disabled={lineItems.length === 1}
-                    data-testid={`button-remove-item-${index}`}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                  {index === 0 && (
+                    <div className="h-5 mb-1.5"></div>
+                  )}
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => removeLineItem(item.id)}
+                        disabled={lineItems.length === 1}
+                        data-testid={`button-remove-item-${index}`}
+                        className="h-9 w-9 hover:bg-destructive/10 hover:text-destructive"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Remove item</p>
+                    </TooltipContent>
+                  </Tooltip>
                 </div>
               </div>
             ))}
 
-            <div className="flex justify-end pt-4 border-t">
-              <div className="text-right">
-                <p className="text-sm text-muted-foreground">Total Amount</p>
-                <p className="text-xl font-bold font-mono">
-                  ${calculateTotal().toLocaleString(undefined, { minimumFractionDigits: 2 })}
+            <div className="flex justify-end pt-4 mt-2 border-t-2 border-primary/20">
+              <div className="text-right bg-background p-4 rounded-lg border-2 border-primary/30 min-w-[200px]">
+                <p className="text-sm text-muted-foreground font-medium uppercase tracking-wide">Total Amount</p>
+                <p className="text-3xl font-bold font-mono text-primary mt-1">
+                  ${calculateTotal().toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </p>
               </div>
             </div>

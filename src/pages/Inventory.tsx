@@ -219,6 +219,8 @@ export default function Inventory() {
                 size="sm"
                 onClick={() => handleEdit(item)}
                 data-testid={`button-edit-${item.id}`}
+                className="hover:bg-primary/10 hover:text-primary transition-all duration-200"
+                aria-label={`Edit ${item.name}`}
               >
                 <Pencil className="h-4 w-4" />
               </Button>
@@ -232,7 +234,8 @@ export default function Inventory() {
                 size="sm"
                 onClick={() => handleDeleteClick(item)}
                 data-testid={`button-delete-${item.id}`}
-                className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                className="text-destructive hover:text-destructive hover:bg-destructive/10 transition-all duration-200"
+                aria-label={`Delete ${item.name}`}
               >
                 <Trash2 className="h-4 w-4" />
               </Button>
@@ -276,6 +279,34 @@ export default function Inventory() {
   };
 
   const handleSubmit = () => {
+    // Basic validation
+    if (!formData.sku || !formData.name || !formData.category || !formData.location) {
+      toast({
+        title: "Validation Error",
+        description: "Please fill in all required fields (SKU, Name, Category, Location).",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!formData.currentStock || parseInt(formData.currentStock) < 0) {
+      toast({
+        title: "Validation Error",
+        description: "Please enter a valid initial stock quantity.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!formData.unitPrice || parseFloat(formData.unitPrice) <= 0) {
+      toast({
+        title: "Validation Error",
+        description: "Please enter a valid unit price.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (editingItem) {
       toast({
         title: "Product Updated",
@@ -333,53 +364,57 @@ export default function Inventory() {
         {/* Page Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent">
               Inventory Management
             </h1>
-            <p className="text-muted-foreground mt-1">Track and manage your product inventory</p>
+            <p className="text-muted-foreground mt-1 text-sm sm:text-base">Track and manage your product inventory</p>
           </div>
-          <Button onClick={() => setModalOpen(true)} className="gap-2">
+          <Button 
+            onClick={() => setModalOpen(true)} 
+            className="gap-2 hover:shadow-lg hover:scale-105 transition-all duration-200"
+            aria-label="Add new product"
+          >
             <Package className="h-4 w-4" />
             Add Product
           </Button>
         </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-        <Card className="border-primary/20">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card className="border-primary/20 hover:border-primary/40 hover:shadow-md transition-all duration-200 cursor-pointer" onClick={() => {/* Navigate to all products */}}>
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-2">
-              <Package className="h-4 w-4 text-primary" />
+              <Package className="h-4 w-4 text-primary" aria-hidden="true" />
             </div>
             <p className="text-xs text-muted-foreground font-medium">Total Products</p>
-            <p className="text-2xl font-bold mt-1">{mockInventory.length}</p>
+            <p className="text-2xl font-bold mt-1" aria-label={`${mockInventory.length} total products`}>{mockInventory.length}</p>
           </CardContent>
         </Card>
-        <Card className="border-blue-500/20">
+        <Card className="border-blue-500/20 hover:border-blue-500/40 hover:shadow-md transition-all duration-200 cursor-pointer">
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-2">
-              <DollarSign className="h-4 w-4 text-blue-500" />
+              <DollarSign className="h-4 w-4 text-blue-500" aria-hidden="true" />
             </div>
             <p className="text-xs text-muted-foreground font-medium">Total Stock Value</p>
-            <p className="text-2xl font-bold mt-1 font-mono">${totalValue.toLocaleString()}</p>
+            <p className="text-2xl font-bold mt-1 font-mono" aria-label={`Total value $${totalValue.toLocaleString()}`}>${totalValue.toLocaleString()}</p>
           </CardContent>
         </Card>
-        <Card className="border-amber-500/30 bg-gradient-to-br from-amber-500/10 to-transparent">
+        <Card className="border-amber-500/30 bg-gradient-to-br from-amber-500/10 to-transparent hover:border-amber-500/50 hover:shadow-md transition-all duration-200 cursor-pointer">
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-2">
-              <TrendingUp className="h-4 w-4 text-amber-500" />
+              <TrendingUp className="h-4 w-4 text-amber-500" aria-hidden="true" />
             </div>
             <p className="text-xs text-muted-foreground font-medium">Low Stock Items</p>
-            <p className="text-2xl font-bold mt-1 text-amber-600">{lowStockCount}</p>
+            <p className="text-2xl font-bold mt-1 text-amber-600" aria-label={`${lowStockCount} items with low stock`}>{lowStockCount}</p>
           </CardContent>
         </Card>
-        <Card className="border-green-500/30 bg-gradient-to-br from-green-500/10 to-transparent">
+        <Card className="border-green-500/30 bg-gradient-to-br from-green-500/10 to-transparent hover:border-green-500/50 hover:shadow-md transition-all duration-200 cursor-pointer">
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-2">
-              <Package className="h-4 w-4 text-green-500" />
+              <Package className="h-4 w-4 text-green-500" aria-hidden="true" />
             </div>
             <p className="text-xs text-muted-foreground font-medium">In Stock Items</p>
-            <p className="text-2xl font-bold mt-1 text-green-600">{inStockCount}</p>
+            <p className="text-2xl font-bold mt-1 text-green-600" aria-label={`${inStockCount} items in stock`}>{inStockCount}</p>
           </CardContent>
         </Card>
       </div>

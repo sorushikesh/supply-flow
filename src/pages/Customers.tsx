@@ -445,12 +445,18 @@ export default function Customers() {
       <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-2xl">
-              <Users className="h-6 w-6 text-primary" />
+            <DialogTitle className="flex items-center gap-3 text-2xl">
+              <div className="p-2 rounded-lg bg-primary/10">
+                <Users className="h-6 w-6 text-primary" />
+              </div>
               {selectedCustomer?.name}
             </DialogTitle>
-            <DialogDescription>
-              Customer Code: {selectedCustomer?.code}
+            <DialogDescription className="flex items-center gap-2 mt-2">
+              <Badge variant="outline" className="font-mono text-xs">{selectedCustomer?.code}</Badge>
+              <span className="text-xs text-muted-foreground">•</span>
+              <Badge variant={selectedCustomer?.status === "active" ? "default" : "secondary"}>
+                {selectedCustomer?.status === "active" ? "Active Customer" : "Inactive"}
+              </Badge>
             </DialogDescription>
           </DialogHeader>
 
@@ -460,73 +466,103 @@ export default function Customers() {
               <TabsTrigger value="history">Purchase History</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="overview" className="space-y-4">
+            <TabsContent value="overview" className="space-y-4 mt-4">
               {/* Contact Information */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">Contact Information</CardTitle>
+              <Card className="border-primary/20">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <Mail className="h-5 w-5 text-primary" />
+                    Contact Information
+                  </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
-                  <div className="flex items-center gap-2">
-                    <Mail className="h-4 w-4 text-muted-foreground" />
-                    <span>{selectedCustomer?.email}</span>
+                  <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors">
+                    <div className="p-2 rounded-md bg-background">
+                      <Mail className="h-4 w-4 text-primary" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-xs text-muted-foreground">Email Address</p>
+                      <p className="font-medium">{selectedCustomer?.email}</p>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Phone className="h-4 w-4 text-muted-foreground" />
-                    <span>{selectedCustomer?.phone}</span>
+                  <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors">
+                    <div className="p-2 rounded-md bg-background">
+                      <Phone className="h-4 w-4 text-primary" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-xs text-muted-foreground">Phone Number</p>
+                      <p className="font-medium">{selectedCustomer?.phone}</p>
+                    </div>
                   </div>
-                  <div className="flex items-start gap-2">
-                    <Package className="h-4 w-4 text-muted-foreground mt-1" />
-                    <span>{selectedCustomer?.address}</span>
+                  <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors">
+                    <div className="p-2 rounded-md bg-background">
+                      <Package className="h-4 w-4 text-primary mt-0.5" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-xs text-muted-foreground">Address</p>
+                      <p className="font-medium">{selectedCustomer?.address}</p>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
 
               {/* Statistics */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <Card>
+                <Card className="border-blue-500/20 hover:border-blue-500/40 transition-all duration-200">
                   <CardContent className="p-4">
-                    <div className="flex items-center gap-2 text-muted-foreground mb-1">
-                      <ShoppingCart className="h-4 w-4" />
-                      <p className="text-xs font-medium">Total Orders</p>
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="p-2 rounded-lg bg-blue-500/10">
+                        <ShoppingCart className="h-4 w-4 text-blue-600" />
+                      </div>
+                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Total Orders</p>
                     </div>
-                    <p className="text-2xl font-bold">{selectedCustomer?.totalOrders}</p>
+                    <p className="text-3xl font-bold">{selectedCustomer?.totalOrders}</p>
+                    <p className="text-xs text-muted-foreground mt-1">Lifetime orders</p>
                   </CardContent>
                 </Card>
-                <Card>
+                <Card className="border-green-500/20 hover:border-green-500/40 transition-all duration-200">
                   <CardContent className="p-4">
-                    <div className="flex items-center gap-2 text-muted-foreground mb-1">
-                      <TrendingUp className="h-4 w-4" />
-                      <p className="text-xs font-medium">Total Revenue</p>
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="p-2 rounded-lg bg-green-500/10">
+                        <TrendingUp className="h-4 w-4 text-green-600" />
+                      </div>
+                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Total Revenue</p>
                     </div>
-                    <p className="text-2xl font-bold font-mono">
+                    <p className="text-3xl font-bold font-mono text-green-600">
                       ${selectedCustomer?.totalRevenue.toLocaleString()}
                     </p>
+                    <p className="text-xs text-muted-foreground mt-1">Lifetime value</p>
                   </CardContent>
                 </Card>
-                <Card>
+                <Card className="border-purple-500/20 hover:border-purple-500/40 transition-all duration-200">
                   <CardContent className="p-4">
-                    <div className="flex items-center gap-2 text-muted-foreground mb-1">
-                      <DollarSign className="h-4 w-4" />
-                      <p className="text-xs font-medium">Credit Limit</p>
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="p-2 rounded-lg bg-purple-500/10">
+                        <DollarSign className="h-4 w-4 text-purple-600" />
+                      </div>
+                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Credit Limit</p>
                     </div>
-                    <p className="text-2xl font-bold font-mono">
+                    <p className="text-3xl font-bold font-mono">
                       ${selectedCustomer?.creditLimit.toLocaleString()}
                     </p>
+                    <p className="text-xs text-muted-foreground mt-1">Available credit</p>
                   </CardContent>
                 </Card>
-                <Card>
+                <Card className="border-primary/20 hover:border-primary/40 transition-all duration-200">
                   <CardContent className="p-4">
-                    <div className="flex items-center gap-2 text-muted-foreground mb-1">
-                      <Users className="h-4 w-4" />
-                      <p className="text-xs font-medium">Status</p>
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="p-2 rounded-lg bg-primary/10">
+                        <Users className="h-4 w-4 text-primary" />
+                      </div>
+                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Status</p>
                     </div>
                     <Badge 
                       variant={selectedCustomer?.status === "active" ? "default" : "secondary"}
-                      className="mt-1"
+                      className="text-sm px-3 py-1"
                     >
                       {selectedCustomer?.status === "active" ? "Active" : "Inactive"}
                     </Badge>
+                    <p className="text-xs text-muted-foreground mt-2">Account status</p>
                   </CardContent>
                 </Card>
               </div>
@@ -536,15 +572,20 @@ export default function Customers() {
               {selectedCustomer && mockPurchaseHistory[selectedCustomer.id] ? (
                 <div className="space-y-4">
                   {mockPurchaseHistory[selectedCustomer.id].map((order) => (
-                    <Card key={order.id}>
-                      <CardHeader>
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <CardTitle className="text-base font-mono">
-                              {order.orderNumber}
-                            </CardTitle>
-                            <div className="flex items-center gap-2 mt-1 text-sm text-muted-foreground">
-                              <Calendar className="h-3 w-3" />
+                    <Card key={order.id} className="border-primary/10 hover:border-primary/30 transition-all duration-200 hover:shadow-md">
+                      <CardHeader className="pb-3">
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-2">
+                              <div className="p-1.5 rounded-md bg-primary/10">
+                                <ShoppingCart className="h-4 w-4 text-primary" />
+                              </div>
+                              <CardTitle className="text-base font-mono">
+                                {order.orderNumber}
+                              </CardTitle>
+                            </div>
+                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                              <Calendar className="h-3.5 w-3.5" />
                               {new Date(order.date).toLocaleDateString('en-US', {
                                 year: 'numeric',
                                 month: 'long',
@@ -558,6 +599,7 @@ export default function Customers() {
                               order.status === "pending" ? "secondary" : 
                               "destructive"
                             }
+                            className="text-xs px-2.5 py-1"
                           >
                             {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                           </Badge>
@@ -565,27 +607,27 @@ export default function Customers() {
                       </CardHeader>
                       <CardContent>
                         <div className="space-y-3">
-                          <div className="border rounded-lg overflow-hidden">
+                          <div className="border rounded-lg overflow-hidden bg-muted/30">
                             <table className="w-full text-sm">
-                              <thead className="bg-muted">
+                              <thead className="bg-muted/80">
                                 <tr>
-                                  <th className="text-left p-3 font-medium">Product</th>
-                                  <th className="text-left p-3 font-medium">SKU</th>
-                                  <th className="text-right p-3 font-medium">Quantity</th>
-                                  <th className="text-right p-3 font-medium">Unit Price</th>
-                                  <th className="text-right p-3 font-medium">Subtotal</th>
+                                  <th className="text-left p-3 font-semibold text-xs uppercase tracking-wide">Product</th>
+                                  <th className="text-left p-3 font-semibold text-xs uppercase tracking-wide">SKU</th>
+                                  <th className="text-right p-3 font-semibold text-xs uppercase tracking-wide">Quantity</th>
+                                  <th className="text-right p-3 font-semibold text-xs uppercase tracking-wide">Unit Price</th>
+                                  <th className="text-right p-3 font-semibold text-xs uppercase tracking-wide">Subtotal</th>
                                 </tr>
                               </thead>
-                              <tbody>
+                              <tbody className="bg-background">
                                 {order.products.map((product, idx) => (
-                                  <tr key={idx} className="border-t">
-                                    <td className="p-3">{product.name}</td>
-                                    <td className="p-3 font-mono text-xs">{product.sku}</td>
+                                  <tr key={idx} className="border-t hover:bg-muted/20 transition-colors">
+                                    <td className="p-3 font-medium">{product.name}</td>
+                                    <td className="p-3 font-mono text-xs text-muted-foreground">{product.sku}</td>
                                     <td className="p-3 text-right font-mono">{product.quantity}</td>
                                     <td className="p-3 text-right font-mono">
                                       ${product.unitPrice.toFixed(2)}
                                     </td>
-                                    <td className="p-3 text-right font-mono font-medium">
+                                    <td className="p-3 text-right font-mono font-semibold">
                                       ${(product.quantity * product.unitPrice).toFixed(2)}
                                     </td>
                                   </tr>
@@ -593,9 +635,9 @@ export default function Customers() {
                               </tbody>
                             </table>
                           </div>
-                          <div className="flex justify-between items-center pt-2 border-t">
-                            <span className="font-medium">Total Amount</span>
-                            <span className="text-xl font-bold font-mono">
+                          <div className="flex justify-between items-center pt-4 mt-2 border-t-2 border-primary/20">
+                            <span className="font-semibold text-base">Total Amount</span>
+                            <span className="text-2xl font-bold font-mono text-primary">
                               ${order.totalAmount.toFixed(2)}
                             </span>
                           </div>

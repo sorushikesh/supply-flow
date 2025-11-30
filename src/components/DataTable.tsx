@@ -40,6 +40,11 @@ export function DataTable<T extends { id: string | number }>({
   const [selectedIds, setSelectedIds] = useState<Set<string | number>>(new Set());
   const [currentPage, setCurrentPage] = useState(1);
 
+  // Reset to first page when data changes
+  useState(() => {
+    setCurrentPage(1);
+  });
+
   const totalPages = Math.ceil(data.length / pageSize);
   const startIndex = (currentPage - 1) * pageSize;
   const endIndex = startIndex + pageSize;
@@ -73,9 +78,9 @@ export function DataTable<T extends { id: string | number }>({
   };
 
   return (
-    <div className="space-y-4" data-testid={`${testIdPrefix}-container`}>
+    <div className="space-y-4" data-testid={`${testIdPrefix}-container`} role="region" aria-label="Data table">
       <div className="rounded-lg border border-card-border overflow-x-auto backdrop-blur-sm bg-card/50 shadow-lg hover:shadow-xl transition-all duration-300">
-        <Table>
+        <Table aria-label="Data table" aria-busy={isLoading}>
           <TableHeader>
             <TableRow className="bg-gradient-to-r from-primary/5 to-cyan-500/5 hover:from-primary/10 hover:to-cyan-500/10 transition-all duration-300">
               {selectable && (
@@ -91,7 +96,8 @@ export function DataTable<T extends { id: string | number }>({
               {columns.map((col) => (
                 <TableHead
                   key={String(col.key)}
-                  className={`text-sm font-semibold uppercase tracking-wider ${col.className || ""}`}
+                  className={`text-xs font-semibold uppercase tracking-wider bg-gradient-to-r from-transparent to-transparent hover:from-primary/5 hover:to-primary/5 transition-colors ${col.className || ""}`}
+                  scope="col"
                 >
                   {col.header}
                 </TableHead>
@@ -99,7 +105,19 @@ export function DataTable<T extends { id: string | number }>({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {currentData.length === 0 ? (
+            {isLoading ? (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length + (selectable ? 1 : 0)}
+                  className="h-24 text-center"
+                >
+                  <div className="flex items-center justify-center gap-2">
+                    <div className="h-4 w-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                    <span className="text-base text-muted-foreground">Loading data...</span>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ) : currentData.length === 0 ? (
               <TableRow>
                 <TableCell
                   colSpan={columns.length + (selectable ? 1 : 0)}
@@ -149,22 +167,23 @@ export function DataTable<T extends { id: string | number }>({
       </div>
 
       {totalPages > 1 && (
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 animate-fade-in">
-          <p className="text-base text-muted-foreground font-medium">
+        <nav className="flex flex-col sm:flex-row items-center justify-between gap-4 animate-fade-in" aria-label="Table pagination">
+          <p className="text-sm text-muted-foreground font-medium" role="status" aria-live="polite">
             Showing <span className="text-primary font-semibold">{startIndex + 1}</span> to{" "}
             <span className="text-primary font-semibold">{Math.min(endIndex, data.length)}</span> of{" "}
             <span className="text-primary font-semibold">{data.length}</span> entries
           </p>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1" role="group" aria-label="Pagination controls">
             <Button
               size="icon"
               variant="ghost"
               disabled={currentPage === 1}
               onClick={() => setCurrentPage(1)}
               data-testid={`${testIdPrefix}-first-page`}
-              className="transition-all duration-200 hover:scale-110 h-9 w-9"
+              className="transition-all duration-200 hover:scale-110 h-9 w-9 disabled:opacity-50 disabled:cursor-not-allowed"
+              aria-label="Go to first page"
             >
-              <ChevronsLeft className="h-4 w-4" />
+              <ChevronsLeft className="h-4 w-4" aria-hidden="true" />
             </Button>
             <Button
               size="icon"
@@ -172,11 +191,12 @@ export function DataTable<T extends { id: string | number }>({
               disabled={currentPage === 1}
               onClick={() => setCurrentPage((p) => p - 1)}
               data-testid={`${testIdPrefix}-prev-page`}
-              className="transition-all duration-200 hover:scale-110 h-9 w-9"
+              className="transition-all duration-200 hover:scale-110 h-9 w-9 disabled:opacity-50 disabled:cursor-not-allowed"
+              aria-label="Go to previous page"
             >
-              <ChevronLeft className="h-4 w-4" />
+              <ChevronLeft className="h-4 w-4" aria-hidden="true" />
             </Button>
-            <span className="px-3 sm:px-4 py-2 text-sm font-semibold bg-primary/10 rounded-md border border-primary/20 whitespace-nowrap">
+            <span className="px-3 sm:px-4 py-2 text-sm font-semibold bg-primary/10 rounded-md border border-primary/20 whitespace-nowrap" aria-current="page">
               Page {currentPage} of {totalPages}
             </span>
             <Button
@@ -185,9 +205,10 @@ export function DataTable<T extends { id: string | number }>({
               disabled={currentPage === totalPages}
               onClick={() => setCurrentPage((p) => p + 1)}
               data-testid={`${testIdPrefix}-next-page`}
-              className="transition-all duration-200 hover:scale-110 h-9 w-9"
+              className="transition-all duration-200 hover:scale-110 h-9 w-9 disabled:opacity-50 disabled:cursor-not-allowed"
+              aria-label="Go to next page"
             >
-              <ChevronRight className="h-4 w-4" />
+              <ChevronRight className="h-4 w-4" aria-hidden="true" />
             </Button>
             <Button
               size="icon"
@@ -195,12 +216,13 @@ export function DataTable<T extends { id: string | number }>({
               disabled={currentPage === totalPages}
               onClick={() => setCurrentPage(totalPages)}
               data-testid={`${testIdPrefix}-last-page`}
-              className="transition-all duration-200 hover:scale-110 h-9 w-9"
+              className="transition-all duration-200 hover:scale-110 h-9 w-9 disabled:opacity-50 disabled:cursor-not-allowed"
+              aria-label="Go to last page"
             >
-              <ChevronsRight className="h-4 w-4" />
+              <ChevronsRight className="h-4 w-4" aria-hidden="true" />
             </Button>
           </div>
-        </div>
+        </nav>
       )}
     </div>
   );

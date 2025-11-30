@@ -33,9 +33,9 @@ export function SearchFilter({
   filters = [],
 }: SearchFilterProps) {
   return (
-    <div className="flex flex-wrap items-center gap-3 mb-4">
+    <div className="flex flex-wrap items-center gap-3 mb-4" role="search" aria-label="Search and filter">
       <div className="relative flex-1 min-w-[200px] max-w-sm group">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground transition-colors group-focus-within:text-primary" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground transition-colors group-focus-within:text-primary" aria-hidden="true" />
         <Input
           type="search"
           placeholder={searchPlaceholder}
@@ -44,13 +44,14 @@ export function SearchFilter({
           className="pl-9 transition-all duration-200 focus:shadow-md"
           data-testid="input-search"
           autoComplete="off"
+          aria-label={searchPlaceholder}
         />
       </div>
 
       {filters.map((filter) => (
         <Select key={filter.key} value={filter.value} onValueChange={filter.onChange}>
-          <SelectTrigger className="w-auto min-w-[150px]" data-testid={`filter-${filter.key}`}>
-            <Filter className="h-4 w-4 mr-2 text-muted-foreground" />
+          <SelectTrigger className="w-auto min-w-[150px]" data-testid={`filter-${filter.key}`} aria-label={`Filter by ${filter.label}`}>
+            <Filter className="h-4 w-4 mr-2 text-muted-foreground" aria-hidden="true" />
             <SelectValue placeholder={filter.label} />
           </SelectTrigger>
           <SelectContent>
