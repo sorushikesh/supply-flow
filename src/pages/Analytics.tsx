@@ -1,5 +1,4 @@
 import { PageBackground } from "@/components/PageBackground";
-import { StatsCard } from "@/components/StatsCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select,
@@ -21,32 +20,32 @@ import {
 import { useState } from "react";
 
 const mockSalesData = [
-  { month: "Jan", sales: 45000, purchases: 32000 },
-  { month: "Feb", sales: 52000, purchases: 38000 },
-  { month: "Mar", sales: 48000, purchases: 35000 },
-  { month: "Apr", sales: 61000, purchases: 42000 },
-  { month: "May", sales: 55000, purchases: 39000 },
-  { month: "Jun", sales: 67000, purchases: 45000 },
+  { month: "Jan", sales: 245000, purchases: 182000 },
+  { month: "Feb", sales: 268000, purchases: 195000 },
+  { month: "Mar", sales: 252000, purchases: 189000 },
+  { month: "Apr", sales: 291000, purchases: 218000 },
+  { month: "May", sales: 279000, purchases: 203000 },
+  { month: "Jun", sales: 315000, purchases: 235000 },
 ];
 
 const mockTopProducts = [
-  { name: "Widget Alpha", revenue: 45600, units: 1520 },
-  { name: "Gadget Pro", revenue: 38900, units: 260 },
-  { name: "Widget Beta", revenue: 32400, units: 1012 },
-  { name: "Component X", revenue: 28700, units: 2296 },
-  { name: "Accessory Pack", revenue: 21500, units: 1433 },
+  { name: "Dell Latitude 5540 Laptop", revenue: 187500, units: 150 },
+  { name: "Samsung 27\" 4K Monitor", revenue: 105000, units: 300 },
+  { name: "HP ProBook 450 G10", revenue: 89900, units: 100 },
+  { name: "Lenovo ThinkPad T14", revenue: 154950, units: 100 },
+  { name: "USB-C Hub Docking Station", revenue: 77220, units: 1430 },
 ];
 
 const mockTopVendors = [
-  { name: "Tech Components", spend: 234000, orders: 56 },
-  { name: "Acme Corporation", spend: 156000, orders: 45 },
-  { name: "Global Supply Co", spend: 89500, orders: 32 },
+  { name: "Samsung Electronics", spend: 234000, orders: 56 },
+  { name: "Dell Technologies", spend: 156000, orders: 45 },
+  { name: "HP Inc.", spend: 89500, orders: 32 },
 ];
 
 const mockTopCustomers = [
-  { name: "Express Outlets", revenue: 567000, orders: 112 },
-  { name: "Metro Retail Group", revenue: 456000, orders: 89 },
-  { name: "Wholesale Partners", revenue: 345600, orders: 78 },
+  { name: "Amazon Business Services", revenue: 567000, orders: 112 },
+  { name: "BestBuy Corporate", revenue: 456000, orders: 89 },
+  { name: "CDW Corporation", revenue: 345600, orders: 78 },
 ];
 
 export default function Analytics() {
@@ -56,14 +55,12 @@ export default function Analytics() {
 
   return (
     <PageBackground>
-      <div className="p-4 lg:p-6 max-w-[1600px] mx-auto space-y-6">
+      <div className="relative z-10 p-6">
         {/* Page Header */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="mb-6 flex items-center justify-between gap-4">
           <div>
-            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent">
-              Analytics
-            </h1>
-            <p className="text-muted-foreground mt-1">Business insights and performance metrics</p>
+            <h1 className="text-3xl font-bold mb-2">Analytics</h1>
+            <p className="text-muted-foreground">Business insights and performance metrics</p>
           </div>
           
           <Select value={period} onValueChange={setPeriod}>
@@ -79,48 +76,97 @@ export default function Analytics() {
           </Select>
         </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatsCard
-          title="Total Revenue"
-          value="$328,000"
-          change={15.3}
-          changeLabel="vs last period"
-          icon={DollarSign}
-        />
-        <StatsCard
-          title="Total Orders"
-          value="342"
-          change={8.2}
-          changeLabel="vs last period"
-          icon={ShoppingCart}
-        />
-        <StatsCard
-          title="Inventory Turnover"
-          value="4.2x"
-          change={12.5}
-          changeLabel="vs last period"
-          icon={Package}
-        />
-        <StatsCard
-          title="Profit Margin"
-          value="24.8%"
-          change={-2.1}
-          changeLabel="vs last period"
-          icon={TrendingUp}
-        />
-      </div>
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Total Revenue
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-end justify-between">
+                <div>
+                  <p className="text-2xl font-bold">$328K</p>
+                  <div className="flex items-center gap-1 mt-1">
+                    <TrendingUp className="h-3 w-3 text-green-500" />
+                    <span className="text-xs text-green-500 font-medium">+15.3%</span>
+                  </div>
+                </div>
+                <DollarSign className="h-8 w-8 text-green-500 opacity-20" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Total Orders
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-end justify-between">
+                <div>
+                  <p className="text-2xl font-bold">342</p>
+                  <div className="flex items-center gap-1 mt-1">
+                    <TrendingUp className="h-3 w-3 text-green-500" />
+                    <span className="text-xs text-green-500 font-medium">+8.2%</span>
+                  </div>
+                </div>
+                <ShoppingCart className="h-8 w-8 text-blue-500 opacity-20" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Inventory Turnover
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-end justify-between">
+                <div>
+                  <p className="text-2xl font-bold">4.2x</p>
+                  <div className="flex items-center gap-1 mt-1">
+                    <TrendingUp className="h-3 w-3 text-green-500" />
+                    <span className="text-xs text-green-500 font-medium">+12.5%</span>
+                  </div>
+                </div>
+                <Package className="h-8 w-8 text-purple-500 opacity-20" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Profit Margin
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-end justify-between">
+                <div>
+                  <p className="text-2xl font-bold">24.8%</p>
+                  <div className="flex items-center gap-1 mt-1">
+                    <TrendingUp className="h-3 w-3 text-red-500 rotate-180" />
+                    <span className="text-xs text-red-500 font-medium">-2.1%</span>
+                  </div>
+                </div>
+                <TrendingUp className="h-8 w-8 text-orange-500 opacity-20" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
       {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         <Card className="border-primary/20">
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold flex items-center gap-2">
+          <CardContent className="pt-6">
+            <h3 className="text-lg font-semibold flex items-center gap-2 mb-4">
               <BarChart3 className="h-5 w-5 text-primary" />
               Sales vs Purchases Trend
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+            </h3>
             <div className="space-y-4">
               {mockSalesData.map((data) => (
                 <div key={data.month} className="space-y-2">
@@ -159,13 +205,11 @@ export default function Analytics() {
         </Card>
 
         <Card className="border-primary/20">
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold flex items-center gap-2">
+          <CardContent className="pt-6">
+            <h3 className="text-lg font-semibold flex items-center gap-2 mb-4">
               <Package className="h-5 w-5 text-primary" />
               Top Selling Products
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+            </h3>
             <div className="space-y-4">
               {mockTopProducts.map((product, index) => (
                 <div
@@ -197,13 +241,11 @@ export default function Analytics() {
       {/* Top Performers Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="border-primary/20">
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold flex items-center gap-2">
+          <CardContent className="pt-6">
+            <h3 className="text-lg font-semibold flex items-center gap-2 mb-4">
               <Building2 className="h-5 w-5 text-primary" />
               Top Vendors by Spend
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+            </h3>
             <div className="space-y-4">
               {mockTopVendors.map((vendor, index) => {
                 const maxSpend = mockTopVendors[0].spend;
@@ -239,13 +281,11 @@ export default function Analytics() {
         </Card>
 
         <Card className="border-primary/20">
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold flex items-center gap-2">
+          <CardContent className="pt-6">
+            <h3 className="text-lg font-semibold flex items-center gap-2 mb-4">
               <Users className="h-5 w-5 text-primary" />
               Top Customers by Revenue
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+            </h3>
             <div className="space-y-4">
               {mockTopCustomers.map((customer, index) => {
                 const maxRevenue = mockTopCustomers[0].revenue;

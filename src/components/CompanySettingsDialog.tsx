@@ -14,6 +14,11 @@ import { Label } from "@/components/ui/label";
 import { Building2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export function CompanySettingsDialog() {
   const { toast } = useToast();
@@ -24,15 +29,21 @@ export function CompanySettingsDialog() {
   };
 
   return (
-    <Button
-      variant="ghost"
-      size="sm"
-      onClick={handleOpenCompany}
-      className="gap-1.5 h-8 px-2.5 font-medium hover:bg-accent transition-all text-xs"
-      data-testid="button-company-settings"
-    >
-      <Building2 className="h-3.5 w-3.5" />
-      <span className="hidden lg:inline">Company</span>
-    </Button>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={handleOpenCompany}
+          className="h-10 w-10"
+          data-testid="button-company-settings"
+        >
+          <Building2 className="h-[18px] w-[18px]" />
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent>
+        <p>Company</p>
+      </TooltipContent>
+    </Tooltip>
   );
 }
