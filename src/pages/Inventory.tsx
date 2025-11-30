@@ -4,7 +4,7 @@ import { PageBackground } from "@/components/PageBackground";
 import { SearchFilter } from "@/components/SearchFilter";
 import { DataTable, type Column } from "@/components/DataTable";
 import { FormModal } from "@/components/FormModal";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -27,12 +27,20 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2, Package, ArrowUp, ArrowDown, Calendar, TrendingUp, DollarSign } from "lucide-react";
 
 // todo: remove mock functionality
 interface InventoryItem {
@@ -47,6 +55,16 @@ interface InventoryItem {
   lastUpdated: string;
 }
 
+interface StockMovement {
+  id: string;
+  date: string;
+  type: "in" | "out";
+  quantity: number;
+  reference: string;
+  notes: string;
+  performedBy: string;
+}
+
 const mockInventory: InventoryItem[] = [
   { id: "1", sku: "WDG-001", name: "Widget Alpha", category: "Widgets", currentStock: 12, reorderLevel: 50, unitPrice: 25.99, location: "Warehouse A", lastUpdated: "2024-01-15" },
   { id: "2", sku: "GDG-023", name: "Gadget Pro", category: "Gadgets", currentStock: 8, reorderLevel: 25, unitPrice: 149.99, location: "Warehouse B", lastUpdated: "2024-01-14" },
@@ -58,6 +76,25 @@ const mockInventory: InventoryItem[] = [
   { id: "8", sku: "WDG-003", name: "Widget Gamma", category: "Widgets", currentStock: 67, reorderLevel: 25, unitPrice: 45.50, location: "Warehouse C", lastUpdated: "2024-01-09" },
 ];
 
+const mockStockMovements: Record<string, StockMovement[]> = {
+  "1": [
+    { id: "1", date: "2024-11-25", type: "out", quantity: 50, reference: "SO-2024-0098", notes: "Sales order fulfillment", performedBy: "John Doe" },
+    { id: "2", date: "2024-11-20", type: "in", quantity: 100, reference: "PO-2024-0045", notes: "Purchase order received", performedBy: "Jane Smith" },
+    { id: "3", date: "2024-11-15", type: "out", quantity: 38, reference: "SO-2024-0087", notes: "Customer order", performedBy: "John Doe" },
+    { id: "4", date: "2024-11-10", type: "in", quantity: 200, reference: "PO-2024-0038", notes: "Stock replenishment", performedBy: "Jane Smith" },
+  ],
+  "2": [
+    { id: "5", date: "2024-11-22", type: "out", quantity: 30, reference: "SO-2024-0115", notes: "Bulk order", performedBy: "John Doe" },
+    { id: "6", date: "2024-11-18", type: "in", quantity: 50, reference: "PO-2024-0042", notes: "Restock", performedBy: "Jane Smith" },
+    { id: "7", date: "2024-11-12", type: "out", quantity: 12, reference: "ADJ-001", notes: "Inventory adjustment - damaged items", performedBy: "Admin" },
+  ],
+  "3": [
+    { id: "8", date: "2024-11-24", type: "out", quantity: 100, reference: "SO-2024-0122", notes: "Large customer order", performedBy: "John Doe" },
+    { id: "9", date: "2024-11-19", type: "in", quantity: 500, reference: "PO-2024-0043", notes: "Bulk purchase", performedBy: "Jane Smith" },
+    { id: "10", date: "2024-11-14", type: "out", quantity: 297, reference: "SO-2024-0095", notes: "Multiple orders", performedBy: "John Doe" },
+  ],
+};
+
 const categories = ["All", "Widgets", "Gadgets", "Components", "Accessories"];
 const locations = ["All", "Warehouse A", "Warehouse B", "Warehouse C"];
 
@@ -67,6 +104,8 @@ export default function Inventory() {
   const [category, setCategory] = useState("All");
   const [location, setLocation] = useState("All");
   const [modalOpen, setModalOpen] = useState(false);
+  const [detailsOpen, setDetailsOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
   const [editingItem, setEditingItem] = useState<InventoryItem | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<InventoryItem | null>(null);
@@ -91,7 +130,21 @@ export default function Inventory() {
 
   const columns: Column<InventoryItem>[] = [
     { key: "sku", header: "SKU", className: "font-mono text-sm" },
-    { key: "name", header: "Product Name" },
+    { 
+      key: "name", 
+      header: "Product Name",
+      render: (item) => (
+        <button
+          onClick={() => {
+            setSelectedItem(item);
+            setDetailsOpen(true);
+          }}
+          className="font-medium hover:text-primary transition-colors text-left underline decoration-transparent hover:decoration-current"
+        >
+          {item.name}
+        </button>
+      ),
+    },
     {
       key: "category",
       header: "Category",
@@ -518,6 +571,185 @@ export default function Inventory() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Item Details Dialog */}
+      <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-2xl">
+              <Package className="h-6 w-6 text-primary" />
+              {selectedItem?.name}
+            </DialogTitle>
+            <DialogDescription>
+              SKU: {selectedItem?.sku} | Location: {selectedItem?.location}
+            </DialogDescription>
+          </DialogHeader>
+
+          <Tabs defaultValue="overview" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="overview">Overview</TabsTrigger>
+              <TabsTrigger value="movements">Stock Movements</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="overview" className="space-y-4">
+              {/* Product Details */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Product Details</CardTitle>
+                </CardHeader>
+                <CardContent className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Category</p>
+                    <Badge variant="secondary" className="mt-1">{selectedItem?.category}</Badge>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Location</p>
+                    <p className="font-medium mt-1">{selectedItem?.location}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Last Updated</p>
+                    <p className="font-medium mt-1">{selectedItem?.lastUpdated}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Unit Price</p>
+                    <p className="font-medium font-mono mt-1">${selectedItem?.unitPrice.toFixed(2)}</p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Statistics */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <Card>
+                  <CardContent className="p-4">
+                    <div className="flex items-center gap-2 text-muted-foreground mb-1">
+                      <Package className="h-4 w-4" />
+                      <p className="text-xs font-medium">Current Stock</p>
+                    </div>
+                    <p className={`text-2xl font-bold ${
+                      selectedItem && selectedItem.currentStock <= selectedItem.reorderLevel 
+                        ? 'text-destructive' 
+                        : ''
+                    }`}>
+                      {selectedItem?.currentStock}
+                    </p>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="p-4">
+                    <div className="flex items-center gap-2 text-muted-foreground mb-1">
+                      <TrendingUp className="h-4 w-4" />
+                      <p className="text-xs font-medium">Reorder Level</p>
+                    </div>
+                    <p className="text-2xl font-bold">{selectedItem?.reorderLevel}</p>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="p-4">
+                    <div className="flex items-center gap-2 text-muted-foreground mb-1">
+                      <DollarSign className="h-4 w-4" />
+                      <p className="text-xs font-medium">Total Value</p>
+                    </div>
+                    <p className="text-2xl font-bold font-mono">
+                      ${selectedItem ? (selectedItem.currentStock * selectedItem.unitPrice).toFixed(2) : '0.00'}
+                    </p>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="p-4">
+                    <div className="flex items-center gap-2 text-muted-foreground mb-1">
+                      <Package className="h-4 w-4" />
+                      <p className="text-xs font-medium">Status</p>
+                    </div>
+                    <Badge 
+                      variant={
+                        selectedItem && selectedItem.currentStock <= selectedItem.reorderLevel 
+                          ? "destructive" 
+                          : "default"
+                      }
+                      className="mt-1"
+                    >
+                      {selectedItem && selectedItem.currentStock <= selectedItem.reorderLevel 
+                        ? "Low Stock" 
+                        : "In Stock"}
+                    </Badge>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="movements" className="space-y-4">
+              {selectedItem && mockStockMovements[selectedItem.id] ? (
+                <div className="space-y-3">
+                  {mockStockMovements[selectedItem.id].map((movement) => (
+                    <Card key={movement.id}>
+                      <CardContent className="p-4">
+                        <div className="flex items-start justify-between">
+                          <div className="flex items-start gap-3 flex-1">
+                            <div className={`p-2 rounded-lg ${
+                              movement.type === "in" 
+                                ? "bg-green-100 dark:bg-green-900/20" 
+                                : "bg-red-100 dark:bg-red-900/20"
+                            }`}>
+                              {movement.type === "in" ? (
+                                <ArrowDown className="h-5 w-5 text-green-600 dark:text-green-400" />
+                              ) : (
+                                <ArrowUp className="h-5 w-5 text-red-600 dark:text-red-400" />
+                              )}
+                            </div>
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-1">
+                                <Badge variant={movement.type === "in" ? "default" : "secondary"}>
+                                  {movement.type === "in" ? "Stock In" : "Stock Out"}
+                                </Badge>
+                                <span className="font-mono text-sm text-muted-foreground">
+                                  {movement.reference}
+                                </span>
+                              </div>
+                              <p className="text-sm mb-1">{movement.notes}</p>
+                              <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                                <span className="flex items-center gap-1">
+                                  <Calendar className="h-3 w-3" />
+                                  {new Date(movement.date).toLocaleDateString('en-US', {
+                                    year: 'numeric',
+                                    month: 'short',
+                                    day: 'numeric'
+                                  })}
+                                </span>
+                                <span>By {movement.performedBy}</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <p className={`text-xl font-bold font-mono ${
+                              movement.type === "in" 
+                                ? "text-green-600 dark:text-green-400" 
+                                : "text-red-600 dark:text-red-400"
+                            }`}>
+                              {movement.type === "in" ? "+" : "-"}{movement.quantity}
+                            </p>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <Card>
+                  <CardContent className="p-12 text-center">
+                    <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                    <p className="text-lg font-medium text-muted-foreground">
+                      No stock movements recorded
+                    </p>
+                    <p className="text-sm text-muted-foreground mt-2">
+                      Stock movement history will appear here once transactions are recorded
+                    </p>
+                  </CardContent>
+                </Card>
+              )}
+            </TabsContent>
+          </Tabs>
+        </DialogContent>
+      </Dialog>
       </div>
     </PageBackground>
   );

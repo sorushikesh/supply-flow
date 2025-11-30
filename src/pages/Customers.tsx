@@ -4,13 +4,22 @@ import { PageBackground } from "@/components/PageBackground";
 import { SearchFilter } from "@/components/SearchFilter";
 import { DataTable, type Column } from "@/components/DataTable";
 import { FormModal } from "@/components/FormModal";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { Users, Mail, Phone } from "lucide-react";
+import { Users, Mail, Phone, Package, ShoppingCart, Calendar, DollarSign, TrendingUp } from "lucide-react";
 
 // todo: remove mock functionality
 interface Customer {
@@ -26,6 +35,15 @@ interface Customer {
   status: "active" | "inactive";
 }
 
+interface PurchaseHistoryItem {
+  id: string;
+  orderNumber: string;
+  date: string;
+  products: { name: string; sku: string; quantity: number; unitPrice: number }[];
+  totalAmount: number;
+  status: "delivered" | "pending" | "cancelled";
+}
+
 const mockCustomers: Customer[] = [
   { id: "1", code: "C-001", name: "TechStart Inc", email: "orders@techstart.com", phone: "+1 555-0201", address: "100 Innovation Blvd, Tech City", creditLimit: 50000, totalOrders: 67, totalRevenue: 234500, status: "active" },
   { id: "2", code: "C-002", name: "Metro Retail Group", email: "purchasing@metroretail.com", phone: "+1 555-0202", address: "200 Shopping Center, Mall Town", creditLimit: 100000, totalOrders: 89, totalRevenue: 456000, status: "active" },
@@ -35,11 +53,74 @@ const mockCustomers: Customer[] = [
   { id: "6", code: "C-006", name: "Wholesale Partners", email: "orders@wholesalepartners.com", phone: "+1 555-0206", address: "600 Bulk Blvd, Industrial Zone", creditLimit: 200000, totalOrders: 78, totalRevenue: 345600, status: "active" },
 ];
 
+const mockPurchaseHistory: Record<string, PurchaseHistoryItem[]> = {
+  "1": [
+    {
+      id: "1",
+      orderNumber: "SO-2024-0098",
+      date: "2024-11-25",
+      products: [
+        { name: "Widget Alpha", sku: "WDG-001", quantity: 50, unitPrice: 125.00 },
+        { name: "Gadget Pro", sku: "GDG-023", quantity: 30, unitPrice: 89.99 },
+      ],
+      totalAmount: 8949.70,
+      status: "delivered"
+    },
+    {
+      id: "2",
+      orderNumber: "SO-2024-0087",
+      date: "2024-11-18",
+      products: [
+        { name: "Component X", sku: "CMP-045", quantity: 100, unitPrice: 45.50 },
+        { name: "Widget Beta", sku: "WDG-002", quantity: 75, unitPrice: 98.00 },
+      ],
+      totalAmount: 11900.00,
+      status: "delivered"
+    },
+    {
+      id: "3",
+      orderNumber: "SO-2024-0076",
+      date: "2024-11-10",
+      products: [
+        { name: "Device Ultra", sku: "DEV-100", quantity: 25, unitPrice: 275.00 },
+      ],
+      totalAmount: 6875.00,
+      status: "delivered"
+    },
+  ],
+  "2": [
+    {
+      id: "4",
+      orderNumber: "SO-2024-0125",
+      date: "2024-11-28",
+      products: [
+        { name: "Widget Alpha", sku: "WDG-001", quantity: 200, unitPrice: 125.00 },
+        { name: "Component X", sku: "CMP-045", quantity: 150, unitPrice: 45.50 },
+      ],
+      totalAmount: 31825.00,
+      status: "pending"
+    },
+    {
+      id: "5",
+      orderNumber: "SO-2024-0115",
+      date: "2024-11-22",
+      products: [
+        { name: "Gadget Pro", sku: "GDG-023", quantity: 100, unitPrice: 89.99 },
+        { name: "Widget Beta", sku: "WDG-002", quantity: 80, unitPrice: 98.00 },
+      ],
+      totalAmount: 16839.00,
+      status: "delivered"
+    },
+  ],
+};
+
 export default function Customers() {
   const { toast } = useToast();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
   const [modalOpen, setModalOpen] = useState(false);
+  const [detailsOpen, setDetailsOpen] = useState(false);
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -63,12 +144,20 @@ export default function Customers() {
       key: "name",
       header: "Customer Name",
       render: (customer) => (
-        <div className="flex items-center gap-2">
+        <button
+          onClick={() => {
+            setSelectedCustomer(customer);
+            setDetailsOpen(true);
+          }}
+          className="flex items-center gap-2 hover:text-primary transition-colors text-left"
+        >
           <div className="p-1.5 rounded bg-muted">
             <Users className="h-4 w-4 text-muted-foreground" />
           </div>
-          <span className="font-medium">{customer.name}</span>
-        </div>
+          <span className="font-medium underline decoration-transparent hover:decoration-current transition-all">
+            {customer.name}
+          </span>
+        </button>
       ),
     },
     {
@@ -314,6 +403,187 @@ export default function Customers() {
           </div>
         </div>
       </FormModal>
+
+      {/* Customer Details Dialog */}
+      <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-2xl">
+              <Users className="h-6 w-6 text-primary" />
+              {selectedCustomer?.name}
+            </DialogTitle>
+            <DialogDescription>
+              Customer Code: {selectedCustomer?.code}
+            </DialogDescription>
+          </DialogHeader>
+
+          <Tabs defaultValue="overview" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="overview">Overview</TabsTrigger>
+              <TabsTrigger value="history">Purchase History</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="overview" className="space-y-4">
+              {/* Contact Information */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Contact Information</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <Mail className="h-4 w-4 text-muted-foreground" />
+                    <span>{selectedCustomer?.email}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Phone className="h-4 w-4 text-muted-foreground" />
+                    <span>{selectedCustomer?.phone}</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Package className="h-4 w-4 text-muted-foreground mt-1" />
+                    <span>{selectedCustomer?.address}</span>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Statistics */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <Card>
+                  <CardContent className="p-4">
+                    <div className="flex items-center gap-2 text-muted-foreground mb-1">
+                      <ShoppingCart className="h-4 w-4" />
+                      <p className="text-xs font-medium">Total Orders</p>
+                    </div>
+                    <p className="text-2xl font-bold">{selectedCustomer?.totalOrders}</p>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="p-4">
+                    <div className="flex items-center gap-2 text-muted-foreground mb-1">
+                      <TrendingUp className="h-4 w-4" />
+                      <p className="text-xs font-medium">Total Revenue</p>
+                    </div>
+                    <p className="text-2xl font-bold font-mono">
+                      ${selectedCustomer?.totalRevenue.toLocaleString()}
+                    </p>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="p-4">
+                    <div className="flex items-center gap-2 text-muted-foreground mb-1">
+                      <DollarSign className="h-4 w-4" />
+                      <p className="text-xs font-medium">Credit Limit</p>
+                    </div>
+                    <p className="text-2xl font-bold font-mono">
+                      ${selectedCustomer?.creditLimit.toLocaleString()}
+                    </p>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="p-4">
+                    <div className="flex items-center gap-2 text-muted-foreground mb-1">
+                      <Users className="h-4 w-4" />
+                      <p className="text-xs font-medium">Status</p>
+                    </div>
+                    <Badge 
+                      variant={selectedCustomer?.status === "active" ? "default" : "secondary"}
+                      className="mt-1"
+                    >
+                      {selectedCustomer?.status === "active" ? "Active" : "Inactive"}
+                    </Badge>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="history" className="space-y-4">
+              {selectedCustomer && mockPurchaseHistory[selectedCustomer.id] ? (
+                <div className="space-y-4">
+                  {mockPurchaseHistory[selectedCustomer.id].map((order) => (
+                    <Card key={order.id}>
+                      <CardHeader>
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <CardTitle className="text-base font-mono">
+                              {order.orderNumber}
+                            </CardTitle>
+                            <div className="flex items-center gap-2 mt-1 text-sm text-muted-foreground">
+                              <Calendar className="h-3 w-3" />
+                              {new Date(order.date).toLocaleDateString('en-US', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric'
+                              })}
+                            </div>
+                          </div>
+                          <Badge 
+                            variant={
+                              order.status === "delivered" ? "default" : 
+                              order.status === "pending" ? "secondary" : 
+                              "destructive"
+                            }
+                          >
+                            {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                          </Badge>
+                        </div>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-3">
+                          <div className="border rounded-lg overflow-hidden">
+                            <table className="w-full text-sm">
+                              <thead className="bg-muted">
+                                <tr>
+                                  <th className="text-left p-3 font-medium">Product</th>
+                                  <th className="text-left p-3 font-medium">SKU</th>
+                                  <th className="text-right p-3 font-medium">Quantity</th>
+                                  <th className="text-right p-3 font-medium">Unit Price</th>
+                                  <th className="text-right p-3 font-medium">Subtotal</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {order.products.map((product, idx) => (
+                                  <tr key={idx} className="border-t">
+                                    <td className="p-3">{product.name}</td>
+                                    <td className="p-3 font-mono text-xs">{product.sku}</td>
+                                    <td className="p-3 text-right font-mono">{product.quantity}</td>
+                                    <td className="p-3 text-right font-mono">
+                                      ${product.unitPrice.toFixed(2)}
+                                    </td>
+                                    <td className="p-3 text-right font-mono font-medium">
+                                      ${(product.quantity * product.unitPrice).toFixed(2)}
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                          <div className="flex justify-between items-center pt-2 border-t">
+                            <span className="font-medium">Total Amount</span>
+                            <span className="text-xl font-bold font-mono">
+                              ${order.totalAmount.toFixed(2)}
+                            </span>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <Card>
+                  <CardContent className="p-12 text-center">
+                    <ShoppingCart className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                    <p className="text-lg font-medium text-muted-foreground">
+                      No purchase history available
+                    </p>
+                    <p className="text-sm text-muted-foreground mt-2">
+                      This customer hasn't placed any orders yet
+                    </p>
+                  </CardContent>
+                </Card>
+              )}
+            </TabsContent>
+          </Tabs>
+        </DialogContent>
+      </Dialog>
       </div>
     </PageBackground>
   );
