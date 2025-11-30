@@ -203,20 +203,41 @@ export default function Customers() {
         onSubmit={handleSubmit}
         submitLabel="Add Customer"
       >
+        {/* Customer Information Section */}
         <div className="space-y-4">
+          <div className="pb-2 border-b">
+            <h3 className="text-sm font-semibold text-foreground">Customer Information</h3>
+            <p className="text-xs text-muted-foreground mt-1">Basic customer details</p>
+          </div>
+          
           <div className="space-y-2">
-            <Label htmlFor="name">Company Name *</Label>
+            <Label htmlFor="name" className="text-sm font-medium flex items-center gap-1">
+              Company Name <span className="text-destructive">*</span>
+            </Label>
             <Input
               id="name"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               placeholder="e.g., TechStart Inc"
               data-testid="input-customer-name"
+              className="transition-all duration-200"
             />
+            <p className="text-xs text-muted-foreground">Full name or company name</p>
           </div>
+        </div>
+
+        {/* Contact Details Section */}
+        <div className="space-y-4 pt-4">
+          <div className="pb-2 border-b">
+            <h3 className="text-sm font-semibold text-foreground">Contact Details</h3>
+            <p className="text-xs text-muted-foreground mt-1">How to reach the customer</p>
+          </div>
+          
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email *</Label>
+              <Label htmlFor="email" className="text-sm font-medium flex items-center gap-1">
+                Email <span className="text-destructive">*</span>
+              </Label>
               <Input
                 id="email"
                 type="email"
@@ -224,40 +245,70 @@ export default function Customers() {
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 placeholder="orders@company.com"
                 data-testid="input-customer-email"
+                className="transition-all duration-200"
               />
+              <p className="text-xs text-muted-foreground">Primary contact email</p>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="phone">Phone *</Label>
+              <Label htmlFor="phone" className="text-sm font-medium flex items-center gap-1">
+                Phone <span className="text-destructive">*</span>
+              </Label>
               <Input
                 id="phone"
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                 placeholder="+1 555-0200"
                 data-testid="input-customer-phone"
+                className="transition-all duration-200"
               />
+              <p className="text-xs text-muted-foreground">Contact phone number</p>
             </div>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="address">Address</Label>
-            <Textarea
-              id="address"
-              value={formData.address}
-              onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-              placeholder="Full address"
-              rows={2}
-              data-testid="input-customer-address"
-            />
+        </div>
+
+        {/* Address & Credit Section */}
+        <div className="space-y-4 pt-4">
+          <div className="pb-2 border-b">
+            <h3 className="text-sm font-semibold text-foreground">Address & Credit</h3>
+            <p className="text-xs text-muted-foreground mt-1">Location and payment details</p>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="creditLimit">Credit Limit ($)</Label>
-            <Input
-              id="creditLimit"
-              type="number"
-              value={formData.creditLimit}
-              onChange={(e) => setFormData({ ...formData, creditLimit: e.target.value })}
-              placeholder="e.g., 50000"
-              data-testid="input-credit-limit"
-            />
+          
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="address" className="text-sm font-medium">
+                Address
+              </Label>
+              <Textarea
+                id="address"
+                value={formData.address}
+                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                placeholder="Full address"
+                rows={2}
+                data-testid="input-customer-address"
+                className="resize-none transition-all duration-200"
+              />
+              <p className="text-xs text-muted-foreground">Shipping or billing address</p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="creditLimit" className="text-sm font-medium">
+                Credit Limit
+              </Label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">$</span>
+                <Input
+                  id="creditLimit"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={formData.creditLimit}
+                  onChange={(e) => setFormData({ ...formData, creditLimit: e.target.value })}
+                  placeholder="50000"
+                  data-testid="input-credit-limit"
+                  className="pl-7 transition-all duration-200"
+                />
+              </div>
+              <p className="text-xs text-muted-foreground">Maximum credit allowed</p>
+            </div>
           </div>
         </div>
       </FormModal>

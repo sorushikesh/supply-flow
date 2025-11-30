@@ -394,11 +394,12 @@ export default function Settings() {
                   <p className="text-sm">Add your first category above</p>
                 </div>
               ) : (
-              <div className="space-y-3">
-                {categories.map((category) => (
+                <div className="space-y-3">
+                  {categories.map((category, index) => (
                   <div
                     key={category.id}
-                    className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-all duration-200 hover:shadow-md hover:border-primary/20"
+                    className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-all duration-200 hover:shadow-md hover:border-primary/20 animate-fade-in"
+                    style={{ animationDelay: `${index * 50}ms` }}
                   >
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
@@ -502,11 +503,12 @@ export default function Settings() {
                   <p className="text-sm">Add your first warehouse location above</p>
                 </div>
               ) : (
-              <div className="space-y-3">
-                {locations.map((location) => (
+                <div className="space-y-3">
+                  {locations.map((location, index) => (
                   <div
                     key={location.id}
-                    className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-all duration-200 hover:shadow-md hover:border-primary/20"
+                    className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-all duration-200 hover:shadow-md hover:border-primary/20 animate-fade-in"
+                    style={{ animationDelay: `${index * 50}ms` }}
                   >
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
@@ -609,11 +611,12 @@ export default function Settings() {
                   <p className="text-sm">Add your first product type above</p>
                 </div>
               ) : (
-              <div className="space-y-3">
-                {productTypes.map((type) => (
+                <div className="space-y-3">
+                  {productTypes.map((type, index) => (
                   <div
                     key={type.id}
-                    className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-all duration-200 hover:shadow-md hover:border-primary/20"
+                    className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-all duration-200 hover:shadow-md hover:border-primary/20 animate-fade-in"
+                    style={{ animationDelay: `${index * 50}ms` }}
                   >
                     <div className="flex-1">
                       <div className="flex items-center gap-2">

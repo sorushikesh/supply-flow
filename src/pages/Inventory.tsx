@@ -329,96 +329,169 @@ export default function Inventory() {
         onSubmit={handleSubmit}
         submitLabel={editingItem ? "Update Product" : "Add Product"}
       >
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="sku">SKU *</Label>
-            <Input
-              id="sku"
-              value={formData.sku}
-              onChange={(e) => setFormData({ ...formData, sku: e.target.value })}
-              placeholder="e.g., WDG-001"
-              data-testid="input-sku"
-            />
+        {/* Product Information Section */}
+        <div className="space-y-4">
+          <div className="pb-2 border-b">
+            <h3 className="text-sm font-semibold text-foreground">Product Information</h3>
+            <p className="text-xs text-muted-foreground mt-1">Basic details about the product</p>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="name">Product Name *</Label>
-            <Input
-              id="name"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="e.g., Widget Alpha"
-              data-testid="input-product-name"
-            />
+          
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="sku" className="text-sm font-medium flex items-center gap-1">
+                SKU <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                id="sku"
+                value={formData.sku}
+                onChange={(e) => setFormData({ ...formData, sku: e.target.value })}
+                placeholder="e.g., WDG-001"
+                data-testid="input-sku"
+                className="transition-all duration-200"
+              />
+              <p className="text-xs text-muted-foreground">Unique product identifier</p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="name" className="text-sm font-medium flex items-center gap-1">
+                Product Name <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                id="name"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                placeholder="e.g., Widget Alpha"
+                data-testid="input-product-name"
+                className="transition-all duration-200"
+              />
+              <p className="text-xs text-muted-foreground">Full product name</p>
+            </div>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="category">Category *</Label>
-            <Select
-              value={formData.category}
-              onValueChange={(value) => setFormData({ ...formData, category: value })}
-            >
-              <SelectTrigger data-testid="select-category">
-                <SelectValue placeholder="Select category" />
-              </SelectTrigger>
-              <SelectContent>
-                {categories.slice(1).map((c) => (
-                  <SelectItem key={c} value={c}>
-                    {c}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+        </div>
+
+        {/* Classification Section */}
+        <div className="space-y-4 pt-4">
+          <div className="pb-2 border-b">
+            <h3 className="text-sm font-semibold text-foreground">Classification</h3>
+            <p className="text-xs text-muted-foreground mt-1">Categorize and organize the product</p>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="location">Location *</Label>
-            <Select
-              value={formData.location}
-              onValueChange={(value) => setFormData({ ...formData, location: value })}
-            >
-              <SelectTrigger data-testid="select-location">
-                <SelectValue placeholder="Select location" />
-              </SelectTrigger>
-              <SelectContent>
-                {locations.slice(1).map((l) => (
-                  <SelectItem key={l} value={l}>
-                    {l}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="category" className="text-sm font-medium flex items-center gap-1">
+                Category <span className="text-destructive">*</span>
+              </Label>
+              <Select
+                value={formData.category}
+                onValueChange={(value) => setFormData({ ...formData, category: value })}
+              >
+                <SelectTrigger data-testid="select-category">
+                  <SelectValue placeholder="Select category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {categories.slice(1).map((c) => (
+                    <SelectItem key={c} value={c}>
+                      {c}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground">Product category type</p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="location" className="text-sm font-medium flex items-center gap-1">
+                Location <span className="text-destructive">*</span>
+              </Label>
+              <Select
+                value={formData.location}
+                onValueChange={(value) => setFormData({ ...formData, location: value })}
+              >
+                <SelectTrigger data-testid="select-location">
+                  <SelectValue placeholder="Select location" />
+                </SelectTrigger>
+                <SelectContent>
+                  {locations.slice(1).map((l) => (
+                    <SelectItem key={l} value={l}>
+                      {l}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground">Warehouse location</p>
+            </div>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="currentStock">Initial Stock *</Label>
-            <Input
-              id="currentStock"
-              type="number"
-              value={formData.currentStock}
-              onChange={(e) => setFormData({ ...formData, currentStock: e.target.value })}
-              placeholder="0"
-              data-testid="input-initial-stock"
-            />
+        </div>
+
+        {/* Stock Management Section */}
+        <div className="space-y-4 pt-4">
+          <div className="pb-2 border-b">
+            <h3 className="text-sm font-semibold text-foreground">Stock Management</h3>
+            <p className="text-xs text-muted-foreground mt-1">Inventory levels and alerts</p>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="reorderLevel">Reorder Level *</Label>
-            <Input
-              id="reorderLevel"
-              type="number"
-              value={formData.reorderLevel}
-              onChange={(e) => setFormData({ ...formData, reorderLevel: e.target.value })}
-              placeholder="0"
-              data-testid="input-reorder-level"
-            />
+          
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="currentStock" className="text-sm font-medium flex items-center gap-1">
+                Initial Stock <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                id="currentStock"
+                type="number"
+                min="0"
+                value={formData.currentStock}
+                onChange={(e) => setFormData({ ...formData, currentStock: e.target.value })}
+                placeholder="0"
+                data-testid="input-initial-stock"
+                className="transition-all duration-200"
+              />
+              <p className="text-xs text-muted-foreground">Current quantity in stock</p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="reorderLevel" className="text-sm font-medium flex items-center gap-1">
+                Reorder Level <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                id="reorderLevel"
+                type="number"
+                min="0"
+                value={formData.reorderLevel}
+                onChange={(e) => setFormData({ ...formData, reorderLevel: e.target.value })}
+                placeholder="0"
+                data-testid="input-reorder-level"
+                className="transition-all duration-200"
+              />
+              <p className="text-xs text-muted-foreground">Low stock alert threshold</p>
+            </div>
           </div>
-          <div className="col-span-2 space-y-2">
-            <Label htmlFor="unitPrice">Unit Price ($) *</Label>
-            <Input
-              id="unitPrice"
-              type="number"
-              step="0.01"
-              value={formData.unitPrice}
-              onChange={(e) => setFormData({ ...formData, unitPrice: e.target.value })}
-              placeholder="0.00"
-              data-testid="input-unit-price"
-            />
+        </div>
+
+        {/* Pricing Section */}
+        <div className="space-y-4 pt-4">
+          <div className="pb-2 border-b">
+            <h3 className="text-sm font-semibold text-foreground">Pricing</h3>
+            <p className="text-xs text-muted-foreground mt-1">Product pricing information</p>
+          </div>
+          
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="unitPrice" className="text-sm font-medium flex items-center gap-1">
+                Unit Price <span className="text-destructive">*</span>
+              </Label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">$</span>
+                <Input
+                  id="unitPrice"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={formData.unitPrice}
+                  onChange={(e) => setFormData({ ...formData, unitPrice: e.target.value })}
+                  placeholder="0.00"
+                  data-testid="input-unit-price"
+                  className="pl-7 transition-all duration-200"
+                />
+              </div>
+              <p className="text-xs text-muted-foreground">Price per unit</p>
+            </div>
           </div>
         </div>
       </FormModal>

@@ -43,7 +43,7 @@ export function StatsCard({ title, value, change, changeLabel, icon: Icon }: Sta
               </div>
             )}
           </div>
-          <div className="p-3 rounded-lg bg-primary/10">
+          <div className="p-3 rounded-lg bg-primary/10 transition-all duration-200 hover:bg-primary/20 hover:scale-110">
             <Icon className="h-5 w-5 text-primary" />
           </div>
         </div>
