@@ -115,8 +115,12 @@ interface Invoice {
   lineItems?: LineItem[];
 }
 
+import { getInvoicesData } from "@/data/dataTransformers";
+
 // Mock Data with Approval Workflow and Payments
-const mockInvoices: Invoice[] = [
+const mockInvoices: Invoice[] = getInvoicesData();
+
+const _mockInvoices_removed = [
   { 
     id: "1", 
     invoiceNumber: "INV-2024-0100", 

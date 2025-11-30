@@ -40,6 +40,21 @@ const statusConfig: Record<StatusType, { label: string; variant: "default" | "se
 
 export function StatusBadge({ status, className }: StatusBadgeProps) {
   const config = statusConfig[status];
+  
+  // Fallback for undefined status
+  if (!config) {
+    console.error(`StatusBadge: Unknown status "${status}"`);
+    return (
+      <Badge 
+        variant="outline" 
+        className={`transition-all duration-200 hover:scale-105 hover:shadow-sm cursor-default animate-fade-in ${className || ''}`}
+        data-testid={`status-badge-${status}`}
+      >
+        {status}
+      </Badge>
+    );
+  }
+  
   return (
     <Badge 
       variant={config.variant} 

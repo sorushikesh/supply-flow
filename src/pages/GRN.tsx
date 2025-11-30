@@ -42,7 +42,20 @@ interface GRNRecord {
   status: StatusType;
 }
 
-const mockGRNs: GRNRecord[] = [
+import { getGRNData, getPendingPOs } from "@/data/dataTransformers";
+
+const mockGRNs: GRNRecord[] = getGRNData().map(grn => ({
+  id: grn.id,
+  grnNumber: grn.grnNumber,
+  poNumber: grn.poNumber,
+  vendor: grn.vendor,
+  receivedDate: grn.receiptDate,
+  orderedQty: grn.items.reduce((sum, item) => sum + item.orderedQty, 0),
+  receivedQty: grn.items.reduce((sum, item) => sum + item.receivedQty, 0),
+  status: grn.status as StatusType
+}));
+
+const _mockGRNs_removed = [
   { id: "1", grnNumber: "GRN-2024-0030", poNumber: "PO-2024-0044", vendor: "Samsung Electronics", receivedDate: "2024-01-15", orderedQty: 40, receivedQty: 40, status: "completed" },
   { id: "2", grnNumber: "GRN-2024-0029", poNumber: "PO-2024-0043", vendor: "HP Inc.", receivedDate: "2024-01-14", orderedQty: 50, receivedQty: 47, status: "partial" },
   { id: "3", grnNumber: "GRN-2024-0028", poNumber: "PO-2024-0042", vendor: "Lenovo Group Ltd", receivedDate: "2024-01-13", orderedQty: 50, receivedQty: 50, status: "completed" },
@@ -60,10 +73,11 @@ const mockGRNs: GRNRecord[] = [
   { id: "15", grnNumber: "GRN-2024-0016", poNumber: "PO-2024-0029", vendor: "Dell Technologies", receivedDate: "2024-01-01", orderedQty: 30, receivedQty: 30, status: "completed" },
 ];
 
-const mockPendingPOs = [
-  { poNumber: "PO-2024-0045", vendor: "Dell Technologies", items: "Dell Latitude 5540 Laptop x 50, Laptop Power Adapter 65W x 100" },
-  { poNumber: "PO-2024-0046", vendor: "Samsung Electronics", items: "Samsung 27\" 4K Monitor x 30" },
-];
+const mockPendingPOs = getPendingPOs().map(po => ({
+  poNumber: po.poNumber,
+  vendor: po.vendor,
+  items: "Pending items"
+}));
 
 export default function GRN() {
   const { toast } = useToast();

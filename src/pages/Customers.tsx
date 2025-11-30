@@ -37,19 +37,14 @@ import { BulkActions } from "@/components/BulkActions";
 import { ExportDialog } from "@/components/ExportDialog";
 import { ActivityLogDialog, generateMockActivityLogs, type ActivityLog } from "@/components/ActivityLog";
 import { AdvancedFilterDialog, applyAdvancedFilters, type FilterCondition, type SavedFilter } from "@/components/AdvancedFilter";
+import { getCustomersData, getCustomerSalesHistory, type Customer, type SalesOrderHistory } from "@/data/dataTransformers";
 
-interface Customer {
-  id: string;
-  code: string;
-  name: string;
-  email: string;
-  phone: string;
-  address: string;
-  creditLimit: number;
-  totalOrders: number;
-  totalRevenue: number;
-  status: "active" | "inactive";
-}
+const mockCustomers = getCustomersData().map(c => ({
+  ...c,
+  code: c.id,
+  totalOrders: 0,
+  totalRevenue: c.totalPurchases
+}));
 
 interface PurchaseHistoryItem {
   id: string;
@@ -60,7 +55,7 @@ interface PurchaseHistoryItem {
   status: "delivered" | "pending" | "cancelled";
 }
 
-const mockCustomers: Customer[] = [
+const _mockCustomers_removed = [
   { id: "1", code: "C-001", name: "TechCorp Solutions", email: "procurement@techcorp.com", phone: "+1 (555) 201-4500", address: "1250 Tech Valley Drive, San Jose, CA 95131", creditLimit: 50000, totalOrders: 67, totalRevenue: 234500, status: "active" },
   { id: "2", code: "C-002", name: "BestBuy Corporate", email: "purchasing@bestbuy.com", phone: "+1 (555) 202-8900", address: "7601 Penn Avenue South, Richfield, MN 55423", creditLimit: 100000, totalOrders: 89, totalRevenue: 456000, status: "active" },
   { id: "3", code: "C-003", name: "Micro Center Distribution", email: "supply@microcenter.com", phone: "+1 (555) 203-3300", address: "4119 Leap Road, Hilliard, OH 43026", creditLimit: 75000, totalOrders: 45, totalRevenue: 178900, status: "active" },

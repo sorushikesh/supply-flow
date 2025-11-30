@@ -37,75 +37,10 @@ import { BulkActions } from "@/components/BulkActions";
 import { ExportDialog } from "@/components/ExportDialog";
 import { ActivityLogDialog, generateMockActivityLogs, type ActivityLog } from "@/components/ActivityLog";
 import { AdvancedFilterDialog, applyAdvancedFilters, type FilterCondition, type SavedFilter } from "@/components/AdvancedFilter";
+import { getInventoryData, getStockMovements, type InventoryItem, type StockMovement } from "@/data/dataTransformers";
 
-interface InventoryItem {
-  id: string;
-  sku: string;
-  name: string;
-  category: string;
-  currentStock: number;
-  reorderLevel: number;
-  unitPrice: number;
-  location: string;
-  lastUpdated: string;
-}
-
-interface StockMovement {
-  id: string;
-  date: string;
-  type: "in" | "out";
-  quantity: number;
-  reference: string;
-  notes: string;
-  performedBy: string;
-}
-
-const mockInventory: InventoryItem[] = [
-  { id: "1", sku: "LTP-0001", name: "Dell Latitude 5540 15.6\" Laptop", category: "Laptops", currentStock: 12, reorderLevel: 50, unitPrice: 1249.99, location: "Main Warehouse", lastUpdated: "2024-01-15" },
-  { id: "2", sku: "MON-0023", name: "Samsung 27\" 4K Monitor", category: "Monitors", currentStock: 8, reorderLevel: 25, unitPrice: 349.99, location: "Electronics Depot", lastUpdated: "2024-01-14" },
-  { id: "3", sku: "PWR-0045", name: "Laptop Power Adapter 65W", category: "Power Supplies", currentStock: 3, reorderLevel: 20, unitPrice: 24.50, location: "Main Warehouse", lastUpdated: "2024-01-14" },
-  { id: "4", sku: "LTP-0002", name: "HP ProBook 450 G10", category: "Laptops", currentStock: 156, reorderLevel: 30, unitPrice: 899.00, location: "Main Warehouse", lastUpdated: "2024-01-13" },
-  { id: "5", sku: "MON-0024", name: "LG 24\" Full HD IPS Monitor", category: "Monitors", currentStock: 89, reorderLevel: 40, unitPrice: 179.99, location: "Regional Storage", lastUpdated: "2024-01-12" },
-  { id: "6", sku: "PWR-0046", name: "Universal Laptop Charger 90W", category: "Power Supplies", currentStock: 234, reorderLevel: 100, unitPrice: 32.75, location: "Electronics Depot", lastUpdated: "2024-01-11" },
-  { id: "7", sku: "ACC-0001", name: "Wireless Mouse & Keyboard Combo", category: "Accessories", currentStock: 45, reorderLevel: 20, unitPrice: 45.00, location: "Main Warehouse", lastUpdated: "2024-01-10" },
-  { id: "8", sku: "LTP-0003", name: "Lenovo ThinkPad T14 Gen 4", category: "Laptops", currentStock: 67, reorderLevel: 25, unitPrice: 1549.50, location: "Regional Storage", lastUpdated: "2024-01-09" },
-  { id: "9", sku: "MON-0025", name: "ASUS 32\" Curved Gaming Monitor", category: "Monitors", currentStock: 145, reorderLevel: 50, unitPrice: 499.99, location: "Main Warehouse", lastUpdated: "2024-01-08" },
-  { id: "10", sku: "PWR-0047", name: "Desktop Power Supply 500W", category: "Power Supplies", currentStock: 5, reorderLevel: 15, unitPrice: 68.75, location: "Electronics Depot", lastUpdated: "2024-01-07" },
-  { id: "11", sku: "LTP-0004", name: "Acer Aspire 5 Business Laptop", category: "Laptops", currentStock: 203, reorderLevel: 40, unitPrice: 749.50, location: "Regional Storage", lastUpdated: "2024-01-06" },
-  { id: "12", sku: "ACC-0002", name: "USB-C Hub 7-in-1 Docking Station", category: "Accessories", currentStock: 78, reorderLevel: 30, unitPrice: 54.00, location: "Main Warehouse", lastUpdated: "2024-01-05" },
-  { id: "13", sku: "MON-0026", name: "BenQ 22\" Office Monitor", category: "Monitors", currentStock: 112, reorderLevel: 35, unitPrice: 149.99, location: "Electronics Depot", lastUpdated: "2024-01-04" },
-  { id: "14", sku: "PWR-0048", name: "Laptop Battery Replacement Pack", category: "Power Supplies", currentStock: 18, reorderLevel: 25, unitPrice: 89.25, location: "Regional Storage", lastUpdated: "2024-01-03" },
-  { id: "15", sku: "LTP-0005", name: "MacBook Air M2 13.6\"", category: "Laptops", currentStock: 189, reorderLevel: 45, unitPrice: 1199.75, location: "Main Warehouse", lastUpdated: "2024-01-02" },
-  { id: "16", sku: "ACC-0003", name: "HDMI & DisplayPort Cable Kit", category: "Accessories", currentStock: 6, reorderLevel: 18, unitPrice: 28.50, location: "Electronics Depot", lastUpdated: "2024-01-01" },
-  { id: "17", sku: "MON-0027", name: "Dell UltraSharp 34\" Ultrawide", category: "Monitors", currentStock: 167, reorderLevel: 60, unitPrice: 899.99, location: "Regional Storage", lastUpdated: "2023-12-31" },
-  { id: "18", sku: "PWR-0049", name: "UPS Battery Backup 1500VA", category: "Power Supplies", currentStock: 298, reorderLevel: 80, unitPrice: 189.99, location: "Main Warehouse", lastUpdated: "2023-12-30" },
-  { id: "19", sku: "LTP-0006", name: "Microsoft Surface Laptop 5", category: "Laptops", currentStock: 4, reorderLevel: 22, unitPrice: 1399.00, location: "Electronics Depot", lastUpdated: "2023-12-29" },
-  { id: "20", sku: "ACC-0004", name: "Laptop Stand & Cooling Pad", category: "Accessories", currentStock: 134, reorderLevel: 28, unitPrice: 39.99, location: "Regional Storage", lastUpdated: "2023-12-28" },
-  { id: "21", sku: "MON-0028", name: "ViewSonic Portable USB Monitor 15.6\"", category: "Monitors", currentStock: 56, reorderLevel: 45, unitPrice: 229.99, location: "Main Warehouse", lastUpdated: "2023-12-27" },
-  { id: "22", sku: "PWR-0050", name: "USB-C Power Delivery Charger 100W", category: "Power Supplies", currentStock: 423, reorderLevel: 120, unitPrice: 42.50, location: "Electronics Depot", lastUpdated: "2023-12-26" },
-  { id: "23", sku: "LTP-0007", name: "ASUS ROG Gaming Laptop RTX 4060", category: "Laptops", currentStock: 91, reorderLevel: 33, unitPrice: 1849.99, location: "Regional Storage", lastUpdated: "2023-12-25" },
-  { id: "24", sku: "ACC-0005", name: "Dual Monitor Mounting Arm", category: "Accessories", currentStock: 12, reorderLevel: 24, unitPrice: 89.75, location: "Main Warehouse", lastUpdated: "2023-12-24" },
-  { id: "25", sku: "MON-0029", name: "AOC 27\" Professional Design Monitor", category: "Monitors", currentStock: 178, reorderLevel: 52, unitPrice: 429.99, location: "Electronics Depot", lastUpdated: "2023-12-23" },
-];
-
-const mockStockMovements: Record<string, StockMovement[]> = {
-  "1": [
-    { id: "1", date: "2024-11-25", type: "out", quantity: 15, reference: "SO-2024-0098", notes: "Corporate bulk order - TechCorp Inc", performedBy: "Mike Johnson" },
-    { id: "2", date: "2024-11-20", type: "in", quantity: 50, reference: "PO-2024-0045", notes: "Dell shipment received", performedBy: "Sarah Williams" },
-    { id: "3", date: "2024-11-15", type: "out", quantity: 8, reference: "SO-2024-0087", notes: "Educational institution order", performedBy: "Mike Johnson" },
-    { id: "4", date: "2024-11-10", type: "in", quantity: 75, reference: "PO-2024-0038", notes: "Stock replenishment from Dell", performedBy: "Sarah Williams" },
-  ],
-  "2": [
-    { id: "5", date: "2024-11-22", type: "out", quantity: 12, reference: "SO-2024-0115", notes: "Office setup - new client", performedBy: "Mike Johnson" },
-    { id: "6", date: "2024-11-18", type: "in", quantity: 30, reference: "PO-2024-0042", notes: "Samsung shipment", performedBy: "Sarah Williams" },
-    { id: "7", date: "2024-11-12", type: "out", quantity: 3, reference: "ADJ-001", notes: "Inventory adjustment - display units damaged", performedBy: "Admin" },
-  ],
-  "3": [
-    { id: "8", date: "2024-11-24", type: "out", quantity: 25, reference: "SO-2024-0122", notes: "Large retail chain order", performedBy: "Mike Johnson" },
-    { id: "9", date: "2024-11-19", type: "in", quantity: 150, reference: "PO-2024-0043", notes: "Bulk purchase from distributor", performedBy: "Sarah Williams" },
-    { id: "10", date: "2024-11-14", type: "out", quantity: 47, reference: "SO-2024-0095", notes: "Multiple small business orders", performedBy: "Mike Johnson" },
-  ],
-};
+const mockInventory = getInventoryData();
+const mockStockMovements = getStockMovements();
 
 const categories = ["All", "Laptops", "Monitors", "Power Supplies", "Accessories"];
 const locations = ["All", "Main Warehouse", "Electronics Depot", "Regional Storage"];

@@ -37,7 +37,20 @@ interface DispatchRecord {
   status: StatusType;
 }
 
-const mockDispatches: DispatchRecord[] = [
+import { getDispatchData, getPendingSOs } from "@/data/dataTransformers";
+
+const mockDispatches: DispatchRecord[] = getDispatchData().map(d => ({
+  id: d.id,
+  dispatchNumber: d.dispatchNumber,
+  soNumber: d.soNumber,
+  customer: d.customer,
+  dispatchDate: d.dispatchDate,
+  carrier: d.carrier,
+  trackingNumber: d.trackingNumber,
+  status: d.status as StatusType
+}));
+
+const _mockDispatches_removed = [
   { id: "1", dispatchNumber: "DSP-2024-0050", soNumber: "SO-2024-0122", customer: "BestBuy Corporate", dispatchDate: "2024-01-15", carrier: "FedEx", trackingNumber: "FX123456789", status: "in_transit" },
   { id: "2", dispatchNumber: "DSP-2024-0049", soNumber: "SO-2024-0121", customer: "Micro Center Distribution", dispatchDate: "2024-01-14", carrier: "UPS", trackingNumber: "UP987654321", status: "delivered" },
   { id: "3", dispatchNumber: "DSP-2024-0048", soNumber: "SO-2024-0120", customer: "Amazon Business Services", dispatchDate: "2024-01-13", carrier: "DHL", trackingNumber: "DH456789123", status: "delivered" },
@@ -58,10 +71,12 @@ const mockDispatches: DispatchRecord[] = [
   { id: "18", dispatchNumber: "DSP-2024-0033", soNumber: "SO-2024-0105", customer: "Amazon Business Services", dispatchDate: "2023-12-29", carrier: "UPS", trackingNumber: "UP369147258", status: "delivered" },
 ];
 
-const mockPendingSOs = [
-  { soNumber: "SO-2024-0123", customer: "TechCorp Solutions", address: "1250 Tech Valley Drive, San Jose, CA 95131", items: 3 },
-  { soNumber: "SO-2024-0124", customer: "BestBuy Corporate", address: "7601 Penn Avenue South, Richfield, MN 55423", items: 5 },
-];
+const mockPendingSOs = getPendingSOs().map(so => ({
+  soNumber: so.soNumber,
+  customer: so.customer,
+  address: "Address",
+  items: 0
+}));
 
 const carriers = ["FedEx", "UPS", "DHL", "USPS"];
 

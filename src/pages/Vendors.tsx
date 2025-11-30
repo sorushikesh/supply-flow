@@ -37,107 +37,11 @@ import { BulkActions } from "@/components/BulkActions";
 import { ExportDialog } from "@/components/ExportDialog";
 import { ActivityLogDialog, generateMockActivityLogs, type ActivityLog } from "@/components/ActivityLog";
 import { AdvancedFilterDialog, applyAdvancedFilters, type FilterCondition, type SavedFilter } from "@/components/AdvancedFilter";
+import { getVendorsData, getVendorPurchaseHistory, type Vendor, type PurchaseOrderHistory } from "@/data/dataTransformers";
 
-interface Vendor {
-  id: string;
-  code: string;
-  name: string;
-  email: string;
-  phone: string;
-  address: string;
-  paymentTerms: string;
-  totalOrders: number;
-  totalSpent: number;
-  status: "active" | "inactive";
-}
-
-interface PurchaseOrderHistory {
-  id: string;
-  orderNumber: string;
-  date: string;
-  products: { name: string; sku: string; quantity: number; unitPrice: number }[];
-  totalAmount: number;
-  status: "completed" | "pending" | "cancelled";
-}
-
-const mockVendors: Vendor[] = [
-  { id: "1", code: "V-001", name: "Dell Technologies", email: "b2b@dell.com", phone: "+1 (800) 289-3355", address: "One Dell Way, Round Rock, TX 78682", paymentTerms: "Net 30", totalOrders: 45, totalSpent: 156000, status: "active" },
-  { id: "2", code: "V-002", name: "HP Inc.", email: "orders@hp.com", phone: "+1 (650) 857-1501", address: "1501 Page Mill Road, Palo Alto, CA 94304", paymentTerms: "Net 45", totalOrders: 32, totalSpent: 89500, status: "active" },
-  { id: "3", code: "V-003", name: "Lenovo Group Ltd", email: "info@lenovo.com", phone: "+1 (855) 253-6686", address: "8001 Development Drive, Morrisville, NC 27560", paymentTerms: "Net 15", totalOrders: 28, totalSpent: 67800, status: "active" },
-  { id: "4", code: "V-004", name: "ASUS Computer International", email: "contact@asus.com", phone: "+1 (812) 282-2787", address: "800 Corporate Way, Fremont, CA 94539", paymentTerms: "Net 30", totalOrders: 18, totalSpent: 45200, status: "inactive" },
-  { id: "5", code: "V-005", name: "Samsung Electronics America", email: "orders@samsung.com", phone: "+1 (800) 726-7864", address: "85 Challenger Road, Ridgefield Park, NJ 07660", paymentTerms: "Net 60", totalOrders: 56, totalSpent: 234000, status: "active" },
-  { id: "6", code: "V-006", name: "LG Electronics USA", email: "sales@lge.com", phone: "+1 (800) 243-0000", address: "1000 Sylvan Avenue, Englewood Cliffs, NJ 07632", paymentTerms: "Net 30", totalOrders: 41, totalSpent: 178900, status: "active" },
-  { id: "7", code: "V-007", name: "Acer America Corporation", email: "orders@acer.com", phone: "+1 (254) 298-4000", address: "333 West San Carlos Street, San Jose, CA 95110", paymentTerms: "Net 45", totalOrders: 63, totalSpent: 289400, status: "active" },
-  { id: "8", code: "V-008", name: "Microsoft Corporation", email: "info@microsoft.com", phone: "+1 (425) 882-8080", address: "One Microsoft Way, Redmond, WA 98052", paymentTerms: "Net 20", totalOrders: 37, totalSpent: 123700, status: "active" },
-  { id: "9", code: "V-009", name: "Apple Inc.", email: "sales@apple.com", phone: "+1 (800) 692-7753", address: "One Apple Park Way, Cupertino, CA 95014", paymentTerms: "Net 30", totalOrders: 29, totalSpent: 98600, status: "active" },
-  { id: "10", code: "V-010", name: "ViewSonic Corporation", email: "orders@viewsonic.com", phone: "+1 (800) 888-8583", address: "10 Pointe Drive, Suite 200, Brea, CA 92821", paymentTerms: "Net 60", totalOrders: 48, totalSpent: 201500, status: "active" },
-  { id: "11", code: "V-011", name: "BenQ America Corp", email: "contact@benq.com", phone: "+1 (949) 255-5550", address: "16 Tesla, Irvine, CA 92618", paymentTerms: "Net 30", totalOrders: 22, totalSpent: 76800, status: "inactive" },
-  { id: "12", code: "V-012", name: "AOC International", email: "sales@aoc.com", phone: "+1 (888) 662-9888", address: "3435 E La Palma Avenue, Anaheim, CA 92806", paymentTerms: "Net 45", totalOrders: 54, totalSpent: 245300, status: "active" },
-  { id: "13", code: "V-013", name: "APC by Schneider Electric", email: "orders@apc.com", phone: "+1 (800) 800-4272", address: "132 Fairgrounds Road, West Kingston, RI 02892", paymentTerms: "Net 15", totalOrders: 34, totalSpent: 112400, status: "active" },
-  { id: "14", code: "V-014", name: "Belkin International", email: "info@belkin.com", phone: "+1 (310) 898-1100", address: "12045 E Waterfront Drive, Playa Vista, CA 90094", paymentTerms: "Net 30", totalOrders: 44, totalSpent: 167900, status: "active" },
-  { id: "15", code: "V-015", name: "Logitech Inc.", email: "sales@logitech.com", phone: "+1 (510) 795-8500", address: "3930 North First Street, San Jose, CA 95134", paymentTerms: "Net 60", totalOrders: 58, totalSpent: 278600, status: "active" },
-];
-
-const mockPurchaseOrders: Record<string, PurchaseOrderHistory[]> = {
-  "1": [
-    {
-      id: "1",
-      orderNumber: "PO-2024-0045",
-      date: "2024-11-20",
-      products: [
-        { name: "Dell Latitude 5540 15.6\" Laptop", sku: "LTP-0001", quantity: 50, unitPrice: 1149.99 },
-        { name: "Laptop Power Adapter 65W", sku: "PWR-0045", quantity: 100, unitPrice: 18.75 },
-      ],
-      totalAmount: 59374.50,
-      status: "completed"
-    },
-    {
-      id: "2",
-      orderNumber: "PO-2024-0038",
-      date: "2024-11-10",
-      products: [
-        { name: "Dell Latitude 5540 15.6\" Laptop", sku: "LTP-0001", quantity: 75, unitPrice: 1149.99 },
-      ],
-      totalAmount: 86249.25,
-      status: "completed"
-    },
-    {
-      id: "3",
-      orderNumber: "PO-2024-0029",
-      date: "2024-11-01",
-      products: [
-        { name: "Dell Latitude 5540 15.6\" Laptop", sku: "LTP-0001", quantity: 30, unitPrice: 1149.99 },
-        { name: "USB-C Hub 7-in-1 Docking Station", sku: "ACC-0002", quantity: 30, unitPrice: 42.50 },
-      ],
-      totalAmount: 35774.70,
-      status: "completed"
-    },
-  ],
-  "2": [
-    {
-      id: "4",
-      orderNumber: "PO-2024-0042",
-      date: "2024-11-18",
-      products: [
-        { name: "HP ProBook 450 G10", sku: "LTP-0002", quantity: 40, unitPrice: 799.00 },
-      ],
-      totalAmount: 31960.00,
-      status: "pending"
-    },
-    {
-      id: "5",
-      orderNumber: "PO-2024-0035",
-      date: "2024-11-08",
-      products: [
-        { name: "HP ProBook 450 G10", sku: "LTP-0002", quantity: 25, unitPrice: 799.00 },
-        { name: "Laptop Power Adapter 65W", sku: "PWR-0045", quantity: 50, unitPrice: 18.75 },
-      ],
-      totalAmount: 20912.50,
-      status: "completed"
-    },
-  ],
-};
-
+const mockVendors = getVendorsData();
+const mockPurchaseOrders = getVendorPurchaseHistory();
+  
 export default function Vendors() {
   const { toast } = useToast();
   const [search, setSearch] = useState("");

@@ -50,24 +50,59 @@ interface LowStockItem {
   reorderLevel: number;
 }
 
+import { 
+  products, 
+  purchaseOrders, 
+  salesOrders, 
+  invoices,
+  getVendorById,
+  getCustomerById 
+} from "@/data/mockData";
+
 const mockRecentOrders: RecentOrder[] = [
-  { id: "1", orderNumber: "PO-2024-0045", type: "PO", party: "Dell Technologies", amount: 59375, status: "pending", date: "Today" },
-  { id: "2", orderNumber: "SO-2024-0123", type: "SO", party: "TechCorp Solutions", amount: 25750, status: "approved", date: "Today" },
-  { id: "3", orderNumber: "PO-2024-0044", type: "PO", party: "Samsung Electronics", amount: 31960, status: "completed", date: "Yesterday" },
-  { id: "4", orderNumber: "SO-2024-0122", type: "SO", party: "BestBuy Corporate", amount: 65200, status: "in_transit", date: "Yesterday" },
-  { id: "5", orderNumber: "SO-2024-0121", type: "SO", party: "Micro Center Distribution", amount: 18594, status: "delivered", date: "2 days ago" },
+  ...purchaseOrders.slice(0, 2).map(po => ({
+    id: po.id,
+    orderNumber: po.poNumber,
+    type: "PO" as const,
+    party: getVendorById(po.vendor)?.name || "Unknown",
+    amount: po.totalAmount,
+    status: po.status,
+    date: po.orderDate === new Date().toISOString().split('T')[0] ? "Today" : "Recently"
+  })),
+  ...salesOrders.slice(0, 3).map(so => ({
+    id: so.id,
+    orderNumber: so.soNumber,
+    type: "SO" as const,
+    party: getCustomerById(so.customer)?.name || "Unknown",
+    amount: so.totalAmount,
+    status: so.status,
+    date: so.orderDate === new Date().toISOString().split('T')[0] ? "Today" : "Recently"
+  }))
 ];
 
-const mockLowStockItems: LowStockItem[] = [
-  { id: "1", sku: "LTP-0001", name: "Dell Latitude 5540 15.6\" Laptop", currentStock: 12, reorderLevel: 50 },
-  { id: "2", sku: "MON-0023", name: "Samsung 27\" 4K Monitor", currentStock: 8, reorderLevel: 25 },
-  { id: "3", sku: "PWR-0045", name: "Laptop Power Adapter 65W", currentStock: 3, reorderLevel: 20 },
-];
+const mockLowStockItems: LowStockItem[] = products
+  .filter(p => p.stockQuantity <= p.reorderLevel)
+  .slice(0, 5)
+  .map(p => ({
+    id: p.id,
+    sku: p.sku,
+    name: p.name,
+    currentStock: p.stockQuantity,
+    reorderLevel: p.reorderLevel
+  }));
 
-const mockOverdueInvoices = [
-  { id: "1", invoiceNumber: "INV-2024-0089", party: "CompuWorld Retailers", amount: 18450, daysOverdue: 15 },
-  { id: "2", invoiceNumber: "INV-2024-0076", party: "Insight Enterprises", amount: 42800, daysOverdue: 8 },
-];
+const mockOverdueInvoices = invoices
+  .filter(inv => inv.status === 'pending' && inv.paidAmount === 0)
+  .slice(0, 3)
+  .map((inv, idx) => ({
+    id: inv.id,
+    invoiceNumber: inv.invoiceNumber,
+    party: inv.type === 'customer' 
+      ? getCustomerById(inv.customerId!)?.name || "Unknown"
+      : getVendorById(inv.vendorId!)?.name || "Unknown",
+    amount: inv.amount,
+    daysOverdue: idx * 5 + 3
+  }));
 
 export default function Dashboard() {
   const orderColumns: Column<RecentOrder>[] = [

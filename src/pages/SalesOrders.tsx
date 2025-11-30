@@ -29,6 +29,7 @@ import { BulkActions } from "@/components/BulkActions";
 import { ExportDialog } from "@/components/ExportDialog";
 import { ActivityLogDialog, generateMockActivityLogs, type ActivityLog } from "@/components/ActivityLog";
 import { AdvancedFilterDialog, applyAdvancedFilters, type FilterCondition, type SavedFilter } from "@/components/AdvancedFilter";
+import { getSalesOrdersData, getCustomerNames, getProductNames } from "@/data/dataTransformers";
 
 interface SalesOrder {
   id: string;
@@ -41,31 +42,11 @@ interface SalesOrder {
   items: number;
 }
 
-const mockSalesOrders: SalesOrder[] = [
-  { id: "1", soNumber: "SO-2024-0123", customer: "TechCorp Solutions", orderDate: "2024-01-15", deliveryDate: "2024-01-20", totalAmount: 25750, status: "approved", items: 3 },
-  { id: "2", soNumber: "SO-2024-0122", customer: "BestBuy Corporate", orderDate: "2024-01-14", deliveryDate: "2024-01-19", totalAmount: 65200, status: "in_transit", items: 5 },
-  { id: "3", soNumber: "SO-2024-0121", customer: "Micro Center Distribution", orderDate: "2024-01-13", deliveryDate: "2024-01-18", totalAmount: 18594, status: "delivered", items: 2 },
-  { id: "4", soNumber: "SO-2024-0120", customer: "Amazon Business Services", orderDate: "2024-01-12", deliveryDate: "2024-01-17", totalAmount: 134520, status: "completed", items: 8 },
-  { id: "5", soNumber: "SO-2024-0119", customer: "CDW Corporation", orderDate: "2024-01-11", deliveryDate: "2024-01-16", totalAmount: 89760, status: "completed", items: 12 },
-  { id: "6", soNumber: "SO-2024-0118", customer: "TechCorp Solutions", orderDate: "2024-01-10", deliveryDate: "2024-01-15", totalAmount: 43890, status: "pending", items: 4 },
-  { id: "7", soNumber: "SO-2024-0117", customer: "Newegg Business", orderDate: "2024-01-09", deliveryDate: "2024-01-14", totalAmount: 76540, status: "approved", items: 6 },
-  { id: "8", soNumber: "SO-2024-0116", customer: "Global Tech Distributors", orderDate: "2024-01-08", deliveryDate: "2024-01-13", totalAmount: 112340, status: "in_transit", items: 9 },
-  { id: "9", soNumber: "SO-2024-0115", customer: "Office Depot Enterprise", orderDate: "2024-01-07", deliveryDate: "2024-01-12", totalAmount: 11850, status: "delivered", items: 3 },
-  { id: "10", soNumber: "SO-2024-0114", customer: "Staples Advantage", orderDate: "2024-01-06", deliveryDate: "2024-01-11", totalAmount: 32680, status: "completed", items: 5 },
-  { id: "11", soNumber: "SO-2024-0113", customer: "B&H Photo Video", orderDate: "2024-01-05", deliveryDate: "2024-01-10", totalAmount: 98750, status: "completed", items: 11 },
-  { id: "12", soNumber: "SO-2024-0112", customer: "TigerDirect Commercial", orderDate: "2024-01-04", deliveryDate: "2024-01-09", totalAmount: 21450, status: "pending", items: 4 },
-  { id: "13", soNumber: "SO-2024-0111", customer: "Connection Enterprise", orderDate: "2024-01-03", deliveryDate: "2024-01-08", totalAmount: 54780, status: "approved", items: 7 },
-  { id: "14", soNumber: "SO-2024-0110", customer: "SHI International", orderDate: "2024-01-02", deliveryDate: "2024-01-07", totalAmount: 87920, status: "in_transit", items: 8 },
-  { id: "15", soNumber: "SO-2024-0109", customer: "Ingram Micro", orderDate: "2024-01-01", deliveryDate: "2024-01-06", totalAmount: 156430, status: "delivered", items: 13 },
-  { id: "16", soNumber: "SO-2024-0108", customer: "Costco Business Center", orderDate: "2023-12-31", deliveryDate: "2024-01-05", totalAmount: 73240, status: "completed", items: 10 },
-  { id: "17", soNumber: "SO-2024-0107", customer: "TechCorp Solutions", orderDate: "2023-12-30", deliveryDate: "2024-01-04", totalAmount: 38950, status: "completed", items: 5 },
-  { id: "18", soNumber: "SO-2024-0106", customer: "BestBuy Corporate", orderDate: "2023-12-29", deliveryDate: "2024-01-03", totalAmount: 64380, status: "pending", items: 6 },
-  { id: "19", soNumber: "SO-2024-0105", customer: "Amazon Business Services", orderDate: "2023-12-28", deliveryDate: "2024-01-02", totalAmount: 124680, status: "approved", items: 9 },
-  { id: "20", soNumber: "SO-2024-0104", customer: "CDW Corporation", orderDate: "2023-12-27", deliveryDate: "2024-01-01", totalAmount: 168900, status: "completed", items: 14 },
-];
+const mockSalesOrders: SalesOrder[] = getSalesOrdersData();
 
-const mockCustomers = ["TechCorp Solutions", "BestBuy Corporate", "Amazon Business Services", "CDW Corporation", "Newegg Business"];
-const mockProducts = ["Dell Latitude 5540 Laptop", "HP ProBook 450 G10", "Samsung 27\" 4K Monitor", "Laptop Power Adapter 65W", "USB-C Hub Docking Station"];
+// Customer and product lists now imported from centralized data
+const mockCustomers = getCustomerNames();
+const mockProducts = getProductNames();
 
 interface LineItem {
   id: string;
