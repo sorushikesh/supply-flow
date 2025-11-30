@@ -18,7 +18,8 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
-import { Truck, MapPin } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Truck, MapPin, Package, CheckCircle2 } from "lucide-react";
 
 // todo: remove mock functionality
 interface DispatchRecord {
@@ -115,46 +116,54 @@ export default function Dispatch() {
 
   return (
     <PageBackground>
-      <div className="p-6 lg:p-8 max-w-7xl mx-auto animate-fade-in">
-        <PageHeader
-          title="Dispatch / Delivery"
-          description="Manage shipments to customers"
-          actionLabel="Create Dispatch"
-          onAction={() => setModalOpen(true)}
-        />
+      <div className="p-4 lg:p-6 max-w-[1600px] mx-auto space-y-6">
+        {/* Page Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent">
+              Dispatch Management
+            </h1>
+            <p className="text-muted-foreground mt-1">Track outgoing shipments</p>
+          </div>
+          <Button onClick={() => setModalOpen(true)} className="gap-2">
+            <Package className="h-4 w-4" />
+            Create Dispatch
+          </Button>
+        </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-        <Card>
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <Card className="border-primary/20">
           <CardContent className="p-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              Total Dispatches
-            </p>
+            <div className="flex items-center justify-between mb-2">
+              <Package className="h-4 w-4 text-primary" />
+            </div>
+            <p className="text-xs text-muted-foreground font-medium">Total Dispatches</p>
             <p className="text-2xl font-bold mt-1">{mockDispatches.length}</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-amber-500/30 bg-gradient-to-br from-amber-500/10 to-transparent">
           <CardContent className="p-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              In Transit
-            </p>
-            <p className="text-2xl font-bold mt-1 text-amber-600">
-              {inTransit}
-            </p>
+            <div className="flex items-center justify-between mb-2">
+              <Truck className="h-4 w-4 text-amber-500" />
+            </div>
+            <p className="text-xs text-muted-foreground font-medium">In Transit</p>
+            <p className="text-2xl font-bold mt-1 text-amber-600">{inTransit}</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-green-500/30 bg-gradient-to-br from-green-500/10 to-transparent">
           <CardContent className="p-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              Delivered
-            </p>
-            <p className="text-2xl font-bold mt-1 text-green-600 dark:text-green-400">
-              {delivered}
-            </p>
+            <div className="flex items-center justify-between mb-2">
+              <CheckCircle2 className="h-4 w-4 text-green-500" />
+            </div>
+            <p className="text-xs text-muted-foreground font-medium">Delivered</p>
+            <p className="text-2xl font-bold mt-1 text-green-600">{delivered}</p>
           </CardContent>
         </Card>
       </div>
 
-      <Card>
+      {/* Main Content */}
+      <Card className="border-primary/20">
         <CardContent className="p-6">
           <SearchFilter
             searchPlaceholder="Search by dispatch, SO number or customer..."

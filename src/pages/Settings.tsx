@@ -309,11 +309,16 @@ export default function Settings() {
 
   return (
     <PageBackground>
-      <div className="p-6 lg:p-8 max-w-5xl mx-auto animate-fade-in">
-        <PageHeader
-        title="Settings"
-        description="Manage categories, locations, and product types"
-      />
+      <div className="p-4 lg:p-6 max-w-[1600px] mx-auto space-y-6">
+        {/* Page Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent">
+              Settings
+            </h1>
+            <p className="text-muted-foreground mt-1">Manage categories, locations, and product types</p>
+          </div>
+        </div>
 
       <Tabs defaultValue="categories" className="space-y-6">
         <TabsList>

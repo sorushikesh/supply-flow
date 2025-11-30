@@ -22,7 +22,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
-import { Trash2, Plus } from "lucide-react";
+import { Trash2, Plus, ShoppingCart, FileText, DollarSign } from "lucide-react";
 
 // todo: remove mock functionality
 interface PurchaseOrder {
@@ -169,46 +169,55 @@ export default function PurchaseOrders() {
 
   return (
     <PageBackground>
-      <div className="p-6 lg:p-8 max-w-7xl mx-auto animate-fade-in">
-        <PageHeader
-        title="Purchase Orders"
-        description="Manage orders to your vendors"
-        actionLabel="New Purchase Order"
-        onAction={() => setModalOpen(true)}
-      />
+      <div className="p-4 lg:p-6 max-w-[1600px] mx-auto space-y-6">
+        {/* Page Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent">
+              Purchase Orders
+            </h1>
+            <p className="text-muted-foreground mt-1">Manage orders to suppliers</p>
+          </div>
+          <Button onClick={() => setModalOpen(true)} className="gap-2">
+            <ShoppingCart className="h-4 w-4" />
+            New Purchase Order
+          </Button>
+        </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-        <Card>
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <Card className="border-primary/20">
           <CardContent className="p-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              Total POs
-            </p>
+            <div className="flex items-center justify-between mb-2">
+              <FileText className="h-4 w-4 text-primary" />
+            </div>
+            <p className="text-xs text-muted-foreground font-medium">Total POs</p>
             <p className="text-2xl font-bold mt-1">{mockPurchaseOrders.length}</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-amber-500/30 bg-gradient-to-br from-amber-500/10 to-transparent">
           <CardContent className="p-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              Pending Approval
-            </p>
-            <p className="text-2xl font-bold mt-1 text-amber-600">
-              {pendingOrders}
-            </p>
+            <div className="flex items-center justify-between mb-2">
+              <ShoppingCart className="h-4 w-4 text-amber-500" />
+            </div>
+            <p className="text-xs text-muted-foreground font-medium">Pending Approval</p>
+            <p className="text-2xl font-bold mt-1 text-amber-600">{pendingOrders}</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-blue-500/20">
           <CardContent className="p-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              Total Value
-            </p>
-            <p className="text-2xl font-bold mt-1 font-mono">
-              ${totalValue.toLocaleString()}
+            <div className="flex items-center justify-between mb-2">
+              <DollarSign className="h-4 w-4 text-blue-500" />
+            </div>
+            <p className="text-xs text-muted-foreground font-medium">Total Value</p>
+            <p className="text-2xl font-bold mt-1 font-mono">${totalValue.toLocaleString()}
             </p>
           </CardContent>
         </Card>
       </div>
 
-      <Card>
+      {/* Main Content */}
+      <Card className="border-primary/20">
         <CardContent className="p-6">
           <div className="space-y-4">
             <SearchFilter
@@ -275,6 +284,7 @@ export default function PurchaseOrders() {
           />
         </CardContent>
       </Card>
+      </div>
 
       <FormModal
         open={modalOpen}
@@ -398,10 +408,9 @@ export default function PurchaseOrders() {
                 </p>
               </div>
             </div>
-            </div>
           </div>
-        </FormModal>
-      </div>
+        </div>
+      </FormModal>
     </PageBackground>
   );
 }

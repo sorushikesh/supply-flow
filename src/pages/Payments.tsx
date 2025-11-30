@@ -23,7 +23,8 @@ import {
 } from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
-import { ArrowDownLeft, ArrowUpRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ArrowDownLeft, ArrowUpRight, CreditCard, DollarSign } from "lucide-react";
 
 // todo: remove mock functionality
 interface Payment {
@@ -157,46 +158,54 @@ export default function Payments() {
 
   return (
     <PageBackground>
-      <div className="p-6 lg:p-8 max-w-7xl mx-auto animate-fade-in">
-        <PageHeader
-          title="Payments"
-          description="Track payments received and made"
-          actionLabel="Record Payment"
-          onAction={() => setModalOpen(true)}
-        />
+      <div className="p-4 lg:p-6 max-w-[1600px] mx-auto space-y-6">
+        {/* Page Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent">
+              Payments
+            </h1>
+            <p className="text-muted-foreground mt-1">Track payment receipts and disbursements</p>
+          </div>
+          <Button onClick={() => setModalOpen(true)} className="gap-2">
+            <CreditCard className="h-4 w-4" />
+            Record Payment
+          </Button>
+        </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-        <Card>
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <Card className="border-primary/20">
           <CardContent className="p-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              Total Transactions
-            </p>
+            <div className="flex items-center justify-between mb-2">
+              <CreditCard className="h-4 w-4 text-primary" />
+            </div>
+            <p className="text-xs text-muted-foreground font-medium">Total Transactions</p>
             <p className="text-2xl font-bold mt-1">{mockPayments.length}</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-green-500/30 bg-gradient-to-br from-green-500/10 to-transparent">
           <CardContent className="p-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              Total Received
-            </p>
-            <p className="text-2xl font-bold mt-1 font-mono text-green-600">
-              ${totalReceived.toLocaleString()}
-            </p>
+            <div className="flex items-center justify-between mb-2">
+              <DollarSign className="h-4 w-4 text-green-500" />
+            </div>
+            <p className="text-xs text-muted-foreground font-medium">Total Received</p>
+            <p className="text-2xl font-bold mt-1 font-mono text-green-600">${totalReceived.toLocaleString()}</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-orange-500/30 bg-gradient-to-br from-orange-500/10 to-transparent">
           <CardContent className="p-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              Total Paid Out
-            </p>
-            <p className="text-2xl font-bold mt-1 font-mono text-orange-600">
-              ${totalMade.toLocaleString()}
-            </p>
+            <div className="flex items-center justify-between mb-2">
+              <DollarSign className="h-4 w-4 text-orange-500" />
+            </div>
+            <p className="text-xs text-muted-foreground font-medium">Total Paid Out</p>
+            <p className="text-2xl font-bold mt-1 font-mono text-orange-600">${totalMade.toLocaleString()}</p>
           </CardContent>
         </Card>
       </div>
 
-      <Card>
+      {/* Main Content */}
+      <Card className="border-primary/20">
         <CardContent className="p-6">
           <Tabs value={typeFilter} onValueChange={setTypeFilter} className="mb-4">
             <TabsList>

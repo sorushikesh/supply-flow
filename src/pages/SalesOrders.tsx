@@ -22,7 +22,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
-import { Trash2, Plus } from "lucide-react";
+import { Trash2, Plus, ShoppingCart, FileText, DollarSign } from "lucide-react";
 
 // todo: remove mock functionality
 interface SalesOrder {
@@ -169,15 +169,23 @@ export default function SalesOrders() {
 
   return (
     <PageBackground>
-      <div className="p-6 lg:p-8 max-w-7xl mx-auto animate-fade-in">
-        <PageHeader
-        title="Sales Orders"
-        description="Manage orders from your customers"
-        actionLabel="New Sales Order"
-        onAction={() => setModalOpen(true)}
-      />
+      <div className="p-4 lg:p-6 max-w-[1600px] mx-auto space-y-6">
+        {/* Page Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent">
+              Sales Orders
+            </h1>
+            <p className="text-muted-foreground mt-1">Manage orders from your customers</p>
+          </div>
+          <Button onClick={() => setModalOpen(true)} className="gap-2">
+            <ShoppingCart className="h-4 w-4" />
+            New Sales Order
+          </Button>
+        </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Card>
           <CardContent className="p-4">
             <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
@@ -208,7 +216,8 @@ export default function SalesOrders() {
         </Card>
       </div>
 
-      <Card>
+      {/* Main Content */}
+      <Card className="border-primary/20">
         <CardContent className="p-6">
           <div className="space-y-4">
             <SearchFilter
@@ -276,6 +285,7 @@ export default function SalesOrders() {
           />
         </CardContent>
       </Card>
+      </div>
 
       <FormModal
         open={modalOpen}
@@ -421,10 +431,9 @@ export default function SalesOrders() {
                 </p>
               </div>
             </div>
-            </div>
           </div>
-        </FormModal>
-      </div>
+        </div>
+      </FormModal>
     </PageBackground>
   );
 }

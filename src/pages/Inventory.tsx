@@ -312,6 +312,9 @@ export default function Inventory() {
   const lowStockCount = mockInventory.filter(
     (item) => item.currentStock <= item.reorderLevel
   ).length;
+  const inStockCount = mockInventory.filter(
+    (item) => item.currentStock > item.reorderLevel
+  ).length;
   const totalValue = mockInventory.reduce(
     (sum, item) => sum + item.currentStock * item.unitPrice,
     0
@@ -319,91 +322,110 @@ export default function Inventory() {
 
   return (
     <PageBackground>
-      <div className="p-6 lg:p-8 max-w-7xl mx-auto animate-fade-in">
-        <PageHeader
-          title="Inventory"
-          description="Manage your product stock levels and locations"
-          actionLabel="Add Product"
-          onAction={() => setModalOpen(true)}
-        />
+      <div className="p-4 lg:p-6 max-w-[1600px] mx-auto space-y-6">
+        {/* Page Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent">
+              Inventory Management
+            </h1>
+            <p className="text-muted-foreground mt-1">Track and manage your product inventory</p>
+          </div>
+          <Button onClick={() => setModalOpen(true)} className="gap-2">
+            <Package className="h-4 w-4" />
+            Add Product
+          </Button>
+        </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-        <Card>
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+        <Card className="border-primary/20">
           <CardContent className="p-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              Total Products
-            </p>
-            <p className="text-2xl font-bold mt-1 transition-all duration-300 hover:scale-105">{mockInventory.length}</p>
+            <div className="flex items-center justify-between mb-2">
+              <Package className="h-4 w-4 text-primary" />
+            </div>
+            <p className="text-xs text-muted-foreground font-medium">Total Products</p>
+            <p className="text-2xl font-bold mt-1">{mockInventory.length}</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-blue-500/20">
           <CardContent className="p-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              Low Stock Items
-            </p>
-            <p className="text-2xl font-bold mt-1 text-destructive animate-pulse transition-all duration-300 hover:scale-105">{lowStockCount}</p>
+            <div className="flex items-center justify-between mb-2">
+              <DollarSign className="h-4 w-4 text-blue-500" />
+            </div>
+            <p className="text-xs text-muted-foreground font-medium">Total Stock Value</p>
+            <p className="text-2xl font-bold mt-1 font-mono">${totalValue.toLocaleString()}</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-amber-500/30 bg-gradient-to-br from-amber-500/10 to-transparent">
           <CardContent className="p-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              Total Value
-            </p>
-            <p className="text-2xl font-bold mt-1 font-mono transition-all duration-300 hover:scale-105">
-              ${totalValue.toLocaleString(undefined, { minimumFractionDigits: 2 })}
-            </p>
+            <div className="flex items-center justify-between mb-2">
+              <TrendingUp className="h-4 w-4 text-amber-500" />
+            </div>
+            <p className="text-xs text-muted-foreground font-medium">Low Stock Items</p>
+            <p className="text-2xl font-bold mt-1 text-amber-600">{lowStockCount}</p>
+          </CardContent>
+        </Card>
+        <Card className="border-green-500/30 bg-gradient-to-br from-green-500/10 to-transparent">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between mb-2">
+              <Package className="h-4 w-4 text-green-500" />
+            </div>
+            <p className="text-xs text-muted-foreground font-medium">In Stock Items</p>
+            <p className="text-2xl font-bold mt-1 text-green-600">{inStockCount}</p>
           </CardContent>
         </Card>
       </div>
 
-      {selectedItems.length > 0 && (
-        <Card className="mb-4 border-primary">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <p className="text-sm font-medium">
-                {selectedItems.length} item{selectedItems.length > 1 ? 's' : ''} selected
-              </p>
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    toast({
-                      title: "Bulk Update",
-                      description: `Updated ${selectedItems.length} items`,
-                    });
-                    setSelectedItems([]);
-                  }}
-                >
-                  Update Stock
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    toast({
-                      title: "Export Started",
-                      description: `Exporting ${selectedItems.length} items to CSV`,
-                    });
-                  }}
-                >
-                  Export Selected
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setSelectedItems([])}
-                >
-                  Clear Selection
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      <Card>
+      {/* Main Content */}
+      <Card className="border-primary/20">
         <CardContent className="p-6">
+          {selectedItems.length > 0 && (
+            <Card className="mb-4 border-primary">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-medium">
+                    {selectedItems.length} item{selectedItems.length > 1 ? 's' : ''} selected
+                  </p>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        toast({
+                          title: "Bulk Update",
+                          description: `Updated ${selectedItems.length} items`,
+                        });
+                        setSelectedItems([]);
+                      }}
+                    >
+                      Update Stock
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        toast({
+                          title: "Export Started",
+                          description: `Exporting ${selectedItems.length} items to CSV`,
+                        });
+                      }}
+                    >
+                      Export Selected
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setSelectedItems([])}
+                    >
+                      Clear Selection
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           <SearchFilter
             searchPlaceholder="Search by SKU or product name..."
             searchValue={search}
@@ -435,6 +457,7 @@ export default function Inventory() {
           />
         </CardContent>
       </Card>
+      </div>
 
       <FormModal
         open={modalOpen}
@@ -810,7 +833,6 @@ export default function Inventory() {
           </Tabs>
         </DialogContent>
       </Dialog>
-      </div>
     </PageBackground>
   );
 }

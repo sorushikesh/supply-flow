@@ -23,7 +23,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
-import { FileText, Download, Send, Eye } from "lucide-react";
+import { FileText, Download, Send, Eye, DollarSign, AlertTriangle } from "lucide-react";
 
 // todo: remove mock functionality
 interface Invoice {
@@ -183,56 +183,63 @@ export default function Invoices() {
 
   return (
     <PageBackground>
-      <div className="p-6 lg:p-8 max-w-7xl mx-auto animate-fade-in">
-        <PageHeader
-          title="Invoices"
-          description="Manage vendor and customer invoices"
-          actionLabel="Create Invoice"
-          onAction={() => setModalOpen(true)}
-        />
+      <div className="p-4 lg:p-6 max-w-[1600px] mx-auto space-y-6">
+        {/* Page Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent">
+              Invoices
+            </h1>
+            <p className="text-muted-foreground mt-1">Manage invoices and billing</p>
+          </div>
+          <Button onClick={() => setModalOpen(true)} className="gap-2">
+            <FileText className="h-4 w-4" />
+            Create Invoice
+          </Button>
+        </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-6">
-        <Card>
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+        <Card className="border-primary/20">
           <CardContent className="p-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              Total Invoices
-            </p>
+            <div className="flex items-center justify-between mb-2">
+              <FileText className="h-4 w-4 text-primary" />
+            </div>
+            <p className="text-xs text-muted-foreground font-medium">Total Invoices</p>
             <p className="text-2xl font-bold mt-1">{mockInvoices.length}</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-green-500/30 bg-gradient-to-br from-green-500/10 to-transparent">
           <CardContent className="p-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              Receivable
-            </p>
-            <p className="text-2xl font-bold mt-1 font-mono text-green-600">
-              ${totalReceivable.toLocaleString()}
-            </p>
+            <div className="flex items-center justify-between mb-2">
+              <DollarSign className="h-4 w-4 text-green-500" />
+            </div>
+            <p className="text-xs text-muted-foreground font-medium">Receivable</p>
+            <p className="text-2xl font-bold mt-1 font-mono text-green-600">${totalReceivable.toLocaleString()}</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-orange-500/30 bg-gradient-to-br from-orange-500/10 to-transparent">
           <CardContent className="p-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              Payable
-            </p>
-            <p className="text-2xl font-bold mt-1 font-mono text-orange-600">
-              ${totalPayable.toLocaleString()}
-            </p>
+            <div className="flex items-center justify-between mb-2">
+              <DollarSign className="h-4 w-4 text-orange-500" />
+            </div>
+            <p className="text-xs text-muted-foreground font-medium">Payable</p>
+            <p className="text-2xl font-bold mt-1 font-mono text-orange-600">${totalPayable.toLocaleString()}</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-red-500/30 bg-gradient-to-br from-red-500/10 to-transparent">
           <CardContent className="p-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              Overdue
-            </p>
-            <p className="text-2xl font-bold mt-1 text-destructive">
-              {overdueCount}
-            </p>
+            <div className="flex items-center justify-between mb-2">
+              <AlertTriangle className="h-4 w-4 text-red-500" />
+            </div>
+            <p className="text-xs text-muted-foreground font-medium">Overdue</p>
+            <p className="text-2xl font-bold mt-1 text-red-600">{overdueCount}</p>
           </CardContent>
         </Card>
       </div>
 
-      <Card>
+      {/* Main Content */}
+      <Card className="border-primary/20">
         <CardContent className="p-6">
           <Tabs value={typeFilter} onValueChange={setTypeFilter} className="mb-4">
             <TabsList>

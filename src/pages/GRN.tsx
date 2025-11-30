@@ -23,6 +23,8 @@ import {
 } from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Package, CheckCircle2, AlertTriangle } from "lucide-react";
 
 // todo: remove mock functionality
 interface GRNRecord {
@@ -142,46 +144,54 @@ export default function GRN() {
 
   return (
     <PageBackground>
-      <div className="p-6 lg:p-8 max-w-7xl mx-auto animate-fade-in">
-        <PageHeader
-          title="Goods Received Notes"
-          description="Record and track goods received from vendors"
-          actionLabel="Record GRN"
-          onAction={() => setModalOpen(true)}
-        />
+      <div className="p-4 lg:p-6 max-w-[1600px] mx-auto space-y-6">
+        {/* Page Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent">
+              Goods Receipt Notes
+            </h1>
+            <p className="text-muted-foreground mt-1">Record incoming inventory</p>
+          </div>
+          <Button onClick={() => setModalOpen(true)} className="gap-2">
+            <Package className="h-4 w-4" />
+            Create GRN
+          </Button>
+        </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-        <Card>
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <Card className="border-primary/20">
           <CardContent className="p-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              Total GRNs
-            </p>
+            <div className="flex items-center justify-between mb-2">
+              <Package className="h-4 w-4 text-primary" />
+            </div>
+            <p className="text-xs text-muted-foreground font-medium">Total GRNs</p>
             <p className="text-2xl font-bold mt-1">{mockGRNs.length}</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-green-500/30 bg-gradient-to-br from-green-500/10 to-transparent">
           <CardContent className="p-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              Complete Receipts
-            </p>
-            <p className="text-2xl font-bold mt-1 text-green-600">
-              {completedGRNs}
-            </p>
+            <div className="flex items-center justify-between mb-2">
+              <CheckCircle2 className="h-4 w-4 text-green-500" />
+            </div>
+            <p className="text-xs text-muted-foreground font-medium">Complete Receipts</p>
+            <p className="text-2xl font-bold mt-1 text-green-600">{completedGRNs}</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-amber-500/30 bg-gradient-to-br from-amber-500/10 to-transparent">
           <CardContent className="p-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              Partial Receipts
-            </p>
-            <p className="text-2xl font-bold mt-1 text-amber-600">
-              {partialGRNs}
-            </p>
+            <div className="flex items-center justify-between mb-2">
+              <AlertTriangle className="h-4 w-4 text-amber-500" />
+            </div>
+            <p className="text-xs text-muted-foreground font-medium">Partial Receipts</p>
+            <p className="text-2xl font-bold mt-1 text-amber-600">{partialGRNs}</p>
           </CardContent>
         </Card>
       </div>
 
-      <Card>
+      {/* Main Content */}
+      <Card className="border-primary/20">
         <CardContent className="p-6">
           <SearchFilter
             searchPlaceholder="Search by GRN, PO number or vendor..."

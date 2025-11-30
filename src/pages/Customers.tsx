@@ -236,46 +236,54 @@ export default function Customers() {
 
   return (
     <PageBackground>
-      <div className="p-6 lg:p-8 max-w-7xl mx-auto animate-fade-in">
-        <PageHeader
-        title="Customers"
-        description="Manage your customer relationships"
-        actionLabel="Add Customer"
-        onAction={() => setModalOpen(true)}
-      />
+      <div className="p-4 lg:p-6 max-w-[1600px] mx-auto space-y-6">
+        {/* Page Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent">
+              Customers
+            </h1>
+            <p className="text-muted-foreground mt-1">Manage your customer relationships</p>
+          </div>
+          <Button onClick={() => setModalOpen(true)} className="gap-2">
+            <Users className="h-4 w-4" />
+            Add Customer
+          </Button>
+        </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-        <Card>
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <Card className="border-primary/20">
           <CardContent className="p-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              Total Customers
-            </p>
+            <div className="flex items-center justify-between mb-2">
+              <Users className="h-4 w-4 text-primary" />
+            </div>
+            <p className="text-xs text-muted-foreground font-medium">Total Customers</p>
             <p className="text-2xl font-bold mt-1">{mockCustomers.length}</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-green-500/30 bg-gradient-to-br from-green-500/10 to-transparent">
           <CardContent className="p-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              Active Customers
-            </p>
-            <p className="text-2xl font-bold mt-1 text-green-600 dark:text-green-400">
-              {activeCustomers}
-            </p>
+            <div className="flex items-center justify-between mb-2">
+              <Users className="h-4 w-4 text-green-500" />
+            </div>
+            <p className="text-xs text-muted-foreground font-medium">Active Customers</p>
+            <p className="text-2xl font-bold mt-1 text-green-600">{activeCustomers}</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-blue-500/20">
           <CardContent className="p-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              Total Revenue
-            </p>
-            <p className="text-2xl font-bold mt-1 font-mono">
-              ${totalRevenue.toLocaleString()}
-            </p>
+            <div className="flex items-center justify-between mb-2">
+              <DollarSign className="h-4 w-4 text-blue-500" />
+            </div>
+            <p className="text-xs text-muted-foreground font-medium">Total Revenue</p>
+            <p className="text-2xl font-bold mt-1 font-mono">${totalRevenue.toLocaleString()}</p>
           </CardContent>
         </Card>
       </div>
 
-      <Card>
+      {/* Main Content */}
+      <Card className="border-primary/20">
         <CardContent className="p-6">
           <SearchFilter
             searchPlaceholder="Search customers..."
@@ -303,6 +311,7 @@ export default function Customers() {
           />
         </CardContent>
       </Card>
+      </div>
 
       <FormModal
         open={modalOpen}
@@ -602,7 +611,6 @@ export default function Customers() {
           </Tabs>
         </DialogContent>
       </Dialog>
-      </div>
     </PageBackground>
   );
 }
