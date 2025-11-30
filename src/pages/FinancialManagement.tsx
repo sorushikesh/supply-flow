@@ -525,25 +525,13 @@ export default function FinancialManagement() {
     {
       key: "actions",
       header: "Actions",
-      render: (invoice) => (
-        <div className="flex items-center gap-1">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  setSelectedInvoice(invoice);
-                  setDetailsOpen(true);
-                }}
-              >
-                <Eye className="h-4 w-4" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>View Details</TooltipContent>
-          </Tooltip>
-          
-          {invoice.approvalStatus === "pending_approval" && (
+      render: (invoice) => {
+        const canApprove = invoice.approvalStatus === "pending_approval";
+        const canRecordPayment = invoice.approvalStatus === "approved" && invoice.paidAmount < invoice.amount;
+        const canSend = invoice.approvalStatus === "approved";
+        
+        return (
+          <div className="flex items-center gap-1">
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
@@ -551,35 +539,89 @@ export default function FinancialManagement() {
                   size="sm"
                   onClick={() => {
                     setSelectedInvoice(invoice);
-                    setApprovalModalOpen(true);
+                    setDetailsOpen(true);
+                  }}
+                >
+                  <Eye className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>View Details</TooltipContent>
+            </Tooltip>
+            
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  disabled={!canApprove}
+                  className={!canApprove ? "opacity-30 cursor-not-allowed" : ""}
+                  onClick={() => {
+                    if (canApprove) {
+                      setSelectedInvoice(invoice);
+                      setApprovalModalOpen(true);
+                    }
                   }}
                 >
                   <CheckCircle className="h-4 w-4 text-green-600" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Review Approval</TooltipContent>
+              <TooltipContent>
+                {canApprove ? "Review Approval" : "Already Approved/Rejected"}
+              </TooltipContent>
             </Tooltip>
-          )}
-          
-          {invoice.approvalStatus === "approved" && invoice.paidAmount < invoice.amount && (
+            
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
                   variant="ghost"
                   size="sm"
+                  disabled={!canRecordPayment}
+                  className={!canRecordPayment ? "opacity-30 cursor-not-allowed" : ""}
                   onClick={() => {
-                    setSelectedInvoice(invoice);
-                    setPaymentModalOpen(true);
+                    if (canRecordPayment) {
+                      setSelectedInvoice(invoice);
+                      setPaymentModalOpen(true);
+                    }
                   }}
                 >
                   <CreditCard className="h-4 w-4 text-blue-600" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Record Payment</TooltipContent>
+              <TooltipContent>
+                {!canRecordPayment 
+                  ? invoice.approvalStatus !== "approved"
+                    ? "Requires Approval First"
+                    : "Fully Paid"
+                  : "Record Payment"}
+              </TooltipContent>
             </Tooltip>
-          )}
-        </div>
-      ),
+            
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  disabled={!canSend}
+                  className={!canSend ? "opacity-30 cursor-not-allowed" : ""}
+                  onClick={() => {
+                    if (canSend) {
+                      toast({
+                        title: "Invoice Sent",
+                        description: `${invoice.invoiceNumber} has been sent to ${invoice.party}`,
+                      });
+                    }
+                  }}
+                >
+                  <Send className="h-4 w-4 text-purple-600" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                {canSend ? "Send Invoice" : "Requires Approval First"}
+              </TooltipContent>
+            </Tooltip>
+          </div>
+        );
+      },
     },
   ];
 
