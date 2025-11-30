@@ -16,6 +16,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 
@@ -63,7 +68,26 @@ export default function GRN() {
   });
 
   const columns: Column<GRNRecord>[] = [
-    { key: "grnNumber", header: "GRN Number", className: "font-mono text-sm font-medium" },
+    { 
+      key: "grnNumber", 
+      header: "GRN Number", 
+      className: "font-mono text-sm font-medium",
+      render: (grn) => (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <span className="cursor-help">{grn.grnNumber}</span>
+          </TooltipTrigger>
+          <TooltipContent side="top">
+            <div className="space-y-1">
+              <p className="text-xs font-semibold">{grn.grnNumber}</p>
+              <p className="text-xs text-muted-foreground">PO: {grn.poNumber}</p>
+              <p className="text-xs text-muted-foreground">Vendor: {grn.vendor}</p>
+              <p className="text-xs text-muted-foreground">Received: {grn.receivedDate}</p>
+            </div>
+          </TooltipContent>
+        </Tooltip>
+      ),
+    },
     { key: "poNumber", header: "PO Number", className: "font-mono text-sm" },
     { key: "vendor", header: "Vendor" },
     { key: "receivedDate", header: "Received Date" },

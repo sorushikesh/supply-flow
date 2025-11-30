@@ -17,6 +17,11 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
 import { Building2, Mail, Phone, Package, ShoppingCart, Calendar, DollarSign, TrendingDown } from "lucide-react";
 
@@ -141,20 +146,33 @@ export default function Vendors() {
       key: "name",
       header: "Vendor Name",
       render: (vendor) => (
-        <button
-          onClick={() => {
-            setSelectedVendor(vendor);
-            setDetailsOpen(true);
-          }}
-          className="flex items-center gap-2 hover:text-primary transition-colors text-left"
-        >
-          <div className="p-1.5 rounded bg-muted">
-            <Building2 className="h-4 w-4 text-muted-foreground" />
-          </div>
-          <span className="font-medium underline decoration-transparent hover:decoration-current transition-all">
-            {vendor.name}
-          </span>
-        </button>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => {
+                setSelectedVendor(vendor);
+                setDetailsOpen(true);
+              }}
+              className="flex items-center gap-2 hover:text-primary transition-colors text-left"
+            >
+              <div className="p-1.5 rounded bg-muted">
+                <Building2 className="h-4 w-4 text-muted-foreground" />
+              </div>
+              <span className="font-medium underline decoration-transparent hover:decoration-current transition-all">
+                {vendor.name}
+              </span>
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="top" className="max-w-xs">
+            <div className="space-y-1">
+              <p className="font-semibold">{vendor.name}</p>
+              <p className="text-xs text-muted-foreground">Code: {vendor.code}</p>
+              <p className="text-xs text-muted-foreground">Status: {vendor.status}</p>
+              <p className="text-xs text-muted-foreground">Payment Terms: {vendor.paymentTerms}</p>
+              <p className="text-xs">Click to view full details</p>
+            </div>
+          </TooltipContent>
+        </Tooltip>
       ),
     },
     {

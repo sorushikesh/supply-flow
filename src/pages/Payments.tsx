@@ -16,6 +16,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { ArrowDownLeft, ArrowUpRight } from "lucide-react";
@@ -70,7 +75,26 @@ export default function Payments() {
   });
 
   const columns: Column<Payment>[] = [
-    { key: "paymentNumber", header: "Payment #", className: "font-mono text-sm font-medium" },
+    { 
+      key: "paymentNumber", 
+      header: "Payment #", 
+      className: "font-mono text-sm font-medium",
+      render: (payment) => (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <span className="cursor-help">{payment.paymentNumber}</span>
+          </TooltipTrigger>
+          <TooltipContent side="top">
+            <div className="space-y-1">
+              <p className="text-xs font-semibold">{payment.paymentNumber}</p>
+              <p className="text-xs text-muted-foreground">Invoice: {payment.invoiceNumber}</p>
+              <p className="text-xs text-muted-foreground">Date: {payment.paymentDate}</p>
+              <p className="text-xs text-muted-foreground">Method: {payment.method}</p>
+            </div>
+          </TooltipContent>
+        </Tooltip>
+      ),
+    },
     {
       key: "type",
       header: "Type",

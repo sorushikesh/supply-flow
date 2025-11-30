@@ -16,6 +16,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
 import { Trash2, Plus } from "lucide-react";
 
@@ -54,6 +59,8 @@ export default function SalesOrders() {
   const { toast } = useToast();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [customer, setCustomer] = useState("");
   const [deliveryDate, setDeliveryDate] = useState("");
@@ -66,11 +73,38 @@ export default function SalesOrders() {
       so.soNumber.toLowerCase().includes(search.toLowerCase()) ||
       so.customer.toLowerCase().includes(search.toLowerCase());
     const matchesStatus = statusFilter === "All" || so.status === statusFilter.toLowerCase().replace(" ", "_");
-    return matchesSearch && matchesStatus;
+    
+    let matchesDateRange = true;
+    if (dateFrom) {
+      matchesDateRange = matchesDateRange && new Date(so.orderDate) >= new Date(dateFrom);
+    }
+    if (dateTo) {
+      matchesDateRange = matchesDateRange && new Date(so.orderDate) <= new Date(dateTo);
+    }
+    
+    return matchesSearch && matchesStatus && matchesDateRange;
   });
 
   const columns: Column<SalesOrder>[] = [
-    { key: "soNumber", header: "SO Number", className: "font-mono text-sm font-medium" },
+    { 
+      key: "soNumber", 
+      header: "SO Number", 
+      className: "font-mono text-sm font-medium",
+      render: (so) => (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <span className="cursor-help">{so.soNumber}</span>
+          </TooltipTrigger>
+          <TooltipContent side="top">
+            <div className="space-y-1">
+              <p className="text-xs font-semibold">{so.soNumber}</p>
+              <p className="text-xs text-muted-foreground">Order Date: {so.orderDate}</p>
+              <p className="text-xs text-muted-foreground">Items: {so.items}</p>
+            </div>
+          </TooltipContent>
+        </Tooltip>
+      ),
+    },
     { key: "customer", header: "Customer" },
     { key: "orderDate", header: "Order Date" },
     { key: "deliveryDate", header: "Delivery Date" },
@@ -176,27 +210,64 @@ export default function SalesOrders() {
 
       <Card>
         <CardContent className="p-6">
-          <SearchFilter
-            searchPlaceholder="Search by SO number or customer..."
-            searchValue={search}
-            onSearchChange={setSearch}
-            filters={[
-              {
-                key: "status",
-                label: "Status",
-                options: [
-                  { value: "All", label: "All Status" },
-                  { value: "Pending", label: "Pending" },
-                  { value: "Approved", label: "Approved" },
-                  { value: "In Transit", label: "In Transit" },
-                  { value: "Delivered", label: "Delivered" },
-                  { value: "Completed", label: "Completed" },
-                ],
-                value: statusFilter,
-                onChange: setStatusFilter,
-              },
-            ]}
-          />
+          <div className="space-y-4">
+            <SearchFilter
+              searchPlaceholder="Search by SO number or customer..."
+              searchValue={search}
+              onSearchChange={setSearch}
+              filters={[
+                {
+                  key: "status",
+                  label: "Status",
+                  options: [
+                    { value: "All", label: "All Status" },
+                    { value: "Pending", label: "Pending" },
+                    { value: "Approved", label: "Approved" },
+                    { value: "In Transit", label: "In Transit" },
+                    { value: "Delivered", label: "Delivered" },
+                    { value: "Completed", label: "Completed" },
+                  ],
+                  value: statusFilter,
+                  onChange: setStatusFilter,
+                },
+              ]}
+            />
+            
+            <div className="flex gap-4 items-end">
+              <div className="flex-1">
+                <Label htmlFor="dateFrom" className="text-sm mb-2 block">From Date</Label>
+                <Input
+                  id="dateFrom"
+                  type="date"
+                  value={dateFrom}
+                  onChange={(e) => setDateFrom(e.target.value)}
+                  className="max-w-xs"
+                />
+              </div>
+              <div className="flex-1">
+                <Label htmlFor="dateTo" className="text-sm mb-2 block">To Date</Label>
+                <Input
+                  id="dateTo"
+                  type="date"
+                  value={dateTo}
+                  onChange={(e) => setDateTo(e.target.value)}
+                  className="max-w-xs"
+                />
+              </div>
+              {(dateFrom || dateTo) && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setDateFrom("");
+                    setDateTo("");
+                  }}
+                >
+                  Clear Dates
+                </Button>
+              )}
+            </div>
+          </div>
 
           <DataTable
             columns={columns}

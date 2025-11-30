@@ -109,6 +109,7 @@ export default function Inventory() {
   const [editingItem, setEditingItem] = useState<InventoryItem | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<InventoryItem | null>(null);
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [formData, setFormData] = useState({
     sku: "",
     name: "",
@@ -134,15 +135,28 @@ export default function Inventory() {
       key: "name", 
       header: "Product Name",
       render: (item) => (
-        <button
-          onClick={() => {
-            setSelectedItem(item);
-            setDetailsOpen(true);
-          }}
-          className="font-medium hover:text-primary transition-colors text-left underline decoration-transparent hover:decoration-current"
-        >
-          {item.name}
-        </button>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => {
+                setSelectedItem(item);
+                setDetailsOpen(true);
+              }}
+              className="font-medium hover:text-primary transition-colors text-left underline decoration-transparent hover:decoration-current"
+            >
+              {item.name}
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="top" className="max-w-xs">
+            <div className="space-y-1">
+              <p className="font-semibold">{item.name}</p>
+              <p className="text-xs text-muted-foreground">SKU: {item.sku}</p>
+              <p className="text-xs text-muted-foreground">Category: {item.category}</p>
+              <p className="text-xs text-muted-foreground">Location: {item.location}</p>
+              <p className="text-xs">Click to view full details</p>
+            </div>
+          </TooltipContent>
+        </Tooltip>
       ),
     },
     {
@@ -341,6 +355,52 @@ export default function Inventory() {
           </CardContent>
         </Card>
       </div>
+
+      {selectedItems.length > 0 && (
+        <Card className="mb-4 border-primary">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <p className="text-sm font-medium">
+                {selectedItems.length} item{selectedItems.length > 1 ? 's' : ''} selected
+              </p>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    toast({
+                      title: "Bulk Update",
+                      description: `Updated ${selectedItems.length} items`,
+                    });
+                    setSelectedItems([]);
+                  }}
+                >
+                  Update Stock
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    toast({
+                      title: "Export Started",
+                      description: `Exporting ${selectedItems.length} items to CSV`,
+                    });
+                  }}
+                >
+                  Export Selected
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setSelectedItems([])}
+                >
+                  Clear Selection
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       <Card>
         <CardContent className="p-6">

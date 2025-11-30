@@ -18,6 +18,11 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
 import { Users, Mail, Phone, Package, ShoppingCart, Calendar, DollarSign, TrendingUp } from "lucide-react";
 
@@ -144,20 +149,33 @@ export default function Customers() {
       key: "name",
       header: "Customer Name",
       render: (customer) => (
-        <button
-          onClick={() => {
-            setSelectedCustomer(customer);
-            setDetailsOpen(true);
-          }}
-          className="flex items-center gap-2 hover:text-primary transition-colors text-left"
-        >
-          <div className="p-1.5 rounded bg-muted">
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </div>
-          <span className="font-medium underline decoration-transparent hover:decoration-current transition-all">
-            {customer.name}
-          </span>
-        </button>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => {
+                setSelectedCustomer(customer);
+                setDetailsOpen(true);
+              }}
+              className="flex items-center gap-2 hover:text-primary transition-colors text-left"
+            >
+              <div className="p-1.5 rounded bg-muted">
+                <Users className="h-4 w-4 text-muted-foreground" />
+              </div>
+              <span className="font-medium underline decoration-transparent hover:decoration-current transition-all">
+                {customer.name}
+              </span>
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="top" className="max-w-xs">
+            <div className="space-y-1">
+              <p className="font-semibold">{customer.name}</p>
+              <p className="text-xs text-muted-foreground">Code: {customer.code}</p>
+              <p className="text-xs text-muted-foreground">Status: {customer.status}</p>
+              <p className="text-xs text-muted-foreground">Total Orders: {customer.totalOrders}</p>
+              <p className="text-xs">Click to view full details</p>
+            </div>
+          </TooltipContent>
+        </Tooltip>
       ),
     },
     {

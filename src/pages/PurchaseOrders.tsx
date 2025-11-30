@@ -16,6 +16,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
 import { Trash2, Plus } from "lucide-react";
 
@@ -54,6 +59,8 @@ export default function PurchaseOrders() {
   const { toast } = useToast();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [vendor, setVendor] = useState("");
   const [expectedDate, setExpectedDate] = useState("");
@@ -66,11 +73,38 @@ export default function PurchaseOrders() {
       po.poNumber.toLowerCase().includes(search.toLowerCase()) ||
       po.vendor.toLowerCase().includes(search.toLowerCase());
     const matchesStatus = statusFilter === "All" || po.status === statusFilter.toLowerCase();
-    return matchesSearch && matchesStatus;
+    
+    let matchesDateRange = true;
+    if (dateFrom) {
+      matchesDateRange = matchesDateRange && new Date(po.orderDate) >= new Date(dateFrom);
+    }
+    if (dateTo) {
+      matchesDateRange = matchesDateRange && new Date(po.orderDate) <= new Date(dateTo);
+    }
+    
+    return matchesSearch && matchesStatus && matchesDateRange;
   });
 
   const columns: Column<PurchaseOrder>[] = [
-    { key: "poNumber", header: "PO Number", className: "font-mono text-sm font-medium" },
+    { 
+      key: "poNumber", 
+      header: "PO Number", 
+      className: "font-mono text-sm font-medium",
+      render: (po) => (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <span className="cursor-help">{po.poNumber}</span>
+          </TooltipTrigger>
+          <TooltipContent side="top">
+            <div className="space-y-1">
+              <p className="text-xs font-semibold">{po.poNumber}</p>
+              <p className="text-xs text-muted-foreground">Order Date: {po.orderDate}</p>
+              <p className="text-xs text-muted-foreground">Items: {po.items}</p>
+            </div>
+          </TooltipContent>
+        </Tooltip>
+      ),
+    },
     { key: "vendor", header: "Vendor" },
     { key: "orderDate", header: "Order Date" },
     { key: "expectedDate", header: "Expected Date" },
@@ -176,26 +210,63 @@ export default function PurchaseOrders() {
 
       <Card>
         <CardContent className="p-6">
-          <SearchFilter
-            searchPlaceholder="Search by PO number or vendor..."
-            searchValue={search}
-            onSearchChange={setSearch}
-            filters={[
-              {
-                key: "status",
-                label: "Status",
-                options: [
-                  { value: "All", label: "All Status" },
-                  { value: "Pending", label: "Pending" },
-                  { value: "Approved", label: "Approved" },
-                  { value: "Completed", label: "Completed" },
-                  { value: "Cancelled", label: "Cancelled" },
-                ],
-                value: statusFilter,
-                onChange: setStatusFilter,
-              },
-            ]}
-          />
+          <div className="space-y-4">
+            <SearchFilter
+              searchPlaceholder="Search by PO number or vendor..."
+              searchValue={search}
+              onSearchChange={setSearch}
+              filters={[
+                {
+                  key: "status",
+                  label: "Status",
+                  options: [
+                    { value: "All", label: "All Status" },
+                    { value: "Pending", label: "Pending" },
+                    { value: "Approved", label: "Approved" },
+                    { value: "Completed", label: "Completed" },
+                    { value: "Cancelled", label: "Cancelled" },
+                  ],
+                  value: statusFilter,
+                  onChange: setStatusFilter,
+                },
+              ]}
+            />
+            
+            <div className="flex gap-4 items-end">
+              <div className="flex-1">
+                <Label htmlFor="dateFrom" className="text-sm mb-2 block">From Date</Label>
+                <Input
+                  id="dateFrom"
+                  type="date"
+                  value={dateFrom}
+                  onChange={(e) => setDateFrom(e.target.value)}
+                  className="max-w-xs"
+                />
+              </div>
+              <div className="flex-1">
+                <Label htmlFor="dateTo" className="text-sm mb-2 block">To Date</Label>
+                <Input
+                  id="dateTo"
+                  type="date"
+                  value={dateTo}
+                  onChange={(e) => setDateTo(e.target.value)}
+                  className="max-w-xs"
+                />
+              </div>
+              {(dateFrom || dateTo) && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setDateFrom("");
+                    setDateTo("");
+                  }}
+                >
+                  Clear Dates
+                </Button>
+              )}
+            </div>
+          </div>
 
           <DataTable
             columns={columns}

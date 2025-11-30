@@ -17,6 +17,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
 import { FileText, Download, Send, Eye } from "lucide-react";
 
@@ -68,7 +73,26 @@ export default function Invoices() {
   });
 
   const columns: Column<Invoice>[] = [
-    { key: "invoiceNumber", header: "Invoice #", className: "font-mono text-sm font-medium" },
+    { 
+      key: "invoiceNumber", 
+      header: "Invoice #", 
+      className: "font-mono text-sm font-medium",
+      render: (invoice) => (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <span className="cursor-help">{invoice.invoiceNumber}</span>
+          </TooltipTrigger>
+          <TooltipContent side="top">
+            <div className="space-y-1">
+              <p className="text-xs font-semibold">{invoice.invoiceNumber}</p>
+              <p className="text-xs text-muted-foreground">Party: {invoice.party}</p>
+              <p className="text-xs text-muted-foreground">Due Date: {invoice.dueDate}</p>
+              <p className="text-xs text-muted-foreground">Amount: ${invoice.amount.toLocaleString()}</p>
+            </div>
+          </TooltipContent>
+        </Tooltip>
+      ),
+    },
     {
       key: "type",
       header: "Type",
