@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Bell, Settings, LogOut, Zap, ShoppingCart, FileText, Package, CreditCard, Keyboard } from "lucide-react";
+import { Bell, Settings, LogOut, Zap, ShoppingCart, FileText, Package, CreditCard, Keyboard, CheckCircle2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useLocation } from "wouter";
 import { CompanySettingsDialog } from "@/components/CompanySettingsDialog";
@@ -21,9 +21,10 @@ import {
 } from "@/components/ui/tooltip";
 
 const mockNotifications = [
-  { id: 1, title: "Low Stock Alert", description: "Widget A is below reorder level", time: "2 min ago" },
-  { id: 2, title: "PO Approved", description: "PO-2024-0042 has been approved", time: "15 min ago" },
-  { id: 3, title: "Invoice Overdue", description: "INV-2024-0089 is overdue by 5 days", time: "1 hour ago" },
+  { id: 1, title: "Low Stock Alert", description: "Widget A is below reorder level", time: "2 min ago", type: "alert" },
+  { id: 2, title: "PO Approved", description: "PO-2024-0042 has been approved", time: "15 min ago", type: "approval" },
+  { id: 3, title: "Invoice Overdue", description: "INV-2024-0089 is overdue by 5 days", time: "1 hour ago", type: "alert" },
+  { id: 4, title: "Approval Required", description: "Purchase Order PO-2024-0045 awaits your approval", time: "5 min ago", type: "approval" },
 ];
 
 interface TopHeaderProps {
@@ -107,7 +108,7 @@ export function TopHeader({ breadcrumb }: TopHeaderProps) {
               </div>
             </DropdownMenuItem>
             <DropdownMenuItem 
-              onClick={() => setLocation("/invoices")}
+              onClick={() => setLocation("/financial")}
               className="flex items-center gap-3 p-3 cursor-pointer"
               data-testid="quick-action-invoice"
             >
@@ -115,8 +116,8 @@ export function TopHeader({ breadcrumb }: TopHeaderProps) {
                 <CreditCard className="h-4 w-4 text-orange-600 dark:text-orange-400" />
               </div>
               <div className="flex-1">
-                <p className="text-sm font-medium">Invoice</p>
-                <p className="text-xs text-muted-foreground">Generate invoice</p>
+                <p className="text-sm font-medium">Financial</p>
+                <p className="text-xs text-muted-foreground">Invoices & Payments</p>
               </div>
             </DropdownMenuItem>
           </DropdownMenuContent>
@@ -125,7 +126,33 @@ export function TopHeader({ breadcrumb }: TopHeaderProps) {
         {/* Divider */}
         <div className="h-6 w-px bg-border hidden lg:block" />
 
-        {/* Keyboard Shortcuts Help */}
+        {/* Approvals - Quick Access */}
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="relative gap-1.5 h-8 px-2.5 hover:bg-accent transition-all"
+              onClick={() => setLocation("/approvals")}
+              aria-label="Pending approvals"
+            >
+              <CheckCircle2 className="h-4 w-4" />
+              <span className="hidden lg:inline text-xs">Approvals</span>
+              <Badge
+                variant="destructive"
+                className="h-4 min-w-[16px] px-1 flex items-center justify-center text-[9px] font-bold"
+                aria-label="5 pending approvals"
+              >
+                5
+              </Badge>
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom">
+            <p className="text-xs">5 items pending approval</p>
+          </TooltipContent>
+        </Tooltip>
+
+        {/* Keyboard Shortcuts */}
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
@@ -169,9 +196,9 @@ export function TopHeader({ breadcrumb }: TopHeaderProps) {
               <Badge
                 variant="destructive"
                 className="absolute -top-0.5 -right-0.5 h-4 w-4 p-0 flex items-center justify-center text-[9px] font-bold"
-                aria-label="3 unread notifications"
+                aria-label="4 unread notifications"
               >
-                3
+                4
               </Badge>
             </Button>
           </DropdownMenuTrigger>
@@ -184,8 +211,20 @@ export function TopHeader({ breadcrumb }: TopHeaderProps) {
                 key={notif.id}
                 className="flex flex-col items-start gap-1 p-3 cursor-pointer"
                 data-testid={`notification-${notif.id}`}
+                onClick={() => {
+                  if (notif.type === "approval") {
+                    setLocation("/approvals");
+                  }
+                }}
               >
-                <p className="text-sm font-medium">{notif.title}</p>
+                <div className="flex items-center gap-2 w-full">
+                  <p className="text-sm font-medium flex-1">{notif.title}</p>
+                  {notif.type === "approval" && (
+                    <Badge variant="secondary" className="text-xs">
+                      Approval
+                    </Badge>
+                  )}
+                </div>
                 <p className="text-xs text-muted-foreground">{notif.description}</p>
                 <p className="text-xs text-muted-foreground">{notif.time}</p>
               </DropdownMenuItem>

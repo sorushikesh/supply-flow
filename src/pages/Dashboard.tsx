@@ -196,7 +196,7 @@ export default function Dashboard() {
                 </div>
               </Link>
 
-              <Link href="/invoices" className="group relative overflow-hidden rounded-xl border border-purple-500/30 bg-background/50 backdrop-blur-xl p-4 hover:shadow-lg hover:shadow-purple-500/20 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2" aria-label="View open invoices">
+              <Link href="/financial" className="group relative overflow-hidden rounded-xl border border-purple-500/30 bg-background/50 backdrop-blur-xl p-4 hover:shadow-lg hover:shadow-purple-500/20 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2" aria-label="View open invoices">
                 <div className="flex items-start justify-between mb-3">
                   <div className="p-2.5 rounded-lg bg-purple-500/10">
                     <FileText className="h-5 w-5 text-purple-500" aria-hidden="true" />
@@ -338,7 +338,7 @@ export default function Dashboard() {
                       <p className="text-xs text-muted-foreground mt-0.5">Requires immediate attention</p>
                     </div>
                   </div>
-                  <Link href="/invoices">
+                  <Link href="/financial">
                     <Button variant="ghost" size="sm" className="gap-2">
                       <span className="text-xs">View All</span>
                       <ArrowRight className="h-3 w-3" />

@@ -17,9 +17,9 @@ import PurchaseOrders from "@/pages/PurchaseOrders";
 import SalesOrders from "@/pages/SalesOrders";
 import GRN from "@/pages/GRN";
 import Dispatch from "@/pages/Dispatch";
-import Invoices from "@/pages/Invoices";
-import Payments from "@/pages/Payments";
+import FinancialManagement from "./pages/FinancialManagement";
 import Analytics from "@/pages/Analytics";
+import Approvals from "@/pages/Approvals";
 import ControlPanel from "@/pages/ControlPanel";
 import CompanyOverview from "@/pages/CompanyOverview";
 import UserProfile from "@/pages/UserProfile";
@@ -33,9 +33,9 @@ const routes = [
   { path: "/sales-orders", component: SalesOrders, breadcrumb: "Sales Orders" },
   { path: "/grn", component: GRN, breadcrumb: "GRN" },
   { path: "/dispatch", component: Dispatch, breadcrumb: "Dispatch" },
-  { path: "/invoices", component: Invoices, breadcrumb: "Invoices" },
-  { path: "/payments", component: Payments, breadcrumb: "Payments" },
+  { path: "/financial", component: FinancialManagement, breadcrumb: "Financial Management" },
   { path: "/analytics", component: Analytics, breadcrumb: "Analytics" },
+  { path: "/approvals", component: Approvals, breadcrumb: "Approvals" },
   { path: "/control-panel", component: ControlPanel, breadcrumb: "Control Panel" },
   { path: "/company-overview", component: CompanyOverview, breadcrumb: "Company Overview" },
   { path: "/user-profile", component: UserProfile, breadcrumb: "User Profile" },

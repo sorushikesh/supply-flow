@@ -26,6 +26,8 @@ const shortcutGroups: ShortcutGroup[] = [
       { keys: ["Alt", "V"], description: "Vendors", route: "/vendors" },
       { keys: ["Alt", "C"], description: "Customers", route: "/customers" },
       { keys: ["Alt", "P"], description: "Purchase Orders", route: "/purchase-orders" },
+      { keys: ["Alt", "F"], description: "Financial Management", route: "/financial" },
+      { keys: ["Alt", "A"], description: "Approvals", route: "/approvals" },
       { keys: ["Alt", "S"], description: "Sales Orders", route: "/sales-orders" },
     ],
   },

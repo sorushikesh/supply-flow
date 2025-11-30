@@ -19,9 +19,9 @@ import {
   ClipboardList,
   FileCheck,
   Truck,
-  FileText,
-  CreditCard,
+  DollarSign,
   BarChart3,
+  CheckCircle2,
   Settings,
 } from "lucide-react";
 
@@ -43,9 +43,9 @@ const ordersNavItems = [
 ];
 
 const financeNavItems = [
-  { title: "Invoices", url: "/invoices", icon: FileText },
-  { title: "Payments", url: "/payments", icon: CreditCard },
+  { title: "Financial Management", url: "/financial", icon: DollarSign },
   { title: "Analytics", url: "/analytics", icon: BarChart3 },
+  { title: "Approvals", url: "/approvals", icon: CheckCircle2 },
 ];
 
 const systemNavItems = [
