@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { PageHeader } from "@/components/PageHeader";
 import { PageBackground } from "@/components/PageBackground";
 import { SearchFilter } from "@/components/SearchFilter";
 import { DataTable, type Column } from "@/components/DataTable";
@@ -55,6 +54,16 @@ const mockVendors: Vendor[] = [
   { id: "3", code: "V-003", name: "Quality Parts Inc", email: "info@qualityparts.com", phone: "+1 555-0103", address: "789 Factory Rd, Village", paymentTerms: "Net 15", totalOrders: 28, totalSpent: 67800, status: "active" },
   { id: "4", code: "V-004", name: "Prime Materials Ltd", email: "contact@primematerials.com", phone: "+1 555-0104", address: "321 Supply Lane, Metro", paymentTerms: "Net 30", totalOrders: 18, totalSpent: 45200, status: "inactive" },
   { id: "5", code: "V-005", name: "Tech Components", email: "orders@techcomp.com", phone: "+1 555-0105", address: "654 Tech Park, Hub", paymentTerms: "Net 60", totalOrders: 56, totalSpent: 234000, status: "active" },
+  { id: "6", code: "V-006", name: "Supreme Electronics", email: "sales@supremeelec.com", phone: "+1 555-0106", address: "987 Circuit Blvd, Tech City", paymentTerms: "Net 30", totalOrders: 41, totalSpent: 178900, status: "active" },
+  { id: "7", code: "V-007", name: "Mega Manufacturing", email: "orders@megamfg.com", phone: "+1 555-0107", address: "246 Factory Lane, Industrial Zone", paymentTerms: "Net 45", totalOrders: 63, totalSpent: 289400, status: "active" },
+  { id: "8", code: "V-008", name: "Alpha Distributors", email: "info@alphadist.com", phone: "+1 555-0108", address: "135 Warehouse Way, Distribution Hub", paymentTerms: "Net 20", totalOrders: 37, totalSpent: 123700, status: "active" },
+  { id: "9", code: "V-009", name: "Beta Supplies Ltd", email: "sales@betasupplies.com", phone: "+1 555-0109", address: "579 Supply Road, Business Park", paymentTerms: "Net 30", totalOrders: 29, totalSpent: 98600, status: "active" },
+  { id: "10", code: "V-010", name: "Gamma Industries", email: "orders@gammaindustries.com", phone: "+1 555-0110", address: "802 Production Ave, Factory District", paymentTerms: "Net 60", totalOrders: 48, totalSpent: 201500, status: "active" },
+  { id: "11", code: "V-011", name: "Delta Components", email: "contact@deltacomp.com", phone: "+1 555-0111", address: "913 Component St, Tech Valley", paymentTerms: "Net 30", totalOrders: 22, totalSpent: 76800, status: "inactive" },
+  { id: "12", code: "V-012", name: "Epsilon Materials", email: "sales@epsilonmaterials.com", phone: "+1 555-0112", address: "1024 Material Blvd, Industrial Park", paymentTerms: "Net 45", totalOrders: 54, totalSpent: 245300, status: "active" },
+  { id: "13", code: "V-013", name: "Zeta Trading Co", email: "orders@zetatrading.com", phone: "+1 555-0113", address: "1135 Trade Center, Commerce District", paymentTerms: "Net 15", totalOrders: 34, totalSpent: 112400, status: "active" },
+  { id: "14", code: "V-014", name: "Theta Wholesale", email: "info@thetawholesale.com", phone: "+1 555-0114", address: "1246 Wholesale Plaza, Market Zone", paymentTerms: "Net 30", totalOrders: 44, totalSpent: 167900, status: "active" },
+  { id: "15", code: "V-015", name: "Omega Solutions", email: "sales@omegasolutions.com", phone: "+1 555-0115", address: "1357 Solution Drive, Business Hub", paymentTerms: "Net 60", totalOrders: 58, totalSpent: 278600, status: "active" },
 ];
 
 const mockPurchaseOrders: Record<string, PurchaseOrderHistory[]> = {

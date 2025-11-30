@@ -1,4 +1,3 @@
-import { PageHeader } from "@/components/PageHeader";
 import { PageBackground } from "@/components/PageBackground";
 import { StatsCard } from "@/components/StatsCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -67,6 +66,7 @@ export default function Analytics() {
             </h1>
             <p className="text-muted-foreground mt-1">Business insights and performance metrics</p>
           </div>
+          
           <Select value={period} onValueChange={setPeriod}>
             <SelectTrigger className="w-[180px]" data-testid="select-period">
               <SelectValue placeholder="Select period" />

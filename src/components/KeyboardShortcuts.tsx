@@ -1,37 +1,15 @@
 import { useEffect } from "react";
 import { useLocation } from "wouter";
 
-interface ShortcutConfig {
-  key: string;
-  action: () => void;
-  description: string;
-}
-
-interface KeyboardShortcutsProps {
-  shortcuts: ShortcutConfig[];
-}
-
-export function KeyboardShortcuts({ shortcuts }: KeyboardShortcutsProps) {
-  useEffect(() => {
-    const handleKeyPress = (e: KeyboardEvent) => {
-      // Check for Ctrl/Cmd + key combinations
-      if (e.ctrlKey || e.metaKey) {
-        const shortcut = shortcuts.find(s => s.key.toLowerCase() === e.key.toLowerCase());
-        if (shortcut) {
-          e.preventDefault();
-          shortcut.action();
-        }
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyPress);
-    return () => window.removeEventListener("keydown", handleKeyPress);
-  }, [shortcuts]);
-
-  return null; // This component doesn't render anything
-}
-
-// Global keyboard navigation shortcuts
+/**
+ * Global keyboard navigation shortcuts hook
+ * Alt + D: Dashboard
+ * Alt + I: Inventory
+ * Alt + V: Vendors
+ * Alt + C: Customers
+ * Alt + P: Purchase Orders
+ * Alt + S: Sales Orders
+ */
 export function useGlobalShortcuts() {
   const [, setLocation] = useLocation();
 

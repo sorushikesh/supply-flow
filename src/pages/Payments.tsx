@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { PageHeader } from "@/components/PageHeader";
 import { PageBackground } from "@/components/PageBackground";
 import { SearchFilter } from "@/components/SearchFilter";
 import { DataTable, type Column } from "@/components/DataTable";
@@ -46,6 +45,18 @@ const mockPayments: Payment[] = [
   { id: "4", paymentNumber: "PAY-2024-0077", type: "made", invoiceNumber: "INV-2024-0096", party: "Global Supply Co", paymentDate: "2024-01-12", amount: 4000, method: "Bank Transfer", reference: "TRF-123456" },
   { id: "5", paymentNumber: "PAY-2024-0076", type: "received", invoiceNumber: "INV-2024-0094", party: "TechStart Inc", paymentDate: "2024-01-11", amount: 8750, method: "Bank Transfer", reference: "TRF-987654" },
   { id: "6", paymentNumber: "PAY-2024-0075", type: "made", invoiceNumber: "INV-2024-0093", party: "Quality Parts Inc", paymentDate: "2024-01-10", amount: 6700, method: "Check", reference: "CHK-001233" },
+  { id: "7", paymentNumber: "PAY-2024-0074", type: "received", invoiceNumber: "INV-2024-0093", party: "Wholesale Partners", paymentDate: "2024-01-09", amount: 34500, method: "Wire Transfer", reference: "WIR-445566" },
+  { id: "8", paymentNumber: "PAY-2024-0073", type: "made", invoiceNumber: "INV-2024-0092", party: "Tech Components", paymentDate: "2024-01-08", amount: 8000, method: "Bank Transfer", reference: "TRF-556677" },
+  { id: "9", paymentNumber: "PAY-2024-0072", type: "received", invoiceNumber: "INV-2024-0090", party: "Global Trade Corp", paymentDate: "2024-01-07", amount: 28900, method: "Bank Transfer", reference: "TRF-667788" },
+  { id: "10", paymentNumber: "PAY-2024-0071", type: "received", invoiceNumber: "INV-2024-0087", party: "Downtown Supermarket", paymentDate: "2024-01-06", amount: 6700, method: "Credit Card", reference: "CC-778899" },
+  { id: "11", paymentNumber: "PAY-2024-0070", type: "made", invoiceNumber: "INV-2024-0086", party: "Mega Manufacturing", paymentDate: "2024-01-05", amount: 15000, method: "Check", reference: "CHK-001232" },
+  { id: "12", paymentNumber: "PAY-2024-0069", type: "received", invoiceNumber: "INV-2024-0085", party: "Coastal Distributors", paymentDate: "2024-01-04", amount: 14500, method: "Bank Transfer", reference: "TRF-889900" },
+  { id: "13", paymentNumber: "PAY-2024-0068", type: "made", invoiceNumber: "INV-2024-0083", party: "Alpha Distributors", paymentDate: "2024-01-03", amount: 11200, method: "Wire Transfer", reference: "WIR-990011" },
+  { id: "14", paymentNumber: "PAY-2024-0067", type: "received", invoiceNumber: "INV-2024-0082", party: "Northern Supplies", paymentDate: "2024-01-02", amount: 17300, method: "Bank Transfer", reference: "TRF-001122" },
+  { id: "15", paymentNumber: "PAY-2024-0066", type: "made", invoiceNumber: "INV-2024-0081", party: "Beta Supplies Ltd", paymentDate: "2024-01-01", amount: 9600, method: "Check", reference: "CHK-001231" },
+  { id: "16", paymentNumber: "PAY-2024-0065", type: "received", invoiceNumber: "INV-2024-0080", party: "Pacific Retailers", paymentDate: "2023-12-31", amount: 26500, method: "Credit Card", reference: "CC-112233" },
+  { id: "17", paymentNumber: "PAY-2024-0064", type: "made", invoiceNumber: "INV-2024-0079", party: "Epsilon Materials", paymentDate: "2023-12-30", amount: 31800, method: "Bank Transfer", reference: "TRF-223344" },
+  { id: "18", paymentNumber: "PAY-2024-0063", type: "received", invoiceNumber: "INV-2024-0078", party: "Urban Solutions LLC", paymentDate: "2023-12-29", amount: 9600, method: "Cash", reference: "CSH-334455" },
 ];
 
 const mockPendingInvoices = [

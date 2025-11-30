@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { PageHeader } from "@/components/PageHeader";
 import { PageBackground } from "@/components/PageBackground";
 import { SearchFilter } from "@/components/SearchFilter";
 import { DataTable, type Column } from "@/components/DataTable";
@@ -39,6 +38,19 @@ const mockDispatches: DispatchRecord[] = [
   { id: "3", dispatchNumber: "DSP-2024-0048", soNumber: "SO-2024-0120", customer: "Express Outlets", dispatchDate: "2024-01-13", carrier: "DHL", trackingNumber: "DH456789123", status: "delivered" },
   { id: "4", dispatchNumber: "DSP-2024-0047", soNumber: "SO-2024-0119", customer: "Wholesale Partners", dispatchDate: "2024-01-12", carrier: "FedEx", trackingNumber: "FX789123456", status: "delivered" },
   { id: "5", dispatchNumber: "DSP-2024-0046", soNumber: "SO-2024-0118", customer: "TechStart Inc", dispatchDate: "2024-01-11", carrier: "UPS", trackingNumber: "UP654321987", status: "delivered" },
+  { id: "6", dispatchNumber: "DSP-2024-0045", soNumber: "SO-2024-0117", customer: "Prime Electronics", dispatchDate: "2024-01-10", carrier: "DHL", trackingNumber: "DH321654987", status: "pending" },
+  { id: "7", dispatchNumber: "DSP-2024-0044", soNumber: "SO-2024-0116", customer: "Global Trade Corp", dispatchDate: "2024-01-09", carrier: "FedEx", trackingNumber: "FX987456123", status: "in_transit" },
+  { id: "8", dispatchNumber: "DSP-2024-0043", soNumber: "SO-2024-0115", customer: "Downtown Supermarket", dispatchDate: "2024-01-08", carrier: "Local Delivery", trackingNumber: "LD123789456", status: "delivered" },
+  { id: "9", dispatchNumber: "DSP-2024-0042", soNumber: "SO-2024-0114", customer: "Coastal Distributors", dispatchDate: "2024-01-07", carrier: "UPS", trackingNumber: "UP456123789", status: "delivered" },
+  { id: "10", dispatchNumber: "DSP-2024-0041", soNumber: "SO-2024-0113", customer: "Mountain Retail Chain", dispatchDate: "2024-01-06", carrier: "FedEx", trackingNumber: "FX654987321", status: "delivered" },
+  { id: "11", dispatchNumber: "DSP-2024-0040", soNumber: "SO-2024-0112", customer: "Urban Solutions LLC", dispatchDate: "2024-01-05", carrier: "DHL", trackingNumber: "DH789321654", status: "pending" },
+  { id: "12", dispatchNumber: "DSP-2024-0039", soNumber: "SO-2024-0111", customer: "Northern Supplies", dispatchDate: "2024-01-04", carrier: "UPS", trackingNumber: "UP321789654", status: "in_transit" },
+  { id: "13", dispatchNumber: "DSP-2024-0038", soNumber: "SO-2024-0110", customer: "Eastern Markets", dispatchDate: "2024-01-03", carrier: "FedEx", trackingNumber: "FX147258369", status: "in_transit" },
+  { id: "14", dispatchNumber: "DSP-2024-0037", soNumber: "SO-2024-0109", customer: "Central Warehouse Hub", dispatchDate: "2024-01-02", carrier: "DHL", trackingNumber: "DH963852741", status: "delivered" },
+  { id: "15", dispatchNumber: "DSP-2024-0036", soNumber: "SO-2024-0108", customer: "Pacific Retailers", dispatchDate: "2024-01-01", carrier: "UPS", trackingNumber: "UP741963852", status: "delivered" },
+  { id: "16", dispatchNumber: "DSP-2024-0035", soNumber: "SO-2024-0107", customer: "TechStart Inc", dispatchDate: "2023-12-31", carrier: "Local Delivery", trackingNumber: "LD852741963", status: "delivered" },
+  { id: "17", dispatchNumber: "DSP-2024-0034", soNumber: "SO-2024-0106", customer: "Metro Retail Group", dispatchDate: "2023-12-30", carrier: "FedEx", trackingNumber: "FX258963147", status: "pending" },
+  { id: "18", dispatchNumber: "DSP-2024-0033", soNumber: "SO-2024-0105", customer: "Express Outlets", dispatchDate: "2023-12-29", carrier: "UPS", trackingNumber: "UP369147258", status: "delivered" },
 ];
 
 const mockPendingSOs = [

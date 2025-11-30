@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { PageHeader } from "@/components/PageHeader";
 import { PageBackground } from "@/components/PageBackground";
 import { SearchFilter } from "@/components/SearchFilter";
 import { DataTable, type Column } from "@/components/DataTable";
@@ -43,6 +42,20 @@ const mockPurchaseOrders: PurchaseOrder[] = [
   { id: "4", poNumber: "PO-2024-0042", vendor: "Tech Components", orderDate: "2024-01-12", expectedDate: "2024-01-22", totalAmount: 15600, status: "completed", items: 4 },
   { id: "5", poNumber: "PO-2024-0041", vendor: "Prime Materials Ltd", orderDate: "2024-01-11", expectedDate: "2024-01-21", totalAmount: 4800, status: "cancelled", items: 2 },
   { id: "6", poNumber: "PO-2024-0040", vendor: "Acme Corporation", orderDate: "2024-01-10", expectedDate: "2024-01-20", totalAmount: 22300, status: "completed", items: 6 },
+  { id: "7", poNumber: "PO-2024-0039", vendor: "Supreme Electronics", orderDate: "2024-01-09", expectedDate: "2024-01-19", totalAmount: 18900, status: "pending", items: 7 },
+  { id: "8", poNumber: "PO-2024-0038", vendor: "Mega Manufacturing", orderDate: "2024-01-08", expectedDate: "2024-01-18", totalAmount: 29400, status: "approved", items: 9 },
+  { id: "9", poNumber: "PO-2024-0037", vendor: "Alpha Distributors", orderDate: "2024-01-07", expectedDate: "2024-01-17", totalAmount: 11200, status: "completed", items: 4 },
+  { id: "10", poNumber: "PO-2024-0036", vendor: "Beta Supplies Ltd", orderDate: "2024-01-06", expectedDate: "2024-01-16", totalAmount: 16700, status: "completed", items: 6 },
+  { id: "11", poNumber: "PO-2024-0035", vendor: "Gamma Industries", orderDate: "2024-01-05", expectedDate: "2024-01-15", totalAmount: 24300, status: "pending", items: 8 },
+  { id: "12", poNumber: "PO-2024-0034", vendor: "Epsilon Materials", orderDate: "2024-01-04", expectedDate: "2024-01-14", totalAmount: 31800, status: "approved", items: 11 },
+  { id: "13", poNumber: "PO-2024-0033", vendor: "Zeta Trading Co", orderDate: "2024-01-03", expectedDate: "2024-01-13", totalAmount: 9600, status: "completed", items: 5 },
+  { id: "14", poNumber: "PO-2024-0032", vendor: "Theta Wholesale", orderDate: "2024-01-02", expectedDate: "2024-01-12", totalAmount: 19200, status: "completed", items: 7 },
+  { id: "15", poNumber: "PO-2024-0031", vendor: "Omega Solutions", orderDate: "2024-01-01", expectedDate: "2024-01-11", totalAmount: 35600, status: "pending", items: 12 },
+  { id: "16", poNumber: "PO-2024-0030", vendor: "Acme Corporation", orderDate: "2023-12-31", expectedDate: "2024-01-10", totalAmount: 14800, status: "approved", items: 6 },
+  { id: "17", poNumber: "PO-2024-0029", vendor: "Global Supply Co", orderDate: "2023-12-30", expectedDate: "2024-01-09", totalAmount: 21400, status: "completed", items: 8 },
+  { id: "18", poNumber: "PO-2024-0028", vendor: "Quality Parts Inc", orderDate: "2023-12-29", expectedDate: "2024-01-08", totalAmount: 7900, status: "completed", items: 4 },
+  { id: "19", poNumber: "PO-2024-0027", vendor: "Tech Components", orderDate: "2023-12-28", expectedDate: "2024-01-07", totalAmount: 28500, status: "cancelled", items: 10 },
+  { id: "20", poNumber: "PO-2024-0026", vendor: "Supreme Electronics", orderDate: "2023-12-27", expectedDate: "2024-01-06", totalAmount: 33700, status: "completed", items: 13 },
 ];
 
 const mockVendors = ["Acme Corporation", "Global Supply Co", "Quality Parts Inc", "Tech Components", "Prime Materials Ltd"];
@@ -240,41 +253,6 @@ export default function PurchaseOrders() {
                 },
               ]}
             />
-            
-            <div className="flex gap-4 items-end">
-              <div className="flex-1">
-                <Label htmlFor="dateFrom" className="text-sm mb-2 block">From Date</Label>
-                <Input
-                  id="dateFrom"
-                  type="date"
-                  value={dateFrom}
-                  onChange={(e) => setDateFrom(e.target.value)}
-                  className="max-w-xs"
-                />
-              </div>
-              <div className="flex-1">
-                <Label htmlFor="dateTo" className="text-sm mb-2 block">To Date</Label>
-                <Input
-                  id="dateTo"
-                  type="date"
-                  value={dateTo}
-                  onChange={(e) => setDateTo(e.target.value)}
-                  className="max-w-xs"
-                />
-              </div>
-              {(dateFrom || dateTo) && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {
-                    setDateFrom("");
-                    setDateTo("");
-                  }}
-                >
-                  Clear Dates
-                </Button>
-              )}
-            </div>
           </div>
 
           <DataTable

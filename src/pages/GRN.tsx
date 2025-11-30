@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { PageHeader } from "@/components/PageHeader";
 import { PageBackground } from "@/components/PageBackground";
 import { SearchFilter } from "@/components/SearchFilter";
 import { DataTable, type Column } from "@/components/DataTable";
@@ -44,6 +43,16 @@ const mockGRNs: GRNRecord[] = [
   { id: "3", grnNumber: "GRN-2024-0028", poNumber: "PO-2024-0042", vendor: "Tech Components", receivedDate: "2024-01-13", orderedQty: 50, receivedQty: 50, status: "completed" },
   { id: "4", grnNumber: "GRN-2024-0027", poNumber: "PO-2024-0040", vendor: "Acme Corporation", receivedDate: "2024-01-12", orderedQty: 200, receivedQty: 200, status: "completed" },
   { id: "5", grnNumber: "GRN-2024-0026", poNumber: "PO-2024-0039", vendor: "Prime Materials Ltd", receivedDate: "2024-01-11", orderedQty: 75, receivedQty: 70, status: "partial" },
+  { id: "6", grnNumber: "GRN-2024-0025", poNumber: "PO-2024-0038", vendor: "Mega Manufacturing", receivedDate: "2024-01-10", orderedQty: 180, receivedQty: 180, status: "completed" },
+  { id: "7", grnNumber: "GRN-2024-0024", poNumber: "PO-2024-0037", vendor: "Alpha Distributors", receivedDate: "2024-01-09", orderedQty: 120, receivedQty: 115, status: "partial" },
+  { id: "8", grnNumber: "GRN-2024-0023", poNumber: "PO-2024-0036", vendor: "Beta Supplies Ltd", receivedDate: "2024-01-08", orderedQty: 95, receivedQty: 95, status: "completed" },
+  { id: "9", grnNumber: "GRN-2024-0022", poNumber: "PO-2024-0035", vendor: "Gamma Industries", receivedDate: "2024-01-07", orderedQty: 150, receivedQty: 150, status: "completed" },
+  { id: "10", grnNumber: "GRN-2024-0021", poNumber: "PO-2024-0034", vendor: "Epsilon Materials", receivedDate: "2024-01-06", orderedQty: 220, receivedQty: 210, status: "partial" },
+  { id: "11", grnNumber: "GRN-2024-0020", poNumber: "PO-2024-0033", vendor: "Zeta Trading Co", receivedDate: "2024-01-05", orderedQty: 65, receivedQty: 65, status: "completed" },
+  { id: "12", grnNumber: "GRN-2024-0019", poNumber: "PO-2024-0032", vendor: "Theta Wholesale", receivedDate: "2024-01-04", orderedQty: 135, receivedQty: 135, status: "completed" },
+  { id: "13", grnNumber: "GRN-2024-0018", poNumber: "PO-2024-0031", vendor: "Omega Solutions", receivedDate: "2024-01-03", orderedQty: 280, receivedQty: 270, status: "partial" },
+  { id: "14", grnNumber: "GRN-2024-0017", poNumber: "PO-2024-0030", vendor: "Acme Corporation", receivedDate: "2024-01-02", orderedQty: 110, receivedQty: 110, status: "completed" },
+  { id: "15", grnNumber: "GRN-2024-0016", poNumber: "PO-2024-0029", vendor: "Global Supply Co", receivedDate: "2024-01-01", orderedQty: 160, receivedQty: 160, status: "completed" },
 ];
 
 const mockPendingPOs = [

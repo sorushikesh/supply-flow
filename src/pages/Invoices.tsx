@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { PageHeader } from "@/components/PageHeader";
 import { PageBackground } from "@/components/PageBackground";
 import { SearchFilter } from "@/components/SearchFilter";
 import { DataTable, type Column } from "@/components/DataTable";
@@ -46,6 +45,17 @@ const mockInvoices: Invoice[] = [
   { id: "5", invoiceNumber: "INV-2024-0096", type: "vendor", party: "Global Supply Co", issueDate: "2024-01-11", dueDate: "2024-02-25", amount: 8750, paidAmount: 4000, status: "partial" },
   { id: "6", invoiceNumber: "INV-2024-0095", type: "customer", party: "Express Outlets", issueDate: "2024-01-10", dueDate: "2024-02-09", amount: 23400, paidAmount: 23400, status: "paid" },
   { id: "7", invoiceNumber: "INV-2024-0089", type: "customer", party: "Beta Industries", issueDate: "2024-01-01", dueDate: "2024-01-15", amount: 5600, paidAmount: 0, status: "overdue" },
+  { id: "8", invoiceNumber: "INV-2024-0094", type: "vendor", party: "Quality Parts Inc", issueDate: "2024-01-09", dueDate: "2024-02-08", amount: 6700, paidAmount: 6700, status: "paid" },
+  { id: "9", invoiceNumber: "INV-2024-0093", type: "customer", party: "Wholesale Partners", issueDate: "2024-01-08", dueDate: "2024-02-07", amount: 34500, paidAmount: 34500, status: "paid" },
+  { id: "10", invoiceNumber: "INV-2024-0092", type: "vendor", party: "Tech Components", issueDate: "2024-01-07", dueDate: "2024-02-21", amount: 15600, paidAmount: 8000, status: "partial" },
+  { id: "11", invoiceNumber: "INV-2024-0091", type: "customer", party: "Prime Electronics", issueDate: "2024-01-06", dueDate: "2024-02-05", amount: 19800, paidAmount: 0, status: "pending" },
+  { id: "12", invoiceNumber: "INV-2024-0090", type: "customer", party: "Global Trade Corp", issueDate: "2024-01-05", dueDate: "2024-02-04", amount: 28900, paidAmount: 28900, status: "paid" },
+  { id: "13", invoiceNumber: "INV-2024-0088", type: "vendor", party: "Supreme Electronics", issueDate: "2023-12-31", dueDate: "2024-01-30", amount: 18900, paidAmount: 0, status: "pending" },
+  { id: "14", invoiceNumber: "INV-2024-0087", type: "customer", party: "Downtown Supermarket", issueDate: "2023-12-30", dueDate: "2024-01-29", amount: 6700, paidAmount: 6700, status: "paid" },
+  { id: "15", invoiceNumber: "INV-2024-0086", type: "vendor", party: "Mega Manufacturing", issueDate: "2023-12-29", dueDate: "2024-02-13", amount: 29400, paidAmount: 15000, status: "partial" },
+  { id: "16", invoiceNumber: "INV-2024-0085", type: "customer", party: "Coastal Distributors", issueDate: "2023-12-28", dueDate: "2024-01-27", amount: 14500, paidAmount: 14500, status: "paid" },
+  { id: "17", invoiceNumber: "INV-2024-0084", type: "customer", party: "Mountain Retail Chain", issueDate: "2023-12-27", dueDate: "2024-01-26", amount: 31200, paidAmount: 0, status: "overdue" },
+  { id: "18", invoiceNumber: "INV-2024-0083", type: "vendor", party: "Alpha Distributors", issueDate: "2023-12-26", dueDate: "2024-02-10", amount: 11200, paidAmount: 11200, status: "paid" },
 ];
 
 const mockOrders = [

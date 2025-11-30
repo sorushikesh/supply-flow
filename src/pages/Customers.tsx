@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { PageHeader } from "@/components/PageHeader";
 import { PageBackground } from "@/components/PageBackground";
 import { SearchFilter } from "@/components/SearchFilter";
 import { DataTable, type Column } from "@/components/DataTable";
@@ -56,6 +55,18 @@ const mockCustomers: Customer[] = [
   { id: "4", code: "C-004", name: "Regional Distributors", email: "orders@regionaldist.com", phone: "+1 555-0204", address: "400 Highway Road, Suburb", creditLimit: 25000, totalOrders: 23, totalRevenue: 67800, status: "inactive" },
   { id: "5", code: "C-005", name: "Express Outlets", email: "buy@expressoutlets.com", phone: "+1 555-0205", address: "500 Fast Lane, Commerce Park", creditLimit: 150000, totalOrders: 112, totalRevenue: 567000, status: "active" },
   { id: "6", code: "C-006", name: "Wholesale Partners", email: "orders@wholesalepartners.com", phone: "+1 555-0206", address: "600 Bulk Blvd, Industrial Zone", creditLimit: 200000, totalOrders: 78, totalRevenue: 345600, status: "active" },
+  { id: "7", code: "C-007", name: "Prime Electronics", email: "buying@primeelec.com", phone: "+1 555-0207", address: "700 Circuit Ave, Silicon Valley", creditLimit: 120000, totalOrders: 94, totalRevenue: 412300, status: "active" },
+  { id: "8", code: "C-008", name: "Global Trade Corp", email: "orders@globaltrade.com", phone: "+1 555-0208", address: "800 International Blvd, Trade Hub", creditLimit: 180000, totalOrders: 156, totalRevenue: 687500, status: "active" },
+  { id: "9", code: "C-009", name: "Downtown Supermarket", email: "procurement@downtown.com", phone: "+1 555-0209", address: "900 Market Street, City Center", creditLimit: 65000, totalOrders: 38, totalRevenue: 145800, status: "active" },
+  { id: "10", code: "C-010", name: "Coastal Distributors", email: "supply@coastal.com", phone: "+1 555-0210", address: "1000 Seaside Road, Port City", creditLimit: 45000, totalOrders: 29, totalRevenue: 89700, status: "active" },
+  { id: "11", code: "C-011", name: "Mountain Retail Chain", email: "orders@mountainretail.com", phone: "+1 555-0211", address: "1100 Alpine Drive, Highland", creditLimit: 90000, totalOrders: 61, totalRevenue: 267400, status: "active" },
+  { id: "12", code: "C-012", name: "Urban Solutions LLC", email: "purchasing@urbansolutions.com", phone: "+1 555-0212", address: "1200 Metro Plaza, Uptown", creditLimit: 55000, totalOrders: 42, totalRevenue: 198600, status: "active" },
+  { id: "13", code: "C-013", name: "Sunset Trading Co", email: "orders@sunsettrading.com", phone: "+1 555-0213", address: "1300 Western Ave, Beach Town", creditLimit: 40000, totalOrders: 18, totalRevenue: 56900, status: "inactive" },
+  { id: "14", code: "C-014", name: "Northern Supplies", email: "buy@northernsupplies.com", phone: "+1 555-0214", address: "1400 Polar Street, North City", creditLimit: 70000, totalOrders: 53, totalRevenue: 223100, status: "active" },
+  { id: "15", code: "C-015", name: "Eastern Markets", email: "procurement@easternmarkets.com", phone: "+1 555-0215", address: "1500 Sunrise Blvd, East District", creditLimit: 110000, totalOrders: 87, totalRevenue: 398200, status: "active" },
+  { id: "16", code: "C-016", name: "Central Warehouse Hub", email: "orders@centralwh.com", phone: "+1 555-0216", address: "1600 Storage Lane, Midtown", creditLimit: 135000, totalOrders: 103, totalRevenue: 512800, status: "active" },
+  { id: "17", code: "C-017", name: "Southwest Commerce", email: "supply@swcommerce.com", phone: "+1 555-0217", address: "1700 Desert Road, Southwest", creditLimit: 30000, totalOrders: 21, totalRevenue: 72400, status: "inactive" },
+  { id: "18", code: "C-018", name: "Pacific Retailers", email: "orders@pacificretailers.com", phone: "+1 555-0218", address: "1800 Ocean Drive, Coastal City", creditLimit: 95000, totalOrders: 74, totalRevenue: 334500, status: "active" },
 ];
 
 const mockPurchaseHistory: Record<string, PurchaseHistoryItem[]> = {

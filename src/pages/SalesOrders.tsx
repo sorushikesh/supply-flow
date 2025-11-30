@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { PageHeader } from "@/components/PageHeader";
 import { PageBackground } from "@/components/PageBackground";
 import { SearchFilter } from "@/components/SearchFilter";
 import { DataTable, type Column } from "@/components/DataTable";
@@ -43,6 +42,20 @@ const mockSalesOrders: SalesOrder[] = [
   { id: "4", soNumber: "SO-2024-0120", customer: "Express Outlets", orderDate: "2024-01-12", deliveryDate: "2024-01-17", totalAmount: 23400, status: "completed", items: 8 },
   { id: "5", soNumber: "SO-2024-0119", customer: "Wholesale Partners", orderDate: "2024-01-11", deliveryDate: "2024-01-16", totalAmount: 34500, status: "completed", items: 12 },
   { id: "6", soNumber: "SO-2024-0118", customer: "TechStart Inc", orderDate: "2024-01-10", deliveryDate: "2024-01-15", totalAmount: 12300, status: "pending", items: 4 },
+  { id: "7", soNumber: "SO-2024-0117", customer: "Prime Electronics", orderDate: "2024-01-09", deliveryDate: "2024-01-14", totalAmount: 19800, status: "approved", items: 6 },
+  { id: "8", soNumber: "SO-2024-0116", customer: "Global Trade Corp", orderDate: "2024-01-08", deliveryDate: "2024-01-13", totalAmount: 28900, status: "in_transit", items: 9 },
+  { id: "9", soNumber: "SO-2024-0115", customer: "Downtown Supermarket", orderDate: "2024-01-07", deliveryDate: "2024-01-12", totalAmount: 6700, status: "delivered", items: 3 },
+  { id: "10", soNumber: "SO-2024-0114", customer: "Coastal Distributors", orderDate: "2024-01-06", deliveryDate: "2024-01-11", totalAmount: 14500, status: "completed", items: 5 },
+  { id: "11", soNumber: "SO-2024-0113", customer: "Mountain Retail Chain", orderDate: "2024-01-05", deliveryDate: "2024-01-10", totalAmount: 31200, status: "completed", items: 11 },
+  { id: "12", soNumber: "SO-2024-0112", customer: "Urban Solutions LLC", orderDate: "2024-01-04", deliveryDate: "2024-01-09", totalAmount: 9600, status: "pending", items: 4 },
+  { id: "13", soNumber: "SO-2024-0111", customer: "Northern Supplies", orderDate: "2024-01-03", deliveryDate: "2024-01-08", totalAmount: 17300, status: "approved", items: 7 },
+  { id: "14", soNumber: "SO-2024-0110", customer: "Eastern Markets", orderDate: "2024-01-02", deliveryDate: "2024-01-07", totalAmount: 22100, status: "in_transit", items: 8 },
+  { id: "15", soNumber: "SO-2024-0109", customer: "Central Warehouse Hub", orderDate: "2024-01-01", deliveryDate: "2024-01-06", totalAmount: 38700, status: "delivered", items: 13 },
+  { id: "16", soNumber: "SO-2024-0108", customer: "Pacific Retailers", orderDate: "2023-12-31", deliveryDate: "2024-01-05", totalAmount: 26500, status: "completed", items: 10 },
+  { id: "17", soNumber: "SO-2024-0107", customer: "TechStart Inc", orderDate: "2023-12-30", deliveryDate: "2024-01-04", totalAmount: 11400, status: "completed", items: 5 },
+  { id: "18", soNumber: "SO-2024-0106", customer: "Metro Retail Group", orderDate: "2023-12-29", deliveryDate: "2024-01-03", totalAmount: 18900, status: "pending", items: 6 },
+  { id: "19", soNumber: "SO-2024-0105", customer: "Express Outlets", orderDate: "2023-12-28", deliveryDate: "2024-01-02", totalAmount: 29300, status: "approved", items: 9 },
+  { id: "20", soNumber: "SO-2024-0104", customer: "Wholesale Partners", orderDate: "2023-12-27", deliveryDate: "2024-01-01", totalAmount: 41800, status: "completed", items: 14 },
 ];
 
 const mockCustomers = ["TechStart Inc", "Metro Retail Group", "City Stores Ltd", "Express Outlets", "Wholesale Partners"];
@@ -241,41 +254,6 @@ export default function SalesOrders() {
                 },
               ]}
             />
-            
-            <div className="flex gap-4 items-end">
-              <div className="flex-1">
-                <Label htmlFor="dateFrom" className="text-sm mb-2 block">From Date</Label>
-                <Input
-                  id="dateFrom"
-                  type="date"
-                  value={dateFrom}
-                  onChange={(e) => setDateFrom(e.target.value)}
-                  className="max-w-xs"
-                />
-              </div>
-              <div className="flex-1">
-                <Label htmlFor="dateTo" className="text-sm mb-2 block">To Date</Label>
-                <Input
-                  id="dateTo"
-                  type="date"
-                  value={dateTo}
-                  onChange={(e) => setDateTo(e.target.value)}
-                  className="max-w-xs"
-                />
-              </div>
-              {(dateFrom || dateTo) && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {
-                    setDateFrom("");
-                    setDateTo("");
-                  }}
-                >
-                  Clear Dates
-                </Button>
-              )}
-            </div>
           </div>
 
           <DataTable

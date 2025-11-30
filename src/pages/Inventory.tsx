@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { PageHeader } from "@/components/PageHeader";
 import { PageBackground } from "@/components/PageBackground";
 import { SearchFilter } from "@/components/SearchFilter";
 import { DataTable, type Column } from "@/components/DataTable";
@@ -74,6 +73,23 @@ const mockInventory: InventoryItem[] = [
   { id: "6", sku: "CMP-046", name: "Component Y", category: "Components", currentStock: 234, reorderLevel: 100, unitPrice: 8.75, location: "Warehouse B", lastUpdated: "2024-01-11" },
   { id: "7", sku: "ACC-001", name: "Accessory Pack", category: "Accessories", currentStock: 45, reorderLevel: 20, unitPrice: 15.00, location: "Warehouse A", lastUpdated: "2024-01-10" },
   { id: "8", sku: "WDG-003", name: "Widget Gamma", category: "Widgets", currentStock: 67, reorderLevel: 25, unitPrice: 45.50, location: "Warehouse C", lastUpdated: "2024-01-09" },
+  { id: "9", sku: "GDG-025", name: "Gadget Ultra", category: "Gadgets", currentStock: 145, reorderLevel: 50, unitPrice: 199.99, location: "Warehouse A", lastUpdated: "2024-01-08" },
+  { id: "10", sku: "CMP-047", name: "Component Z", category: "Components", currentStock: 5, reorderLevel: 15, unitPrice: 18.75, location: "Warehouse B", lastUpdated: "2024-01-07" },
+  { id: "11", sku: "WDG-004", name: "Widget Delta", category: "Widgets", currentStock: 203, reorderLevel: 40, unitPrice: 28.50, location: "Warehouse C", lastUpdated: "2024-01-06" },
+  { id: "12", sku: "ACC-002", name: "Premium Cable Set", category: "Accessories", currentStock: 78, reorderLevel: 30, unitPrice: 22.00, location: "Warehouse A", lastUpdated: "2024-01-05" },
+  { id: "13", sku: "GDG-026", name: "Gadget Mini", category: "Gadgets", currentStock: 112, reorderLevel: 35, unitPrice: 59.99, location: "Warehouse B", lastUpdated: "2024-01-04" },
+  { id: "14", sku: "CMP-048", name: "Component Alpha", category: "Components", currentStock: 18, reorderLevel: 25, unitPrice: 14.25, location: "Warehouse C", lastUpdated: "2024-01-03" },
+  { id: "15", sku: "WDG-005", name: "Widget Omega", category: "Widgets", currentStock: 189, reorderLevel: 45, unitPrice: 38.75, location: "Warehouse A", lastUpdated: "2024-01-02" },
+  { id: "16", sku: "ACC-003", name: "Connector Kit", category: "Accessories", currentStock: 6, reorderLevel: 18, unitPrice: 12.50, location: "Warehouse B", lastUpdated: "2024-01-01" },
+  { id: "17", sku: "GDG-027", name: "Gadget Max", category: "Gadgets", currentStock: 167, reorderLevel: 60, unitPrice: 299.99, location: "Warehouse C", lastUpdated: "2023-12-31" },
+  { id: "18", sku: "CMP-049", name: "Component Beta", category: "Components", currentStock: 298, reorderLevel: 80, unitPrice: 9.99, location: "Warehouse A", lastUpdated: "2023-12-30" },
+  { id: "19", sku: "WDG-006", name: "Widget Prime", category: "Widgets", currentStock: 4, reorderLevel: 22, unitPrice: 42.00, location: "Warehouse B", lastUpdated: "2023-12-29" },
+  { id: "20", sku: "ACC-004", name: "Adapter Bundle", category: "Accessories", currentStock: 134, reorderLevel: 28, unitPrice: 19.99, location: "Warehouse C", lastUpdated: "2023-12-28" },
+  { id: "21", sku: "GDG-028", name: "Gadget Flex", category: "Gadgets", currentStock: 56, reorderLevel: 45, unitPrice: 129.99, location: "Warehouse A", lastUpdated: "2023-12-27" },
+  { id: "22", sku: "CMP-050", name: "Component Gamma", category: "Components", currentStock: 423, reorderLevel: 120, unitPrice: 7.50, location: "Warehouse B", lastUpdated: "2023-12-26" },
+  { id: "23", sku: "WDG-007", name: "Widget Express", category: "Widgets", currentStock: 91, reorderLevel: 33, unitPrice: 34.99, location: "Warehouse C", lastUpdated: "2023-12-25" },
+  { id: "24", sku: "ACC-005", name: "Mount Bracket Set", category: "Accessories", currentStock: 12, reorderLevel: 24, unitPrice: 16.75, location: "Warehouse A", lastUpdated: "2023-12-24" },
+  { id: "25", sku: "GDG-029", name: "Gadget Swift", category: "Gadgets", currentStock: 178, reorderLevel: 52, unitPrice: 174.99, location: "Warehouse B", lastUpdated: "2023-12-23" },
 ];
 
 const mockStockMovements: Record<string, StockMovement[]> = {
