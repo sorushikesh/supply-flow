@@ -29,10 +29,12 @@ export function PageHeader({
         )}
       </div>
       {actionLabel && (
-        <Button onClick={onAction} data-testid="button-page-action">
-          <ActionIcon className="h-4 w-4 mr-2" />
-          {actionLabel}
-        </Button>
+        <div className="transition-transform duration-200 hover:scale-105">
+          <Button onClick={onAction} data-testid="button-page-action">
+            <ActionIcon className="h-4 w-4 mr-2" />
+            {actionLabel}
+          </Button>
+        </div>
       )}
     </div>
   );

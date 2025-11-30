@@ -122,7 +122,7 @@ export default function Vendors() {
   const activeVendors = mockVendors.filter((v) => v.status === "active").length;
 
   return (
-    <div className="p-6 lg:p-8 max-w-7xl mx-auto">
+    <div className="p-6 lg:p-8 max-w-7xl mx-auto animate-fade-in">
       <PageHeader
         title="Vendors"
         description="Manage your supplier relationships"
@@ -199,20 +199,41 @@ export default function Vendors() {
         onSubmit={handleSubmit}
         submitLabel="Add Vendor"
       >
+        {/* Vendor Information Section */}
         <div className="space-y-4">
+          <div className="pb-2 border-b">
+            <h3 className="text-sm font-semibold text-foreground">Vendor Information</h3>
+            <p className="text-xs text-muted-foreground mt-1">Basic vendor details</p>
+          </div>
+          
           <div className="space-y-2">
-            <Label htmlFor="name">Company Name *</Label>
+            <Label htmlFor="vendor-name" className="text-sm font-medium flex items-center gap-1">
+              Vendor Name <span className="text-destructive">*</span>
+            </Label>
             <Input
-              id="name"
+              id="vendor-name"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="e.g., Acme Corporation"
+              placeholder="e.g., Acme Supplies Inc."
               data-testid="input-vendor-name"
+              className="transition-all duration-200"
             />
+            <p className="text-xs text-muted-foreground">Full legal name of the vendor</p>
           </div>
+        </div>
+
+        {/* Contact Details Section */}
+        <div className="space-y-4 pt-4">
+          <div className="pb-2 border-b">
+            <h3 className="text-sm font-semibold text-foreground">Contact Details</h3>
+            <p className="text-xs text-muted-foreground mt-1">How to reach the vendor</p>
+          </div>
+          
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email *</Label>
+              <Label htmlFor="email" className="text-sm font-medium flex items-center gap-1">
+                Email <span className="text-destructive">*</span>
+              </Label>
               <Input
                 id="email"
                 type="email"
@@ -220,39 +241,64 @@ export default function Vendors() {
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 placeholder="sales@company.com"
                 data-testid="input-vendor-email"
+                className="transition-all duration-200"
               />
+              <p className="text-xs text-muted-foreground">Primary contact email</p>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="phone">Phone *</Label>
+              <Label htmlFor="phone" className="text-sm font-medium flex items-center gap-1">
+                Phone <span className="text-destructive">*</span>
+              </Label>
               <Input
                 id="phone"
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                 placeholder="+1 555-0100"
                 data-testid="input-vendor-phone"
+                className="transition-all duration-200"
               />
+              <p className="text-xs text-muted-foreground">Contact phone number</p>
             </div>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="address">Address</Label>
-            <Textarea
-              id="address"
-              value={formData.address}
-              onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-              placeholder="Full address"
-              rows={2}
-              data-testid="input-vendor-address"
-            />
+        </div>
+
+        {/* Location & Terms Section */}
+        <div className="space-y-4 pt-4">
+          <div className="pb-2 border-b">
+            <h3 className="text-sm font-semibold text-foreground">Location & Terms</h3>
+            <p className="text-xs text-muted-foreground mt-1">Address and payment details</p>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="paymentTerms">Payment Terms</Label>
-            <Input
-              id="paymentTerms"
-              value={formData.paymentTerms}
-              onChange={(e) => setFormData({ ...formData, paymentTerms: e.target.value })}
-              placeholder="e.g., Net 30"
-              data-testid="input-payment-terms"
-            />
+          
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="address" className="text-sm font-medium">
+                Address
+              </Label>
+              <Textarea
+                id="address"
+                value={formData.address}
+                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                placeholder="Full address"
+                rows={2}
+                data-testid="input-vendor-address"
+                className="resize-none transition-all duration-200"
+              />
+              <p className="text-xs text-muted-foreground">Full business address</p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="paymentTerms" className="text-sm font-medium">
+                Payment Terms
+              </Label>
+              <Input
+                id="paymentTerms"
+                value={formData.paymentTerms}
+                onChange={(e) => setFormData({ ...formData, paymentTerms: e.target.value })}
+                placeholder="e.g., Net 30"
+                data-testid="input-payment-terms"
+                className="transition-all duration-200"
+              />
+              <p className="text-xs text-muted-foreground">Standard payment terms agreement</p>
+            </div>
           </div>
         </div>
       </FormModal>

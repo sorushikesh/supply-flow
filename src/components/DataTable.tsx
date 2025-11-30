@@ -109,7 +109,8 @@ export function DataTable<T extends { id: string | number }>({
               currentData.map((item, idx) => (
                 <TableRow
                   key={item.id}
-                  className={onRowClick ? "hover-elevate cursor-pointer" : ""}
+                  className={`${onRowClick ? "hover-elevate cursor-pointer" : ""} animate-fade-in`}
+                  style={{ animationDelay: `${idx * 30}ms` }}
                   onClick={() => onRowClick?.(item)}
                   data-testid={`${testIdPrefix}-row-${idx}`}
                 >

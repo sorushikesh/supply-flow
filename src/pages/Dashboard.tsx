@@ -101,41 +101,49 @@ export default function Dashboard() {
   ];
 
   return (
-    <div className="p-6 lg:p-8 max-w-7xl mx-auto">
+    <div className="p-6 lg:p-8 max-w-7xl mx-auto animate-fade-in">
       <PageHeader
         title="Dashboard"
         description="Overview of your supply chain operations"
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <StatsCard
-          title="Total Inventory Value"
-          value="$284,520"
-          change={12.5}
-          changeLabel="vs last month"
-          icon={Package}
-        />
-        <StatsCard
-          title="Pending Orders"
-          value="23"
-          change={-8}
-          changeLabel="vs last week"
-          icon={ShoppingCart}
-        />
-        <StatsCard
-          title="Open Invoices"
-          value="$67,890"
-          change={5.2}
-          changeLabel="vs last month"
-          icon={FileText}
-        />
-        <StatsCard
-          title="Payments Received"
-          value="$156,340"
-          change={18.3}
-          changeLabel="vs last month"
-          icon={CreditCard}
-        />
+        <div className="animate-fade-in" style={{ animationDelay: '0ms' }}>
+          <StatsCard
+            title="Total Inventory Value"
+            value="$284,520"
+            change={12.5}
+            changeLabel="vs last month"
+            icon={Package}
+          />
+        </div>
+        <div className="animate-fade-in" style={{ animationDelay: '100ms' }}>
+          <StatsCard
+            title="Pending Orders"
+            value="23"
+            change={-8}
+            changeLabel="vs last week"
+            icon={ShoppingCart}
+          />
+        </div>
+        <div className="animate-fade-in" style={{ animationDelay: '200ms' }}>
+          <StatsCard
+            title="Open Invoices"
+            value="$67,890"
+            change={5.2}
+            changeLabel="vs last month"
+            icon={FileText}
+          />
+        </div>
+        <div className="animate-fade-in" style={{ animationDelay: '300ms' }}>
+          <StatsCard
+            title="Payments Received"
+            value="$156,340"
+            change={18.3}
+            changeLabel="vs last month"
+            icon={CreditCard}
+          />
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
@@ -143,9 +151,9 @@ export default function Dashboard() {
           <CardHeader className="flex flex-row items-center justify-between gap-4">
             <CardTitle className="text-lg font-semibold">Recent Orders</CardTitle>
             <Link href="/purchase-orders">
-              <Button variant="ghost" size="sm" data-testid="link-view-all-orders">
+              <Button variant="ghost" size="sm" data-testid="link-view-all-orders" className="transition-all duration-200 hover:translate-x-1">
                 View All
-                <ArrowRight className="ml-2 h-4 w-4" />
+                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Button>
             </Link>
           </CardHeader>
@@ -163,7 +171,7 @@ export default function Dashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2">
-              <AlertTriangle className="h-5 w-5 text-amber-500" />
+              <AlertTriangle className="h-5 w-5 text-amber-500 animate-pulse" />
               <CardTitle className="text-lg font-semibold">Low Stock Alerts</CardTitle>
             </div>
           </CardHeader>
@@ -172,7 +180,7 @@ export default function Dashboard() {
               {mockLowStockItems.map((item) => (
                 <div
                   key={item.id}
-                  className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover-elevate"
+                  className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover-elevate transition-all duration-200 hover:scale-[1.02] hover:shadow-md cursor-pointer"
                   data-testid={`low-stock-item-${item.id}`}
                 >
                   <div>
@@ -204,9 +212,9 @@ export default function Dashboard() {
           <CardHeader className="flex flex-row items-center justify-between gap-4">
             <CardTitle className="text-lg font-semibold">Overdue Invoices</CardTitle>
             <Link href="/invoices">
-              <Button variant="ghost" size="sm" data-testid="link-view-invoices">
+              <Button variant="ghost" size="sm" data-testid="link-view-invoices" className="transition-all duration-200 hover:translate-x-1">
                 View All
-                <ArrowRight className="ml-2 h-4 w-4" />
+                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Button>
             </Link>
           </CardHeader>
@@ -215,7 +223,7 @@ export default function Dashboard() {
               {mockOverdueInvoices.map((inv) => (
                 <div
                   key={inv.id}
-                  className="flex items-center justify-between p-3 rounded-lg border border-destructive/20 bg-destructive/5"
+                  className="flex items-center justify-between p-3 rounded-lg border border-destructive/20 bg-destructive/5 transition-all duration-200 hover:border-destructive/40 hover:shadow-md hover:scale-[1.02] cursor-pointer"
                   data-testid={`overdue-invoice-${inv.id}`}
                 >
                   <div>
@@ -244,26 +252,26 @@ export default function Dashboard() {
           <CardContent>
             <div className="grid grid-cols-2 gap-3">
               <Link href="/purchase-orders">
-                <Button variant="outline" className="w-full h-auto py-4 flex flex-col gap-2" data-testid="quick-action-new-po">
-                  <ShoppingCart className="h-5 w-5" />
+                <Button variant="outline" className="w-full h-auto py-4 flex flex-col gap-2 transition-all duration-200 hover:scale-105 hover:shadow-md active:scale-95" data-testid="quick-action-new-po">
+                  <ShoppingCart className="h-5 w-5 transition-transform group-hover:rotate-12" />
                   <span className="text-xs">New Purchase Order</span>
                 </Button>
               </Link>
               <Link href="/sales-orders">
-                <Button variant="outline" className="w-full h-auto py-4 flex flex-col gap-2" data-testid="quick-action-new-so">
-                  <FileText className="h-5 w-5" />
+                <Button variant="outline" className="w-full h-auto py-4 flex flex-col gap-2 transition-all duration-200 hover:scale-105 hover:shadow-md active:scale-95" data-testid="quick-action-new-so">
+                  <FileText className="h-5 w-5 transition-transform group-hover:rotate-12" />
                   <span className="text-xs">New Sales Order</span>
                 </Button>
               </Link>
               <Link href="/grn">
-                <Button variant="outline" className="w-full h-auto py-4 flex flex-col gap-2" data-testid="quick-action-new-grn">
-                  <Package className="h-5 w-5" />
+                <Button variant="outline" className="w-full h-auto py-4 flex flex-col gap-2 transition-all duration-200 hover:scale-105 hover:shadow-md active:scale-95" data-testid="quick-action-new-grn">
+                  <Package className="h-5 w-5 transition-transform group-hover:rotate-12" />
                   <span className="text-xs">Record GRN</span>
                 </Button>
               </Link>
               <Link href="/invoices">
-                <Button variant="outline" className="w-full h-auto py-4 flex flex-col gap-2" data-testid="quick-action-new-invoice">
-                  <CreditCard className="h-5 w-5" />
+                <Button variant="outline" className="w-full h-auto py-4 flex flex-col gap-2 transition-all duration-200 hover:scale-105 hover:shadow-md active:scale-95" data-testid="quick-action-new-invoice">
+                  <CreditCard className="h-5 w-5 transition-transform group-hover:rotate-12" />
                   <span className="text-xs">Create Invoice</span>
                 </Button>
               </Link>

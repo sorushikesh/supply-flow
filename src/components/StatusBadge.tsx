@@ -37,7 +37,11 @@ const statusConfig: Record<StatusType, { label: string; variant: "default" | "se
 export function StatusBadge({ status, className }: StatusBadgeProps) {
   const config = statusConfig[status];
   return (
-    <Badge variant={config.variant} className={className} data-testid={`status-badge-${status}`}>
+    <Badge 
+      variant={config.variant} 
+      className={`transition-all duration-200 hover:scale-105 hover:shadow-sm cursor-default ${className || ''}`}
+      data-testid={`status-badge-${status}`}
+    >
       {config.label}
     </Badge>
   );

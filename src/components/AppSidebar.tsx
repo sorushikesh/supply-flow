@@ -22,6 +22,7 @@ import {
   FileText,
   CreditCard,
   BarChart3,
+  Settings,
 } from "lucide-react";
 
 const mainNavItems = [
@@ -47,6 +48,10 @@ const financeNavItems = [
   { title: "Analytics", url: "/analytics", icon: BarChart3 },
 ];
 
+const systemNavItems = [
+  { title: "Settings", url: "/settings", icon: Settings },
+];
+
 export function AppSidebar() {
   const [location, setLocation] = useLocation();
 
@@ -65,6 +70,7 @@ export function AppSidebar() {
                 isActive={location === item.url}
                 data-testid={`${testIdPrefix}-${item.title.toLowerCase().replace(/\s+/g, "-")}`}
                 onClick={() => setLocation(item.url)}
+                className="transition-all duration-200 hover:translate-x-1 hover:bg-accent/80 active:scale-95"
               >
                 <item.icon className="h-4 w-4" />
                 <span>{item.title}</span>
@@ -77,7 +83,7 @@ export function AppSidebar() {
   );
 
   return (
-    <Sidebar>
+    <Sidebar className="transition-all duration-300 ease-in-out">
       <SidebarHeader className="p-4 border-b border-sidebar-border">
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-lg bg-primary">
@@ -95,6 +101,7 @@ export function AppSidebar() {
         {renderNavGroup("Parties", partiesNavItems, "nav-parties")}
         {renderNavGroup("Orders", ordersNavItems, "nav-orders")}
         {renderNavGroup("Finance", financeNavItems, "nav-finance")}
+        {renderNavGroup("System", systemNavItems, "nav-system")}
       </SidebarContent>
     </Sidebar>
   );

@@ -133,7 +133,7 @@ export default function PurchaseOrders() {
     .reduce((sum, po) => sum + po.totalAmount, 0);
 
   return (
-    <div className="p-6 lg:p-8 max-w-7xl mx-auto">
+    <div className="p-6 lg:p-8 max-w-7xl mx-auto animate-fade-in">
       <PageHeader
         title="Purchase Orders"
         description="Manage orders to your vendors"

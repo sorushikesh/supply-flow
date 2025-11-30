@@ -133,7 +133,7 @@ export default function SalesOrders() {
     .reduce((sum, so) => sum + so.totalAmount, 0);
 
   return (
-    <div className="p-6 lg:p-8 max-w-7xl mx-auto">
+    <div className="p-6 lg:p-8 max-w-7xl mx-auto animate-fade-in">
       <PageHeader
         title="Sales Orders"
         description="Manage orders from your customers"
@@ -212,10 +212,18 @@ export default function SalesOrders() {
         onSubmit={handleSubmit}
         submitLabel="Create SO"
       >
-        <div className="space-y-6">
+        {/* Order Information Section */}
+        <div className="space-y-4">
+          <div className="pb-2 border-b">
+            <h3 className="text-sm font-semibold text-foreground">Order Information</h3>
+            <p className="text-xs text-muted-foreground mt-1">Basic order details</p>
+          </div>
+          
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Customer *</Label>
+              <Label className="text-sm font-medium flex items-center gap-1">
+                Customer <span className="text-destructive">*</span>
+              </Label>
               <Select value={customer} onValueChange={setCustomer}>
                 <SelectTrigger data-testid="select-customer">
                   <SelectValue placeholder="Select customer" />
@@ -228,21 +236,32 @@ export default function SalesOrders() {
                   ))}
                 </SelectContent>
               </Select>
+              <p className="text-xs text-muted-foreground">Select customer for this order</p>
             </div>
             <div className="space-y-2">
-              <Label>Delivery Date *</Label>
+              <Label className="text-sm font-medium flex items-center gap-1">
+                Delivery Date <span className="text-destructive">*</span>
+              </Label>
               <Input
                 type="date"
                 value={deliveryDate}
                 onChange={(e) => setDeliveryDate(e.target.value)}
                 data-testid="input-delivery-date"
+                className="transition-all duration-200"
               />
+              <p className="text-xs text-muted-foreground">Expected delivery date</p>
             </div>
           </div>
+        </div>
 
-          <div className="space-y-3">
+        {/* Line Items Section */}
+        <div className="space-y-4 pt-4">
+          <div className="pb-2 border-b">
             <div className="flex items-center justify-between">
-              <Label>Line Items</Label>
+              <div>
+                <h3 className="text-sm font-semibold text-foreground">Line Items</h3>
+                <p className="text-xs text-muted-foreground mt-1">Products and quantities</p>
+              </div>
               <Button
                 type="button"
                 variant="outline"
@@ -254,6 +273,9 @@ export default function SalesOrders() {
                 Add Item
               </Button>
             </div>
+          </div>
+
+          <div className="space-y-3">
 
             {lineItems.map((item, index) => (
               <div key={item.id} className="grid grid-cols-12 gap-2 items-end">

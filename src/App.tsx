@@ -18,6 +18,7 @@ import Dispatch from "@/pages/Dispatch";
 import Invoices from "@/pages/Invoices";
 import Payments from "@/pages/Payments";
 import Analytics from "@/pages/Analytics";
+import Settings from "@/pages/Settings";
 
 const routes = [
   { path: "/", component: Dashboard, breadcrumb: "Dashboard" },
@@ -31,6 +32,7 @@ const routes = [
   { path: "/invoices", component: Invoices, breadcrumb: "Invoices" },
   { path: "/payments", component: Payments, breadcrumb: "Payments" },
   { path: "/analytics", component: Analytics, breadcrumb: "Analytics" },
+  { path: "/settings", component: Settings, breadcrumb: "Settings" },
 ];
 
 function Router() {
