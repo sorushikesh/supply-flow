@@ -52,7 +52,8 @@ import {
   AlertCircle,
   User,
   Calendar,
-  Receipt
+  Receipt,
+  Calculator
 } from "lucide-react";
 import { EmptyState } from "@/components/EmptyState";
 import { BulkActions } from "@/components/BulkActions";
@@ -70,6 +71,17 @@ interface Payment {
   reference: string;
   status: StatusType;
   recordedBy: string;
+}
+
+// Line Item Interface
+interface LineItem {
+  id: string;
+  productName: string;
+  sku: string;
+  quantity: number;
+  unitPrice: number;
+  total: number;
+  description?: string;
 }
 
 // Approval Action Interface
@@ -100,6 +112,7 @@ interface Invoice {
   rejectionReason?: string;
   payments?: Payment[];
   approvalHistory?: ApprovalAction[];
+  lineItems?: LineItem[];
 }
 
 // Mock Data with Approval Workflow and Payments
@@ -121,7 +134,12 @@ const mockInvoices: Invoice[] = [
       { level: 1, approver: "John Smith (Finance Manager)", action: "pending" },
       { level: 2, approver: "Sarah Johnson (CFO)", action: "pending" }
     ],
-    payments: []
+    payments: [],
+    lineItems: [
+      { id: "li1", productName: "Dell Latitude 5540 15.6\" Laptop", sku: "LTP-0001", quantity: 15, unitPrice: 1250, total: 18750, description: "Intel Core i7, 16GB RAM, 512GB SSD" },
+      { id: "li2", productName: "Samsung 27\" 4K Monitor", sku: "MON-0005", quantity: 10, unitPrice: 450, total: 4500, description: "4K UHD, USB-C connectivity" },
+      { id: "li3", productName: "USB-C Hub 7-in-1", sku: "ACC-0015", quantity: 25, unitPrice: 100, total: 2500, description: "Multi-port adapter" }
+    ]
   },
   { 
     id: "2", 
@@ -143,6 +161,12 @@ const mockInvoices: Invoice[] = [
     ],
     payments: [
       { id: "p1", paymentNumber: "PAY-2024-0080", paymentDate: "2024-01-15", amount: 65200, method: "Bank Transfer", reference: "TRF-456789", status: "completed", recordedBy: "Jane Doe" }
+    ],
+    lineItems: [
+      { id: "li4", productName: "HP EliteBook 840 14\" Laptop", sku: "LTP-0003", quantity: 30, unitPrice: 1350, total: 40500, description: "Intel Core i7, 16GB RAM, 1TB SSD" },
+      { id: "li5", productName: "LG 32\" UltraWide Monitor", sku: "MON-0007", quantity: 25, unitPrice: 650, total: 16250, description: "WQHD resolution, IPS panel" },
+      { id: "li6", productName: "90W USB-C Power Adapter", sku: "PWR-0012", quantity: 35, unitPrice: 130, total: 4550, description: "Universal laptop charger" },
+      { id: "li7", productName: "Wireless Mouse & Keyboard Combo", sku: "ACC-0020", quantity: 40, unitPrice: 95, total: 3800, description: "Ergonomic design" }
     ]
   },
   { 
@@ -1077,8 +1101,9 @@ export default function FinancialManagement() {
               <ScrollArea className="max-h-[calc(90vh-120px)]">
                 <div className="pr-4">
                   <Tabs defaultValue="overview" className="w-full">
-                    <TabsList className="grid w-full grid-cols-2 mb-6">
+                    <TabsList className="grid w-full grid-cols-3 mb-6">
                       <TabsTrigger value="overview">Overview</TabsTrigger>
+                      <TabsTrigger value="products">Products</TabsTrigger>
                       <TabsTrigger value="activity">Activity Log</TabsTrigger>
                     </TabsList>
 
@@ -1437,6 +1462,137 @@ export default function FinancialManagement() {
                       </Card>
                     )}
                   </div>
+                    </TabsContent>
+
+                    <TabsContent value="products" className="space-y-4">
+                      <div className="rounded-lg border bg-card">
+                        <div className="p-4 border-b">
+                          <h3 className="font-semibold flex items-center gap-2">
+                            <FileText className="h-5 w-5 text-primary" />
+                            {selectedInvoice.type === "customer" ? "Products Sold" : "Products Purchased"}
+                          </h3>
+                          <p className="text-sm text-muted-foreground mt-1">
+                            Detailed list of all items included in this invoice
+                          </p>
+                        </div>
+                        <div className="p-4">
+                          {selectedInvoice.lineItems && selectedInvoice.lineItems.length > 0 ? (
+                            <div className="space-y-3">
+                              {selectedInvoice.lineItems.map((item, index) => (
+                                <Card key={item.id} className="border hover:border-primary/40 transition-all">
+                                  <CardContent className="pt-4 pb-4">
+                                    <div className="flex items-start justify-between mb-3">
+                                      <div className="flex items-start gap-3 flex-1">
+                                        <div className="p-2 rounded-lg bg-primary/10 mt-1">
+                                          <FileText className="h-5 w-5 text-primary" />
+                                        </div>
+                                        <div className="flex-1">
+                                          <div className="flex items-start justify-between mb-2">
+                                            <div>
+                                              <p className="font-semibold text-base">{item.productName}</p>
+                                              <p className="text-xs text-muted-foreground mt-1">SKU: {item.sku}</p>
+                                            </div>
+                                            <Badge variant="outline" className="ml-2">
+                                              Item #{index + 1}
+                                            </Badge>
+                                          </div>
+                                          {item.description && (
+                                            <p className="text-sm text-muted-foreground mt-2 p-2 bg-muted/30 rounded">
+                                              {item.description}
+                                            </p>
+                                          )}
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <Separator className="my-3" />
+                                    <div className="grid grid-cols-4 gap-4">
+                                      <div className="flex items-center gap-2">
+                                        <div className="p-2 rounded bg-blue-500/10">
+                                          <FileText className="h-4 w-4 text-blue-600" />
+                                        </div>
+                                        <div>
+                                          <p className="text-xs text-muted-foreground">Quantity</p>
+                                          <p className="font-bold text-lg">{item.quantity}</p>
+                                        </div>
+                                      </div>
+                                      <div className="flex items-center gap-2">
+                                        <div className="p-2 rounded bg-purple-500/10">
+                                          <DollarSign className="h-4 w-4 text-purple-600" />
+                                        </div>
+                                        <div>
+                                          <p className="text-xs text-muted-foreground">Unit Price</p>
+                                          <p className="font-bold text-lg">${item.unitPrice.toLocaleString()}</p>
+                                        </div>
+                                      </div>
+                                      <div className="flex items-center gap-2">
+                                        <div className="p-2 rounded bg-orange-500/10">
+                                          <Calculator className="h-4 w-4 text-orange-600" />
+                                        </div>
+                                        <div>
+                                          <p className="text-xs text-muted-foreground">Subtotal</p>
+                                          <p className="font-bold text-lg">${item.total.toLocaleString()}</p>
+                                        </div>
+                                      </div>
+                                      <div className="flex items-center gap-2">
+                                        <div className="p-2 rounded bg-green-500/10">
+                                          <TrendingUp className="h-4 w-4 text-green-600" />
+                                        </div>
+                                        <div>
+                                          <p className="text-xs text-muted-foreground">Status</p>
+                                          <Badge variant="default" className="mt-1">
+                                            {selectedInvoice.type === "customer" ? "Sold" : "Purchased"}
+                                          </Badge>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </CardContent>
+                                </Card>
+                              ))}
+                              
+                              {/* Summary Card */}
+                              <Card className="border-primary/30 bg-gradient-to-br from-primary/5 to-blue-500/5">
+                                <CardContent className="pt-4 pb-4">
+                                  <h4 className="font-semibold mb-3 flex items-center gap-2">
+                                    <Calculator className="h-4 w-4 text-primary" />
+                                    Order Summary
+                                  </h4>
+                                  <div className="space-y-2">
+                                    <div className="flex justify-between text-sm">
+                                      <span className="text-muted-foreground">Total Items:</span>
+                                      <span className="font-semibold">{selectedInvoice.lineItems.length}</span>
+                                    </div>
+                                    <div className="flex justify-between text-sm">
+                                      <span className="text-muted-foreground">Total Quantity:</span>
+                                      <span className="font-semibold">
+                                        {selectedInvoice.lineItems.reduce((sum, item) => sum + item.quantity, 0)}
+                                      </span>
+                                    </div>
+                                    <Separator className="my-2" />
+                                    <div className="flex justify-between text-base pt-2">
+                                      <span className="font-semibold">Total Amount:</span>
+                                      <span className="font-bold text-primary text-xl">
+                                        ${selectedInvoice.amount.toLocaleString()}
+                                      </span>
+                                    </div>
+                                  </div>
+                                </CardContent>
+                              </Card>
+                            </div>
+                          ) : (
+                            <Card className="border-dashed">
+                              <CardContent className="py-12">
+                                <div className="text-center text-muted-foreground">
+                                  <div className="mx-auto w-16 h-16 rounded-full bg-muted/50 flex items-center justify-center mb-4">
+                                    <FileText className="h-8 w-8 opacity-50" />
+                                  </div>
+                                  <p className="font-medium">No product details available</p>
+                                  <p className="text-sm mt-1">Line items will appear here when added</p>
+                                </div>
+                              </CardContent>
+                            </Card>
+                          )}
+                        </div>
+                      </div>
                     </TabsContent>
 
                     <TabsContent value="activity" className="space-y-4">
