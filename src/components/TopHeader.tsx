@@ -13,7 +13,6 @@ import { Bell, Settings, LogOut, Zap, ShoppingCart, FileText, Package, CreditCar
 import { Badge } from "@/components/ui/badge";
 import { useLocation } from "wouter";
 
-// todo: remove mock functionality
 const mockNotifications = [
   { id: 1, title: "Low Stock Alert", description: "Widget A is below reorder level", time: "2 min ago" },
   { id: 2, title: "PO Approved", description: "PO-2024-0042 has been approved", time: "15 min ago" },

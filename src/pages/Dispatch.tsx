@@ -20,7 +20,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Truck, MapPin, Package, CheckCircle2 } from "lucide-react";
 
-// todo: remove mock functionality
 interface DispatchRecord {
   id: string;
   dispatchNumber: string;

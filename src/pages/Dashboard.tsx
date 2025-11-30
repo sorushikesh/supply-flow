@@ -33,7 +33,6 @@ import {
 } from "lucide-react";
 import { Link } from "wouter";
 
-// todo: remove mock functionality
 interface RecentOrder {
   id: string;
   orderNumber: string;

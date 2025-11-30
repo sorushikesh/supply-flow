@@ -41,7 +41,6 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { Pencil, Trash2, Package, ArrowUp, ArrowDown, Calendar, TrendingUp, DollarSign } from "lucide-react";
 
-// todo: remove mock functionality
 interface InventoryItem {
   id: string;
   sku: string;

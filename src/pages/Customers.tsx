@@ -25,7 +25,6 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { Users, Mail, Phone, Package, ShoppingCart, Calendar, DollarSign, TrendingUp } from "lucide-react";
 
-// todo: remove mock functionality
 interface Customer {
   id: string;
   code: string;

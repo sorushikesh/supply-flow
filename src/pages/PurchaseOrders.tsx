@@ -23,7 +23,6 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { Trash2, Plus, ShoppingCart, FileText, DollarSign } from "lucide-react";
 
-// todo: remove mock functionality
 interface PurchaseOrder {
   id: string;
   poNumber: string;

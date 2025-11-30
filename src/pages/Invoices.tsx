@@ -24,7 +24,6 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { FileText, Download, Send, Eye, DollarSign, AlertTriangle } from "lucide-react";
 
-// todo: remove mock functionality
 interface Invoice {
   id: string;
   invoiceNumber: string;

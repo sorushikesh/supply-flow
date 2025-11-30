@@ -20,7 +20,6 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 
-// todo: remove mock functionality - simplified chart representation
 const mockSalesData = [
   { month: "Jan", sales: 45000, purchases: 32000 },
   { month: "Feb", sales: 52000, purchases: 38000 },

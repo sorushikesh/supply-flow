@@ -25,7 +25,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowDownLeft, ArrowUpRight, CreditCard, DollarSign } from "lucide-react";
 
-// todo: remove mock functionality
 interface Payment {
   id: string;
   paymentNumber: string;

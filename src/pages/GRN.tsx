@@ -25,7 +25,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Package, CheckCircle2, AlertTriangle } from "lucide-react";
 
-// todo: remove mock functionality
 interface GRNRecord {
   id: string;
   grnNumber: string;

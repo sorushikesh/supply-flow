@@ -19,7 +19,6 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Trash2, Pencil, Package, MapPin, Tag, Building2, DollarSign, Scale, Bell, FileText, Users } from "lucide-react";
 
-// todo: remove mock functionality
 interface Category {
   id: string;
   name: string;
