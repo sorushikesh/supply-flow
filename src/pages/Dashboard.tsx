@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { PageHeader } from "@/components/PageHeader";
+import { PageBackground } from "@/components/PageBackground";
 import { StatsCard } from "@/components/StatsCard";
 import { DataTable, type Column } from "@/components/DataTable";
 import { StatusBadge, type StatusType } from "@/components/StatusBadge";
@@ -101,11 +102,12 @@ export default function Dashboard() {
   ];
 
   return (
-    <div className="p-6 lg:p-8 max-w-7xl mx-auto animate-fade-in relative">
-      <PageHeader
-        title="Dashboard"
-        description="Overview of your supply chain operations"
-      />
+    <PageBackground>
+      <div className="p-6 lg:p-8 max-w-7xl mx-auto animate-fade-in relative">
+        <PageHeader
+          title="Dashboard"
+          description="Overview of your supply chain operations"
+        />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <div className="animate-fade-in" style={{ animationDelay: '0ms' }}>
@@ -281,6 +283,7 @@ export default function Dashboard() {
           </CardContent>
         </Card>
       </div>
-    </div>
+      </div>
+    </PageBackground>
   );
 }

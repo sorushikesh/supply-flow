@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { PageHeader } from "@/components/PageHeader";
+import { PageBackground } from "@/components/PageBackground";
 import { SearchFilter } from "@/components/SearchFilter";
 import { DataTable, type Column } from "@/components/DataTable";
 import { StatusBadge, type StatusType } from "@/components/StatusBadge";
@@ -131,13 +132,14 @@ export default function Payments() {
     .reduce((sum, p) => sum + p.amount, 0);
 
   return (
-    <div className="p-6 lg:p-8 max-w-7xl mx-auto">
-      <PageHeader
-        title="Payments"
-        description="Track payments received and made"
-        actionLabel="Record Payment"
-        onAction={() => setModalOpen(true)}
-      />
+    <PageBackground>
+      <div className="p-6 lg:p-8 max-w-7xl mx-auto animate-fade-in">
+        <PageHeader
+          title="Payments"
+          description="Track payments received and made"
+          actionLabel="Record Payment"
+          onAction={() => setModalOpen(true)}
+        />
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <Card>
@@ -332,6 +334,7 @@ export default function Payments() {
           </div>
         </div>
       </FormModal>
-    </div>
+      </div>
+    </PageBackground>
   );
 }

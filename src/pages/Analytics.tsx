@@ -1,4 +1,5 @@
 import { PageHeader } from "@/components/PageHeader";
+import { PageBackground } from "@/components/PageBackground";
 import { StatsCard } from "@/components/StatsCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -56,6 +57,7 @@ export default function Analytics() {
   const maxSales = Math.max(...mockSalesData.map((d) => d.sales));
 
   return (
+    <PageBackground>
     <div className="p-6 lg:p-8 max-w-7xl mx-auto">
       <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
         <PageHeader
@@ -273,6 +275,7 @@ export default function Analytics() {
           </CardContent>
         </Card>
       </div>
-    </div>
+      </div>
+    </PageBackground>
   );
 }
