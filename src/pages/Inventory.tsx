@@ -250,7 +250,7 @@ export default function Inventory() {
   );
 
   return (
-    <div className="p-6 lg:p-8 max-w-7xl mx-auto">
+    <div className="p-6 lg:p-8 max-w-7xl mx-auto animate-fade-in">
       <PageHeader
         title="Inventory"
         description="Manage your product stock levels and locations"

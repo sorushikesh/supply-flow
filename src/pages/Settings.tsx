@@ -307,7 +307,7 @@ export default function Settings() {
   };
 
   return (
-    <div className="p-6 lg:p-8 max-w-7xl mx-auto">
+    <div className="p-6 lg:p-8 max-w-7xl mx-auto animate-fade-in">
       <PageHeader
         title="Settings"
         description="Manage categories, locations, and product types"
@@ -398,7 +398,7 @@ export default function Settings() {
                 {categories.map((category) => (
                   <div
                     key={category.id}
-                    className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50"
+                    className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-all duration-200 hover:shadow-md hover:border-primary/20"
                   >
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
@@ -506,7 +506,7 @@ export default function Settings() {
                 {locations.map((location) => (
                   <div
                     key={location.id}
-                    className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50"
+                    className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-all duration-200 hover:shadow-md hover:border-primary/20"
                   >
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
@@ -613,7 +613,7 @@ export default function Settings() {
                 {productTypes.map((type) => (
                   <div
                     key={type.id}
-                    className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50"
+                    className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-all duration-200 hover:shadow-md hover:border-primary/20"
                   >
                     <div className="flex-1">
                       <div className="flex items-center gap-2">

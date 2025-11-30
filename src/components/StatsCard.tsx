@@ -14,7 +14,7 @@ export function StatsCard({ title, value, change, changeLabel, icon: Icon }: Sta
   const isNegative = change && change < 0;
 
   return (
-    <Card data-testid={`stats-card-${title.toLowerCase().replace(/\s+/g, "-")}`}>
+    <Card data-testid={`stats-card-${title.toLowerCase().replace(/\s+/g, "-")}`} className="transition-all duration-200 hover:shadow-md hover:-translate-y-1 cursor-pointer">
       <CardContent className="p-6">
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1 min-w-0">

@@ -127,7 +127,7 @@ export default function Customers() {
   const activeCustomers = mockCustomers.filter((c) => c.status === "active").length;
 
   return (
-    <div className="p-6 lg:p-8 max-w-7xl mx-auto">
+    <div className="p-6 lg:p-8 max-w-7xl mx-auto animate-fade-in">
       <PageHeader
         title="Customers"
         description="Manage your customer relationships"

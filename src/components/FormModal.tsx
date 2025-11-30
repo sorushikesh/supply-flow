@@ -31,7 +31,7 @@ export function FormModal({
 }: FormModalProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto animate-scale-in">
         <DialogHeader>
           <DialogTitle data-testid="modal-title">{title}</DialogTitle>
           {description && <DialogDescription>{description}</DialogDescription>}

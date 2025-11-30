@@ -122,7 +122,7 @@ export default function Vendors() {
   const activeVendors = mockVendors.filter((v) => v.status === "active").length;
 
   return (
-    <div className="p-6 lg:p-8 max-w-7xl mx-auto">
+    <div className="p-6 lg:p-8 max-w-7xl mx-auto animate-fade-in">
       <PageHeader
         title="Vendors"
         description="Manage your supplier relationships"

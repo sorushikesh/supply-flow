@@ -133,7 +133,7 @@ export default function SalesOrders() {
     .reduce((sum, so) => sum + so.totalAmount, 0);
 
   return (
-    <div className="p-6 lg:p-8 max-w-7xl mx-auto">
+    <div className="p-6 lg:p-8 max-w-7xl mx-auto animate-fade-in">
       <PageHeader
         title="Sales Orders"
         description="Manage orders from your customers"

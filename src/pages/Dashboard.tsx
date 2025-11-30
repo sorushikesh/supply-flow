@@ -101,7 +101,7 @@ export default function Dashboard() {
   ];
 
   return (
-    <div className="p-6 lg:p-8 max-w-7xl mx-auto">
+    <div className="p-6 lg:p-8 max-w-7xl mx-auto animate-fade-in">
       <PageHeader
         title="Dashboard"
         description="Overview of your supply chain operations"
