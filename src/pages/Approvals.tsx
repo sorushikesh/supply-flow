@@ -246,8 +246,10 @@ export default function Approvals() {
                   i < item.approvalLevel - 1
                     ? "bg-green-500"
                     : i === item.approvalLevel - 1
-                    ? "bg-primary"
-                    : "bg-muted"
+                    ? item.status === "rejected"
+                      ? "bg-red-500"
+                      : "bg-green-500"
+                    : "bg-blue-900"
                 }`}
               />
             ))}

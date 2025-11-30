@@ -313,7 +313,8 @@ const mockInvoices: Invoice[] = [
     paidAmount: 0, 
     status: "pending",
     approvalStatus: "pending_approval",
-    approvalLevel: 2,
+    approvalLevel: 1,
+    totalApprovalLevels: 2,
     approvalHistory: [
       { level: 1, approver: "John Smith (Finance Manager)", action: "approved", date: "2024-01-06", comments: "Approved, forwarding to CFO" },
       { level: 2, approver: "Sarah Johnson (CFO)", action: "pending" }
@@ -545,8 +546,8 @@ export default function FinancialManagement() {
                       : i === currentLevel - 1
                       ? invoice.approvalStatus === "rejected"
                         ? "bg-red-500"
-                        : "bg-primary"
-                      : "bg-muted"
+                        : "bg-green-500"
+                      : "bg-blue-900"
                   }`}
                 />
               ))}
@@ -1074,9 +1075,16 @@ export default function FinancialManagement() {
                 </div>
               </DialogHeader>
               <ScrollArea className="max-h-[calc(90vh-120px)]">
-                <div className="space-y-6 pr-4">
-                  {/* Basic Info */}
-                  <div className="grid grid-cols-2 gap-4">
+                <div className="pr-4">
+                  <Tabs defaultValue="overview" className="w-full">
+                    <TabsList className="grid w-full grid-cols-2 mb-6">
+                      <TabsTrigger value="overview">Overview</TabsTrigger>
+                      <TabsTrigger value="activity">Activity Log</TabsTrigger>
+                    </TabsList>
+
+                    <TabsContent value="overview" className="space-y-6">
+                      {/* Basic Info */}
+                      <div className="grid grid-cols-2 gap-4">
                     <Card className="border-primary/20 hover:border-primary/40 transition-colors">
                       <CardContent className="pt-4 pb-4">
                         <div className="flex items-center gap-2 mb-2">
@@ -1429,6 +1437,204 @@ export default function FinancialManagement() {
                       </Card>
                     )}
                   </div>
+                    </TabsContent>
+
+                    <TabsContent value="activity" className="space-y-4">
+                      <div className="rounded-lg border bg-card">
+                        <div className="p-4 border-b">
+                          <h3 className="font-semibold flex items-center gap-2">
+                            <History className="h-5 w-5 text-primary" />
+                            Complete Activity Timeline
+                          </h3>
+                          <p className="text-sm text-muted-foreground mt-1">
+                            Full history of all actions and events for this invoice
+                          </p>
+                        </div>
+                        <div className="p-4">
+                          <div className="space-y-4">
+                            {/* Invoice Created */}
+                            <div className="flex gap-3 pb-4 border-b last:border-0 last:pb-0">
+                              <div className="flex flex-col items-center">
+                                <div className="p-2 rounded-full bg-blue-500/10 border-2 border-blue-500/20">
+                                  <FileText className="h-4 w-4 text-blue-600" />
+                                </div>
+                                <div className="w-px h-full bg-border mt-2"></div>
+                              </div>
+                              <div className="flex-1 pt-1">
+                                <div className="flex items-start justify-between mb-1">
+                                  <div>
+                                    <p className="font-semibold text-sm">Invoice Created</p>
+                                    <p className="text-xs text-muted-foreground mt-0.5">
+                                      Invoice {selectedInvoice.invoiceNumber} was generated
+                                    </p>
+                                  </div>
+                                  <Badge variant="outline" className="text-xs">Created</Badge>
+                                </div>
+                                <div className="mt-2 flex items-center gap-4 text-xs text-muted-foreground">
+                                  <span className="flex items-center gap-1">
+                                    <Calendar className="h-3 w-3" />
+                                    {selectedInvoice.issueDate}
+                                  </span>
+                                  <span className="flex items-center gap-1">
+                                    <User className="h-3 w-3" />
+                                    System
+                                  </span>
+                                </div>
+                                <div className="mt-2 p-2 rounded bg-muted/30 text-xs">
+                                  <p><strong>Party:</strong> {selectedInvoice.party}</p>
+                                  <p><strong>Amount:</strong> ${selectedInvoice.amount.toLocaleString()}</p>
+                                  <p><strong>Type:</strong> {selectedInvoice.type === "customer" ? "Customer Invoice (Receivable)" : "Vendor Invoice (Payable)"}</p>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Approval History */}
+                            {selectedInvoice.approvalHistory?.map((action, index) => (
+                              <div key={index} className="flex gap-3 pb-4 border-b last:border-0 last:pb-0">
+                                <div className="flex flex-col items-center">
+                                  <div className={`p-2 rounded-full border-2 ${
+                                    action.action === "approved" ? "bg-green-500/10 border-green-500/20" :
+                                    action.action === "rejected" ? "bg-red-500/10 border-red-500/20" :
+                                    "bg-yellow-500/10 border-yellow-500/20"
+                                  }`}>
+                                    {action.action === "approved" && <CheckCircle className="h-4 w-4 text-green-600" />}
+                                    {action.action === "rejected" && <XCircle className="h-4 w-4 text-red-600" />}
+                                    {action.action === "pending" && <Clock className="h-4 w-4 text-yellow-600" />}
+                                  </div>
+                                  <div className="w-px h-full bg-border mt-2"></div>
+                                </div>
+                                <div className="flex-1 pt-1">
+                                  <div className="flex items-start justify-between mb-1">
+                                    <div>
+                                      <p className="font-semibold text-sm">
+                                        {action.action === "approved" ? "Approval Granted" :
+                                         action.action === "rejected" ? "Approval Rejected" : "Pending Approval"}
+                                      </p>
+                                      <p className="text-xs text-muted-foreground mt-0.5">
+                                        Level {action.level} approval {action.action === "pending" ? "is pending" : action.action}
+                                      </p>
+                                    </div>
+                                    <Badge variant={
+                                      action.action === "approved" ? "default" :
+                                      action.action === "rejected" ? "destructive" : "secondary"
+                                    } className="text-xs">
+                                      {action.action === "approved" ? "✓ Approved" :
+                                       action.action === "rejected" ? "✗ Rejected" : "⏳ Pending"}
+                                    </Badge>
+                                  </div>
+                                  <div className="mt-2 flex items-center gap-4 text-xs text-muted-foreground">
+                                    {action.date && (
+                                      <span className="flex items-center gap-1">
+                                        <Calendar className="h-3 w-3" />
+                                        {action.date}
+                                      </span>
+                                    )}
+                                    <span className="flex items-center gap-1">
+                                      <User className="h-3 w-3" />
+                                      {action.approver}
+                                    </span>
+                                  </div>
+                                  {action.comments && (
+                                    <div className="mt-2 p-2 rounded bg-muted/30 border-l-2 border-primary text-xs">
+                                      <p className="text-muted-foreground italic">"{action.comments}"</p>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            ))}
+
+                            {/* Payment History */}
+                            {selectedInvoice.payments && selectedInvoice.payments.length > 0 && selectedInvoice.payments.map((payment, idx) => (
+                              <div key={payment.id} className="flex gap-3 pb-4 border-b last:border-0 last:pb-0">
+                                <div className="flex flex-col items-center">
+                                  <div className="p-2 rounded-full bg-green-500/10 border-2 border-green-500/20">
+                                    <CreditCard className="h-4 w-4 text-green-600" />
+                                  </div>
+                                  <div className="w-px h-full bg-border mt-2"></div>
+                                </div>
+                                <div className="flex-1 pt-1">
+                                  <div className="flex items-start justify-between mb-1">
+                                    <div>
+                                      <p className="font-semibold text-sm">Payment Recorded</p>
+                                      <p className="text-xs text-muted-foreground mt-0.5">
+                                        Payment #{idx + 1} received and processed
+                                      </p>
+                                    </div>
+                                    <Badge variant="default" className="text-xs bg-green-600">
+                                      ${payment.amount.toLocaleString()}
+                                    </Badge>
+                                  </div>
+                                  <div className="mt-2 flex items-center gap-4 text-xs text-muted-foreground">
+                                    <span className="flex items-center gap-1">
+                                      <Calendar className="h-3 w-3" />
+                                      {payment.paymentDate}
+                                    </span>
+                                    <span className="flex items-center gap-1">
+                                      <User className="h-3 w-3" />
+                                      {payment.recordedBy}
+                                    </span>
+                                  </div>
+                                  <div className="mt-2 p-2 rounded bg-muted/30 text-xs">
+                                    <p><strong>Payment Number:</strong> {payment.paymentNumber}</p>
+                                    <p><strong>Method:</strong> {payment.method}</p>
+                                    <p><strong>Reference:</strong> {payment.reference}</p>
+                                    <p><strong>Status:</strong> {payment.status}</p>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+
+                            {/* Current Status */}
+                            <div className="flex gap-3">
+                              <div className="flex flex-col items-center">
+                                <div className={`p-2 rounded-full border-2 ${
+                                  selectedInvoice.paidAmount >= selectedInvoice.amount 
+                                    ? "bg-green-500/10 border-green-500/20" 
+                                    : "bg-blue-500/10 border-blue-500/20"
+                                }`}>
+                                  {selectedInvoice.paidAmount >= selectedInvoice.amount 
+                                    ? <CheckCircle className="h-4 w-4 text-green-600" />
+                                    : <AlertTriangle className="h-4 w-4 text-blue-600" />
+                                  }
+                                </div>
+                              </div>
+                              <div className="flex-1 pt-1">
+                                <div className="flex items-start justify-between mb-1">
+                                  <div>
+                                    <p className="font-semibold text-sm">Current Status</p>
+                                    <p className="text-xs text-muted-foreground mt-0.5">
+                                      {selectedInvoice.paidAmount >= selectedInvoice.amount 
+                                        ? "Invoice fully paid and closed" 
+                                        : selectedInvoice.paidAmount > 0
+                                        ? "Partial payment received, balance pending"
+                                        : "Awaiting payment"}
+                                    </p>
+                                  </div>
+                                  <StatusBadge status={selectedInvoice.status} />
+                                </div>
+                                <div className="mt-2 p-2 rounded bg-muted/30 text-xs">
+                                  <div className="flex justify-between mb-1">
+                                    <span>Total Amount:</span>
+                                    <span className="font-semibold">${selectedInvoice.amount.toLocaleString()}</span>
+                                  </div>
+                                  <div className="flex justify-between mb-1">
+                                    <span>Paid Amount:</span>
+                                    <span className="font-semibold text-green-600">${selectedInvoice.paidAmount.toLocaleString()}</span>
+                                  </div>
+                                  <div className="flex justify-between pt-1 border-t">
+                                    <span>Balance Due:</span>
+                                    <span className="font-semibold text-red-600">
+                                      ${(selectedInvoice.amount - selectedInvoice.paidAmount).toLocaleString()}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </TabsContent>
+                  </Tabs>
                 </div>
               </ScrollArea>
               <DialogFooter>
