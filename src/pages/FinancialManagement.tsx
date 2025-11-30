@@ -518,25 +518,39 @@ export default function FinancialManagement() {
       header: "Due Date",
     },
     {
-      key: "approvalStatus",
-      header: "Approval",
+      key: "approvalProgress",
+      header: "Approval Progress",
       render: (invoice) => {
-        const approvalStatusMap: Record<string, { label: string; variant: StatusType }> = {
-          draft: { label: "Draft", variant: "pending" },
-          pending_approval: { label: "Pending", variant: "pending" },
-          partially_approved: { label: "Partial", variant: "processing" },
-          approved: { label: "Approved", variant: "completed" },
-          rejected: { label: "Rejected", variant: "cancelled" },
-        };
-        const statusInfo = approvalStatusMap[invoice.approvalStatus];
+        const totalLevels = invoice.totalApprovalLevels || 1;
+        const currentLevel = invoice.approvalStatus === "approved" 
+          ? totalLevels 
+          : invoice.approvalStatus === "rejected"
+          ? invoice.approvalLevel - 1
+          : invoice.approvalLevel || 1;
+        
         return (
-          <div className="flex items-center gap-2">
-            <StatusBadge status={statusInfo.variant} />
-            {invoice.totalApprovalLevels && invoice.totalApprovalLevels > 1 && invoice.approvalStatus !== "rejected" && (
-              <span className="text-xs text-muted-foreground">
-                {invoice.approvalLevel}/{invoice.totalApprovalLevels}
-              </span>
-            )}
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <Badge variant="outline" className="text-xs">
+                Level {currentLevel} of {totalLevels}
+              </Badge>
+            </div>
+            <div className="flex gap-0.5">
+              {Array.from({ length: totalLevels }).map((_, i) => (
+                <div
+                  key={i}
+                  className={`h-1 flex-1 rounded-full ${
+                    i < currentLevel - 1
+                      ? "bg-green-500"
+                      : i === currentLevel - 1
+                      ? invoice.approvalStatus === "rejected"
+                        ? "bg-red-500"
+                        : "bg-primary"
+                      : "bg-muted"
+                  }`}
+                />
+              ))}
+            </div>
           </div>
         );
       },
@@ -1824,7 +1838,7 @@ export default function FinancialManagement() {
             { key: "dueDate", label: "Due Date", enabled: true },
             { key: "amount", label: "Amount", enabled: true },
             { key: "paidAmount", label: "Paid Amount", enabled: true },
-            { key: "approvalStatus", label: "Approval Status", enabled: true },
+            { key: "approvalProgress", label: "Approval Progress", enabled: true },
             { key: "status", label: "Payment Status", enabled: true },
           ]}
         />

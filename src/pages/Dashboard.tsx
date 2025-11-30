@@ -22,7 +22,6 @@ import {
   Clock,
   CheckCircle2,
   XCircle,
-  Loader2,
   ArrowUpRight,
   ArrowDownRight,
   Eye,
@@ -32,8 +31,6 @@ import {
   Building2,
 } from "lucide-react";
 import { Link } from "wouter";
-import { useState, useEffect } from "react";
-import { LoadingSpinner } from "@/components/LoadingSpinner";
 
 interface RecentOrder {
   id: string;
@@ -73,16 +70,6 @@ const mockOverdueInvoices = [
 ];
 
 export default function Dashboard() {
-  const [isLoading, setIsLoading] = useState(true);
-
-  // Simulate initial data loading
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 800);
-    return () => clearTimeout(timer);
-  }, []);
-
   const orderColumns: Column<RecentOrder>[] = [
     { key: "orderNumber", header: "Order #", className: "font-mono text-sm" },
     {
@@ -128,11 +115,6 @@ export default function Dashboard() {
 
   return (
     <PageBackground>
-      {isLoading ? (
-        <div className="flex items-center justify-center min-h-screen">
-          <LoadingSpinner size="xl" text="Loading dashboard..." />
-        </div>
-      ) : (
       <div className="relative z-10 p-6">
         {/* Page Header */}
         <div className="mb-6 flex items-center justify-between">
@@ -473,7 +455,7 @@ export default function Dashboard() {
                   </div>
                 </div>
                 <div className="flex gap-3 p-3 rounded-lg bg-blue-500/10 border border-blue-500/20 hover:bg-blue-500/15 transition-colors cursor-pointer">
-                  <Loader2 className="h-4 w-4 text-blue-500 animate-spin flex-shrink-0 mt-0.5" />
+                  <Clock className="h-4 w-4 text-blue-500 flex-shrink-0 mt-0.5" />
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-medium">Processing payment</p>
                     <p className="text-xs text-muted-foreground">$8,750 • 5m ago</p>
@@ -499,7 +481,6 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
-      )}
     </PageBackground>
   );
 }

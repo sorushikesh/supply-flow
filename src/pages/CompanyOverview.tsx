@@ -157,49 +157,55 @@ export default function CompanyOverview() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="company-name" className="flex items-center gap-2">
+                    <Label htmlFor="company-name" className="flex items-center gap-2 text-sm font-medium">
                       <Building2 className="h-4 w-4 text-primary" />
-                      Company Name *
+                      Company Name <span className="text-destructive ml-1">*</span>
                     </Label>
                     <Input
                       id="company-name"
                       value={companyName}
                       onChange={(e) => setCompanyName(e.target.value)}
                       placeholder="Enter company name"
+                      className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
                     />
+                    <p className="text-xs text-muted-foreground">Legal name of your organization</p>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="company-email" className="flex items-center gap-2">
+                    <Label htmlFor="company-email" className="flex items-center gap-2 text-sm font-medium">
                       <Mail className="h-4 w-4 text-primary" />
-                      Email Address
+                      Email Address <span className="text-destructive ml-1">*</span>
                     </Label>
                     <Input
                       id="company-email"
                       type="email"
                       value={companyEmail}
                       onChange={(e) => setCompanyEmail(e.target.value)}
-                      placeholder="Enter email address"
+                      placeholder="company@example.com"
+                      className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
                     />
+                    <p className="text-xs text-muted-foreground">Primary contact email for your business</p>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="company-phone" className="flex items-center gap-2">
+                    <Label htmlFor="company-phone" className="flex items-center gap-2 text-sm font-medium">
                       <Phone className="h-4 w-4 text-primary" />
-                      Phone Number
+                      Phone Number <span className="text-destructive ml-1">*</span>
                     </Label>
                     <Input
                       id="company-phone"
                       value={companyPhone}
                       onChange={(e) => setCompanyPhone(e.target.value)}
-                      placeholder="Enter phone number"
+                      placeholder="+1 555-0100"
+                      className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
                     />
+                    <p className="text-xs text-muted-foreground">Main business contact number</p>
                   </div>
                 </div>
 
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="company-address" className="flex items-center gap-2">
+                    <Label htmlFor="company-address" className="flex items-center gap-2 text-sm font-medium">
                       <MapPin className="h-4 w-4 text-primary" />
                       Address
                     </Label>
@@ -207,12 +213,14 @@ export default function CompanyOverview() {
                       id="company-address"
                       value={companyAddress}
                       onChange={(e) => setCompanyAddress(e.target.value)}
-                      placeholder="Enter company address"
+                      placeholder="Full business address"
+                      className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
                     />
+                    <p className="text-xs text-muted-foreground">Physical location of your business</p>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="company-tax-id" className="flex items-center gap-2">
+                    <Label htmlFor="company-tax-id" className="flex items-center gap-2 text-sm font-medium">
                       <FileText className="h-4 w-4 text-primary" />
                       Tax ID / Registration Number
                     </Label>
@@ -220,8 +228,10 @@ export default function CompanyOverview() {
                       id="company-tax-id"
                       value={companyTaxId}
                       onChange={(e) => setCompanyTaxId(e.target.value)}
-                      placeholder="Enter tax ID"
+                      placeholder="XX-XXXXXXX"
+                      className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
                     />
+                    <p className="text-xs text-muted-foreground">Official tax identification or registration number</p>
                   </div>
                 </div>
               </div>

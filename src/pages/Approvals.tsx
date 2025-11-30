@@ -3,7 +3,7 @@ import { PageBackground } from "@/components/PageBackground";
 import { SearchFilter } from "@/components/SearchFilter";
 import { DataTable, type Column } from "@/components/DataTable";
 import { StatusBadge, type StatusType } from "@/components/StatusBadge";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -14,6 +14,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
 import { 
   CheckCircle2, 
@@ -221,6 +226,11 @@ export default function Approvals() {
       ),
     },
     {
+      key: "status",
+      header: "Status",
+      render: (item) => getStatusBadge(item.status),
+    },
+    {
       key: "approvalLevel",
       header: "Progress",
       render: (item) => (
@@ -257,24 +267,25 @@ export default function Approvals() {
       ),
     },
     {
-      key: "status",
-      header: "Status",
-      render: (item) => getStatusBadge(item.status),
-    },
-    {
       key: "actions",
       header: "Actions",
       render: (item) => (
         <div className="flex gap-2">
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => handleViewDetails(item)}
-            className="gap-1"
-          >
-            <Eye className="h-3 w-3" />
-            Review
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                size="icon"
+                variant="ghost"
+                onClick={() => handleViewDetails(item)}
+                className="hover:bg-primary/10 hover:text-primary transition-colors"
+              >
+                <Eye className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Review approval request</p>
+            </TooltipContent>
+          </Tooltip>
         </div>
       ),
     },
@@ -300,85 +311,91 @@ export default function Approvals() {
 
   return (
     <PageBackground>
-      <div className="p-6 max-w-[1600px] mx-auto">
+      <div className="relative z-10 p-6">
         {/* Page Header */}
-        <div className="mb-6 flex items-center justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-bold mb-2">Approvals</h1>
-            <p className="text-muted-foreground">
-              Review and manage pending approval requests
-            </p>
-          </div>
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold mb-2">Approvals</h1>
+          <p className="text-muted-foreground">
+            Review and manage pending approval requests
+          </p>
         </div>
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <Card className="border-amber-500/30 bg-gradient-to-br from-amber-500/10 to-orange-500/5">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Pending Approval
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-end justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground mb-1">Pending Approval</p>
-                  <p className="text-3xl font-bold">{pendingRequests.length}</p>
+                  <p className="text-2xl font-bold">{pendingRequests.length}</p>
                   <p className="text-xs text-muted-foreground mt-1 font-mono">
                     ${totalPendingAmount.toLocaleString()}
                   </p>
                 </div>
-                <div className="p-3 rounded-lg bg-amber-500/20">
-                  <Clock className="h-6 w-6 text-amber-600" />
-                </div>
+                <Clock className="h-8 w-8 text-amber-500 opacity-70" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-green-500/30 bg-gradient-to-br from-green-500/10 to-emerald-500/5">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Approved
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-end justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground mb-1">Approved</p>
-                  <p className="text-3xl font-bold">{approvedRequests.length}</p>
+                  <p className="text-2xl font-bold">{approvedRequests.length}</p>
                   <p className="text-xs text-muted-foreground mt-1">This month</p>
                 </div>
-                <div className="p-3 rounded-lg bg-green-500/20">
-                  <CheckCircle2 className="h-6 w-6 text-green-600" />
-                </div>
+                <CheckCircle2 className="h-8 w-8 text-green-500 opacity-70" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-blue-500/30 bg-gradient-to-br from-blue-500/10 to-cyan-500/5">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                In Progress
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-end justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground mb-1">In Progress</p>
-                  <p className="text-3xl font-bold">{partiallyApprovedRequests.length}</p>
+                  <p className="text-2xl font-bold">{partiallyApprovedRequests.length}</p>
                   <p className="text-xs text-muted-foreground mt-1">Multi-level</p>
                 </div>
-                <div className="p-3 rounded-lg bg-blue-500/20">
-                  <TrendingUp className="h-6 w-6 text-blue-600" />
-                </div>
+                <TrendingUp className="h-8 w-8 text-blue-500 opacity-70" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-red-500/30 bg-gradient-to-br from-red-500/10 to-rose-500/5">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Rejected
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-end justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground mb-1">Rejected</p>
-                  <p className="text-3xl font-bold">{rejectedRequests.length}</p>
+                  <p className="text-2xl font-bold">{rejectedRequests.length}</p>
                   <p className="text-xs text-muted-foreground mt-1">This month</p>
                 </div>
-                <div className="p-3 rounded-lg bg-red-500/20">
-                  <XCircle className="h-6 w-6 text-red-600" />
-                </div>
+                <XCircle className="h-8 w-8 text-red-500 opacity-70" />
               </div>
             </CardContent>
           </Card>
         </div>
 
         {/* Filters & Search */}
-        <Card className="border-primary/20">
-          <CardContent className="p-6">
+        <Card>
+          <CardContent className="pt-6">
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex-1">
                 <SearchFilter
@@ -388,7 +405,7 @@ export default function Approvals() {
                 />
               </div>
               <Select value={typeFilter} onValueChange={setTypeFilter}>
-                <SelectTrigger className="w-[200px]">
+                <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Document Type" />
                 </SelectTrigger>
                 <SelectContent>
@@ -399,7 +416,7 @@ export default function Approvals() {
                 </SelectContent>
               </Select>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger className="w-[150px]">
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -415,7 +432,7 @@ export default function Approvals() {
         </Card>
 
         {/* Approval Requests Tabs */}
-        <Tabs defaultValue="pending" className="space-y-4">
+        <Tabs defaultValue="pending" className="mt-6 space-y-4">
           <TabsList className="grid w-full grid-cols-4 lg:w-[600px]">
             <TabsTrigger value="pending" className="gap-2">
               <Clock className="h-4 w-4" />
@@ -446,8 +463,8 @@ export default function Approvals() {
           </TabsList>
 
           <TabsContent value="pending">
-            <Card className="border-primary/20">
-              <CardContent className="p-6">
+            <Card>
+              <CardContent className="pt-6">
                 {pendingRequests.length > 0 ? (
                   <DataTable
                     columns={columns}
@@ -467,8 +484,8 @@ export default function Approvals() {
           </TabsContent>
 
           <TabsContent value="in-progress">
-            <Card className="border-primary/20">
-              <CardContent className="p-6">
+            <Card>
+              <CardContent className="pt-6">
                 {partiallyApprovedRequests.length > 0 ? (
                   <DataTable
                     columns={columns}
@@ -488,8 +505,8 @@ export default function Approvals() {
           </TabsContent>
 
           <TabsContent value="approved">
-            <Card className="border-primary/20">
-              <CardContent className="p-6">
+            <Card>
+              <CardContent className="pt-6">
                 {approvedRequests.length > 0 ? (
                   <DataTable
                     columns={columns}
@@ -509,8 +526,8 @@ export default function Approvals() {
           </TabsContent>
 
           <TabsContent value="rejected">
-            <Card className="border-primary/20">
-              <CardContent className="p-6">
+            <Card>
+              <CardContent className="pt-6">
                 {rejectedRequests.length > 0 ? (
                   <DataTable
                     columns={columns}
