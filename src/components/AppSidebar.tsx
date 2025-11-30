@@ -70,9 +70,9 @@ export function AppSidebar() {
                 isActive={location === item.url}
                 data-testid={`${testIdPrefix}-${item.title.toLowerCase().replace(/\s+/g, "-")}`}
                 onClick={() => setLocation(item.url)}
-                className="transition-all duration-200 hover:translate-x-1 hover:bg-accent/80 active:scale-95"
+                className="transition-all duration-200 hover:translate-x-1 hover:bg-accent/80 active:scale-95 group"
               >
-                <item.icon className="h-4 w-4" />
+                <item.icon className="h-4 w-4 group-hover:animate-wiggle" />
                 <span>{item.title}</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -96,7 +96,7 @@ export function AppSidebar() {
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="px-2">
+      <SidebarContent className="px-2 animate-slide-up-fade">
         {renderNavGroup("Overview", mainNavItems, "nav-main")}
         {renderNavGroup("Parties", partiesNavItems, "nav-parties")}
         {renderNavGroup("Orders", ordersNavItems, "nav-orders")}

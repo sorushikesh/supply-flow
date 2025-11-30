@@ -19,7 +19,7 @@ export function EmptyState({
   return (
     <div className="flex flex-col items-center justify-center py-16 px-4 text-center animate-fade-in">
       <div className="relative p-4 rounded-full bg-muted mb-4 transition-all duration-300 hover:scale-110 group">
-        <Icon className="h-8 w-8 text-muted-foreground transition-colors group-hover:text-primary" />
+        <Icon className="h-8 w-8 text-muted-foreground transition-colors group-hover:text-primary group-hover:animate-pulse-ring" />
         <div className="absolute inset-0 bg-primary/10 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
       </div>
       <h3 className="text-lg font-semibold mb-2" data-testid="empty-state-title">
