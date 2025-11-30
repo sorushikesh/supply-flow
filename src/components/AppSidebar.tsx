@@ -22,6 +22,7 @@ import {
   FileText,
   CreditCard,
   BarChart3,
+  Settings,
 } from "lucide-react";
 
 const mainNavItems = [
@@ -45,6 +46,10 @@ const financeNavItems = [
   { title: "Invoices", url: "/invoices", icon: FileText },
   { title: "Payments", url: "/payments", icon: CreditCard },
   { title: "Analytics", url: "/analytics", icon: BarChart3 },
+];
+
+const systemNavItems = [
+  { title: "Settings", url: "/settings", icon: Settings },
 ];
 
 export function AppSidebar() {
@@ -95,6 +100,7 @@ export function AppSidebar() {
         {renderNavGroup("Parties", partiesNavItems, "nav-parties")}
         {renderNavGroup("Orders", ordersNavItems, "nav-orders")}
         {renderNavGroup("Finance", financeNavItems, "nav-finance")}
+        {renderNavGroup("System", systemNavItems, "nav-system")}
       </SidebarContent>
     </Sidebar>
   );
