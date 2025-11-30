@@ -91,7 +91,7 @@ export function DataTable<T extends { id: string | number }>({
               {columns.map((col) => (
                 <TableHead
                   key={String(col.key)}
-                  className={`text-xs font-semibold uppercase tracking-widest ${col.className || ""}`}
+                  className={`text-sm font-semibold uppercase tracking-wider ${col.className || ""}`}
                 >
                   {col.header}
                 </TableHead>
@@ -103,7 +103,7 @@ export function DataTable<T extends { id: string | number }>({
               <TableRow>
                 <TableCell
                   colSpan={columns.length + (selectable ? 1 : 0)}
-                  className="h-24 text-center text-muted-foreground"
+                  className="h-24 text-center text-base text-muted-foreground"
                 >
                   No results found.
                 </TableCell>
@@ -150,7 +150,7 @@ export function DataTable<T extends { id: string | number }>({
 
       {totalPages > 1 && (
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 animate-fade-in">
-          <p className="text-sm text-muted-foreground font-medium">
+          <p className="text-base text-muted-foreground font-medium">
             Showing <span className="text-primary font-semibold">{startIndex + 1}</span> to{" "}
             <span className="text-primary font-semibold">{Math.min(endIndex, data.length)}</span> of{" "}
             <span className="text-primary font-semibold">{data.length}</span> entries
@@ -176,7 +176,7 @@ export function DataTable<T extends { id: string | number }>({
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
-            <span className="px-3 sm:px-4 py-2 text-xs sm:text-sm font-semibold bg-primary/10 rounded-md border border-primary/20 whitespace-nowrap">
+            <span className="px-3 sm:px-4 py-2 text-sm font-semibold bg-primary/10 rounded-md border border-primary/20 whitespace-nowrap">
               Page {currentPage} of {totalPages}
             </span>
             <Button

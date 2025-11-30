@@ -61,7 +61,7 @@ export default function CompanyOverview() {
         {/* Page Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent">
+            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent">
               Company Overview
             </h1>
             <p className="text-muted-foreground mt-1">View and manage your company information</p>
@@ -228,7 +228,7 @@ export default function CompanyOverview() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Company Status</p>
-                  <p className="text-lg font-semibold">Active</p>
+                  <p className="text-xl font-semibold">Active</p>
                 </div>
               </div>
             </CardContent>
@@ -242,7 +242,7 @@ export default function CompanyOverview() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Registration Date</p>
-                  <p className="text-lg font-semibold">Jan 15, 2024</p>
+                  <p className="text-xl font-semibold">Jan 15, 2024</p>
                 </div>
               </div>
             </CardContent>
@@ -256,7 +256,7 @@ export default function CompanyOverview() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Verified Status</p>
-                  <p className="text-lg font-semibold">Verified ✓</p>
+                  <p className="text-xl font-semibold">Verified ✓</p>
                 </div>
               </div>
             </CardContent>

@@ -532,7 +532,7 @@ export default function ControlPanel() {
         {/* Page Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent">
+            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent">
               Control Panel
             </h1>
             <p className="text-muted-foreground mt-1">Manage categories, warehouses, and product types</p>
@@ -628,7 +628,7 @@ export default function ControlPanel() {
 
           <Card>
             <CardContent className="p-6">
-              <h3 className="text-lg font-semibold mb-4">Existing Categories</h3>
+              <h3 className="text-xl font-semibold mb-4">Existing Categories</h3>
               {categories.length === 0 ? (
                 <div className="text-center py-12 text-muted-foreground">
                   <Package className="h-12 w-12 mx-auto mb-3 opacity-50" />
@@ -737,7 +737,7 @@ export default function ControlPanel() {
 
           <Card>
             <CardContent className="p-6">
-              <h3 className="text-lg font-semibold mb-4">Existing warehouses</h3>
+              <h3 className="text-xl font-semibold mb-4">Existing warehouses</h3>
               {warehouses.length === 0 ? (
                 <div className="text-center py-12 text-muted-foreground">
                   <MapPin className="h-12 w-12 mx-auto mb-3 opacity-50" />
@@ -845,7 +845,7 @@ export default function ControlPanel() {
 
           <Card>
             <CardContent className="p-6">
-              <h3 className="text-lg font-semibold mb-4">Existing Product Types</h3>
+              <h3 className="text-xl font-semibold mb-4">Existing Product Types</h3>
               {productTypes.length === 0 ? (
                 <div className="text-center py-12 text-muted-foreground">
                   <Tag className="h-12 w-12 mx-auto mb-3 opacity-50" />
@@ -897,7 +897,7 @@ export default function ControlPanel() {
         <TabsContent value="tax-rates" className="space-y-6">
           <Card className="border-primary/20">
             <CardContent className="p-6">
-              <h3 className="text-lg font-semibold mb-4">{editingTax ? "Edit Tax Rate" : "Add New Tax Rate"}</h3>
+              <h3 className="text-xl font-semibold mb-4">{editingTax ? "Edit Tax Rate" : "Add New Tax Rate"}</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                 <div className="space-y-2">
                   <Label htmlFor="tax-name">Tax Name *</Label>
@@ -926,7 +926,7 @@ export default function ControlPanel() {
           </Card>
           <Card className="border-primary/20">
             <CardContent className="p-6">
-              <h3 className="text-lg font-semibold mb-4">Existing Tax Rates</h3>
+              <h3 className="text-xl font-semibold mb-4">Existing Tax Rates</h3>
               <div className="space-y-3">
                 {taxRates.map((tax, index) => (
                   <div key={tax.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-all" style={{ animationDelay: `${index * 50}ms` }}>
@@ -952,7 +952,7 @@ export default function ControlPanel() {
         <TabsContent value="payment-terms" className="space-y-6">
           <Card className="border-primary/20">
             <CardContent className="p-6">
-              <h3 className="text-lg font-semibold mb-4">{editingTerm ? "Edit Payment Term" : "Add New Payment Term"}</h3>
+              <h3 className="text-xl font-semibold mb-4">{editingTerm ? "Edit Payment Term" : "Add New Payment Term"}</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                 <div className="space-y-2">
                   <Label htmlFor="term-name">Term Name *</Label>
@@ -981,7 +981,7 @@ export default function ControlPanel() {
           </Card>
           <Card className="border-primary/20">
             <CardContent className="p-6">
-              <h3 className="text-lg font-semibold mb-4">Existing Payment Terms</h3>
+              <h3 className="text-xl font-semibold mb-4">Existing Payment Terms</h3>
               <div className="space-y-3">
                 {paymentTerms.map((term, index) => (
                   <div key={term.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-all" style={{ animationDelay: `${index * 50}ms` }}>
@@ -1007,7 +1007,7 @@ export default function ControlPanel() {
         <TabsContent value="units" className="space-y-6">
           <Card className="border-primary/20">
             <CardContent className="p-6">
-              <h3 className="text-lg font-semibold mb-4">{editingUnit ? "Edit Unit" : "Add New Unit of Measure"}</h3>
+              <h3 className="text-xl font-semibold mb-4">{editingUnit ? "Edit Unit" : "Add New Unit of Measure"}</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                 <div className="space-y-2">
                   <Label htmlFor="unit-name">Unit Name *</Label>
@@ -1036,7 +1036,7 @@ export default function ControlPanel() {
           </Card>
           <Card className="border-primary/20">
             <CardContent className="p-6">
-              <h3 className="text-lg font-semibold mb-4">Existing Units of Measure</h3>
+              <h3 className="text-xl font-semibold mb-4">Existing Units of Measure</h3>
               <div className="space-y-3">
                 {unitsOfMeasure.map((unit, index) => (
                   <div key={unit.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-all" style={{ animationDelay: `${index * 50}ms` }}>
@@ -1062,7 +1062,7 @@ export default function ControlPanel() {
         <TabsContent value="carriers" className="space-y-6">
           <Card className="border-primary/20">
             <CardContent className="p-6">
-              <h3 className="text-lg font-semibold mb-4">{editingCarrier ? "Edit Carrier" : "Add New Shipping Carrier"}</h3>
+              <h3 className="text-xl font-semibold mb-4">{editingCarrier ? "Edit Carrier" : "Add New Shipping Carrier"}</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                 <div className="space-y-2">
                   <Label htmlFor="carrier-name">Carrier Name *</Label>
@@ -1091,7 +1091,7 @@ export default function ControlPanel() {
           </Card>
           <Card className="border-primary/20">
             <CardContent className="p-6">
-              <h3 className="text-lg font-semibold mb-4">Existing Shipping Carriers</h3>
+              <h3 className="text-xl font-semibold mb-4">Existing Shipping Carriers</h3>
               <div className="space-y-3">
                 {shippingCarriers.map((carrier, index) => (
                   <div key={carrier.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-all" style={{ animationDelay: `${index * 50}ms` }}>

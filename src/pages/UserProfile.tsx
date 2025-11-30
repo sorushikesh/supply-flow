@@ -89,7 +89,7 @@ export default function UserProfile() {
         {/* Page Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent">
+            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent">
               User Profile
             </h1>
             <p className="text-muted-foreground mt-1">View and manage your profile information</p>
@@ -308,7 +308,7 @@ export default function UserProfile() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Joined Date</p>
-                  <p className="text-lg font-semibold">Mar 10, 2024</p>
+                  <p className="text-xl font-semibold">Mar 10, 2024</p>
                 </div>
               </div>
             </CardContent>
@@ -322,7 +322,7 @@ export default function UserProfile() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Last Login</p>
-                  <p className="text-lg font-semibold">Today, 9:30 AM</p>
+                  <p className="text-xl font-semibold">Today, 9:30 AM</p>
                 </div>
               </div>
             </CardContent>
@@ -336,7 +336,7 @@ export default function UserProfile() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Account Status</p>
-                  <p className="text-lg font-semibold">Active</p>
+                  <p className="text-xl font-semibold">Active</p>
                 </div>
               </div>
             </CardContent>
