@@ -154,9 +154,9 @@ export default function GRN() {
     <PageBackground>
       <div className="p-4 lg:p-6 max-w-[1600px] mx-auto space-y-6">
         {/* Page Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent">
+            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent">
               Goods Receipt Notes
             </h1>
             <p className="text-muted-foreground mt-1">Record incoming inventory</p>

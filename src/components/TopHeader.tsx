@@ -12,6 +12,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Bell, Settings, LogOut, Zap, ShoppingCart, FileText, Package, CreditCard } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useLocation } from "wouter";
+import { CompanySettingsDialog } from "@/components/CompanySettingsDialog";
 
 const mockNotifications = [
   { id: 1, title: "Low Stock Alert", description: "Widget A is below reorder level", time: "2 min ago" },
@@ -116,6 +117,7 @@ export function TopHeader({ breadcrumb }: TopHeaderProps) {
         {/* Divider */}
         <div className="h-6 w-px bg-border hidden lg:block" />
 
+        {/* Notifications */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button 
@@ -154,6 +156,12 @@ export function TopHeader({ breadcrumb }: TopHeaderProps) {
         {/* Divider */}
         <div className="h-6 w-px bg-border hidden lg:block" />
 
+        {/* Company Settings */}
+        <CompanySettingsDialog />
+
+        {/* Divider */}
+        <div className="h-6 w-px bg-border hidden lg:block" />
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
@@ -172,9 +180,13 @@ export function TopHeader({ breadcrumb }: TopHeaderProps) {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-48">
-            <DropdownMenuItem data-testid="menu-settings" className="cursor-pointer">
+            <DropdownMenuItem 
+              data-testid="menu-profile" 
+              className="cursor-pointer"
+              onClick={() => setLocation("/user-profile")}
+            >
               <Settings className="h-4 w-4 mr-2" />
-              Settings
+              My Profile
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem className="text-destructive cursor-pointer" data-testid="menu-logout">

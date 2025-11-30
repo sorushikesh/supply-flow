@@ -42,39 +42,39 @@ export function StatsCard({ title, value, change, changeLabel, icon: Icon }: Sta
       <CardContent className="p-6 relative z-10">
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1 min-w-0">
-            <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-1 group-hover:text-primary transition-colors duration-300">
+            <p className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-2 group-hover:text-primary transition-colors duration-300">
               {title}
             </p>
-            <div className="text-3xl font-bold mt-2 font-mono overflow-hidden">
+            <div className="text-4xl md:text-5xl font-bold mt-1 font-mono overflow-hidden">
               <span className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent group-hover:from-primary group-hover:to-cyan-500 transition-all duration-500">
                 {value}
               </span>
             </div>
             {change !== undefined && (
-              <div className={`flex items-center gap-1 mt-3 transition-all duration-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
-                <div className={`flex items-center gap-1 px-2 py-1 rounded-md ${
+              <div className={`flex items-center gap-1.5 mt-3 transition-all duration-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
+                <div className={`flex items-center gap-1 px-2.5 py-1 rounded-md ${
                   isPositive
                     ? "bg-green-500/10 text-green-600 dark:text-green-400"
                     : isNegative
                     ? "bg-red-500/10 text-red-600 dark:text-red-400"
                     : "bg-muted text-muted-foreground"
                 }`}>
-                  {isPositive && <ArrowUp className="h-3 w-3 animate-bounce-subtle" />}
-                  {isNegative && <ArrowDown className="h-3 w-3 animate-bounce-subtle" />}
-                  <span className="text-xs font-bold font-mono">
+                  {isPositive && <ArrowUp className="h-3.5 w-3.5 animate-bounce-subtle" />}
+                  {isNegative && <ArrowDown className="h-3.5 w-3.5 animate-bounce-subtle" />}
+                  <span className="text-sm font-bold font-mono">
                     {Math.abs(change)}%
                   </span>
                 </div>
                 {changeLabel && (
-                  <span className="text-xs text-muted-foreground ml-1">{changeLabel}</span>
+                  <span className="text-sm text-muted-foreground ml-1">{changeLabel}</span>
                 )}
               </div>
             )}
           </div>
-          <div className="relative p-3 rounded-xl bg-gradient-to-br from-primary/10 to-cyan-500/10 transition-all duration-300 group-hover:scale-110 group-hover:rotate-12 group-hover:shadow-lg group-hover:shadow-primary/20">
+          <div className="relative p-3.5 rounded-xl bg-gradient-to-br from-primary/10 to-cyan-500/10 transition-all duration-300 group-hover:scale-110 group-hover:rotate-12 group-hover:shadow-lg group-hover:shadow-primary/20">
             {/* Icon glow effect */}
             <div className="absolute inset-0 rounded-xl bg-primary/20 blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            <Icon className="h-6 w-6 text-primary relative z-10 transition-all duration-300 group-hover:drop-shadow-[0_0_8px_rgba(6,182,212,0.8)]" />
+            <Icon className="h-7 w-7 text-primary relative z-10 transition-all duration-300 group-hover:drop-shadow-[0_0_8px_rgba(6,182,212,0.8)]" />
           </div>
         </div>
       </CardContent>

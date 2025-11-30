@@ -19,7 +19,9 @@ import Dispatch from "@/pages/Dispatch";
 import Invoices from "@/pages/Invoices";
 import Payments from "@/pages/Payments";
 import Analytics from "@/pages/Analytics";
-import Settings from "@/pages/Settings";
+import ControlPanel from "@/pages/ControlPanel";
+import CompanyOverview from "@/pages/CompanyOverview";
+import UserProfile from "@/pages/UserProfile";
 
 const routes = [
   { path: "/", component: Dashboard, breadcrumb: "Dashboard" },
@@ -33,7 +35,9 @@ const routes = [
   { path: "/invoices", component: Invoices, breadcrumb: "Invoices" },
   { path: "/payments", component: Payments, breadcrumb: "Payments" },
   { path: "/analytics", component: Analytics, breadcrumb: "Analytics" },
-  { path: "/settings", component: Settings, breadcrumb: "Settings" },
+  { path: "/control-panel", component: ControlPanel, breadcrumb: "Control Panel" },
+  { path: "/company-overview", component: CompanyOverview, breadcrumb: "Company Overview" },
+  { path: "/user-profile", component: UserProfile, breadcrumb: "User Profile" },
 ];
 
 function Router() {

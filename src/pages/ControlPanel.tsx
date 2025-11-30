@@ -17,7 +17,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Trash2, Pencil, Package, MapPin, Tag, Building2, DollarSign, Scale, Bell, FileText, Users } from "lucide-react";
+import { Plus, Trash2, Pencil, Package, MapPin, Tag, DollarSign, Scale, Bell, FileText, Users } from "lucide-react";
 
 interface Category {
   id: string;
@@ -25,7 +25,7 @@ interface Category {
   description: string;
 }
 
-interface Location {
+interface Warehouse {
   id: string;
   name: string;
   address: string;
@@ -73,7 +73,7 @@ const mockCategories: Category[] = [
   { id: "4", name: "Accessories", description: "Product accessories" },
 ];
 
-const mockLocations: Location[] = [
+const mockWarehouses: Warehouse[] = [
   { id: "1", name: "Warehouse A", address: "123 Industrial Blvd", capacity: "10000 sq ft" },
   { id: "2", name: "Warehouse B", address: "456 Storage Ave", capacity: "8000 sq ft" },
   { id: "3", name: "Warehouse C", address: "789 Distribution Way", capacity: "12000 sq ft" },
@@ -110,7 +110,7 @@ const mockShippingCarriers: ShippingCarrier[] = [
   { id: "3", name: "DHL", contactEmail: "support@dhl.com", trackingUrl: "https://dhl.com/track?id=" },
 ];
 
-export default function Settings() {
+export default function ControlPanel() {
   const { toast } = useToast();
   
   // Category state
@@ -120,13 +120,13 @@ export default function Settings() {
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [deleteCategoryId, setDeleteCategoryId] = useState<string | null>(null);
 
-  // Location state
-  const [locations, setLocations] = useState<Location[]>(mockLocations);
-  const [locationName, setLocationName] = useState("");
-  const [locationAddress, setLocationAddress] = useState("");
-  const [locationCapacity, setLocationCapacity] = useState("");
-  const [editingLocation, setEditingLocation] = useState<Location | null>(null);
-  const [deleteLocationId, setDeleteLocationId] = useState<string | null>(null);
+  // Warehouse state
+  const [warehouses, setWarehouses] = useState<Warehouse[]>(mockWarehouses);
+  const [warehouseName, setwarehouseName] = useState("");
+  const [warehouseAddress, setwarehouseAddress] = useState("");
+  const [warehouseCapacity, setwarehouseCapacity] = useState("");
+  const [editingWarehouse, setEditingWarehouse] = useState<Warehouse | null>(null);
+  const [deleteWarehouseId, setDeleteWarehouseId] = useState<string | null>(null);
 
   // Product Type state
   const [productTypes, setProductTypes] = useState<ProductType[]>(mockProductTypes);
@@ -166,13 +166,6 @@ export default function Settings() {
   const [carrierTrackingUrl, setCarrierTrackingUrl] = useState("");
   const [editingCarrier, setEditingCarrier] = useState<ShippingCarrier | null>(null);
   const [deleteCarrierId, setDeleteCarrierId] = useState<string | null>(null);
-
-  // Company Settings state
-  const [companyName, setCompanyName] = useState("SupplyFlow Inc.");
-  const [companyAddress, setCompanyAddress] = useState("123 Business Street, Tech City");
-  const [companyTaxId, setCompanyTaxId] = useState("TAX-123456");
-  const [companyEmail, setCompanyEmail] = useState("contact@supplyflow.com");
-  const [companyPhone, setCompanyPhone] = useState("+1 (555) 123-4567");
 
   // Category handlers
   const handleAddCategory = () => {
@@ -245,85 +238,85 @@ export default function Settings() {
     setCategoryDesc("");
   };
 
-  // Location handlers
-  const handleAddLocation = () => {
-    if (!locationName.trim()) {
+  // warehouse handlers
+  const handleAddWarehouse = () => {
+    if (!warehouseName.trim()) {
       toast({
         title: "Validation Error",
-        description: "Location name is required",
+        description: "warehouse name is required",
         variant: "destructive",
       });
       return;
     }
 
-    const newLocation: Location = {
+    const newWarehouse: Warehouse = {
       id: String(Date.now()),
-      name: locationName,
-      address: locationAddress,
-      capacity: locationCapacity,
+      name: warehouseName,
+      address: warehouseAddress,
+      capacity: warehouseCapacity,
     };
 
-    setLocations([...locations, newLocation]);
-    setLocationName("");
-    setLocationAddress("");
-    setLocationCapacity("");
+    setWarehouses([...warehouses, newWarehouse]);
+    setwarehouseName("");
+    setwarehouseAddress("");
+    setwarehouseCapacity("");
     toast({
-      title: "Location Added",
-      description: `${locationName} has been added successfully.`,
+      title: "warehouse Added",
+      description: `${warehouseName} has been added successfully.`,
     });
   };
 
-  const handleEditLocation = (location: Location) => {
-    setEditingLocation(location);
-    setLocationName(location.name);
-    setLocationAddress(location.address);
-    setLocationCapacity(location.capacity);
+  const handleEditWarehouse = (warehouse: Warehouse) => {
+    setEditingWarehouse(warehouse);
+    setwarehouseName(warehouse.name);
+    setwarehouseAddress(warehouse.address);
+    setwarehouseCapacity(warehouse.capacity);
   };
 
-  const handleUpdateLocation = () => {
-    if (!editingLocation) return;
+  const handleUpdateWarehouse = () => {
+    if (!editingWarehouse) return;
 
-    setLocations(
-      locations.map((loc) =>
-        loc.id === editingLocation.id
+    setWarehouses(
+      warehouses.map((loc) =>
+        loc.id === editingWarehouse.id
           ? {
               ...loc,
-              name: locationName,
-              address: locationAddress,
-              capacity: locationCapacity,
+              name: warehouseName,
+              address: warehouseAddress,
+              capacity: warehouseCapacity,
             }
           : loc
       )
     );
 
     toast({
-      title: "Location Updated",
-      description: `${locationName} has been updated successfully.`,
+      title: "Warehouse Updated",
+      description: `${warehouseName} has been updated successfully.`,
     });
 
-    setEditingLocation(null);
-    setLocationName("");
-    setLocationAddress("");
-    setLocationCapacity("");
+    setEditingWarehouse(null);
+    setwarehouseName("");
+    setwarehouseAddress("");
+    setwarehouseCapacity("");
   };
 
-  const handleDeleteLocation = () => {
-    if (!deleteLocationId) return;
+  const handleDeleteWarehouse = () => {
+    if (!deleteWarehouseId) return;
 
-    setLocations(locations.filter((loc) => loc.id !== deleteLocationId));
+    setWarehouses(warehouses.filter((loc) => loc.id !== deleteWarehouseId));
     toast({
-      title: "Location Deleted",
-      description: "Location has been removed successfully.",
+      title: "warehouse Deleted",
+      description: "warehouse has been removed successfully.",
       variant: "destructive",
     });
-    setDeleteLocationId(null);
+    setDeleteWarehouseId(null);
   };
 
-  const handleCancelLocationEdit = () => {
-    setEditingLocation(null);
-    setLocationName("");
-    setLocationAddress("");
-    setLocationCapacity("");
+  const handleCancelWarehouseEdit = () => {
+    setEditingWarehouse(null);
+    setwarehouseName("");
+    setwarehouseAddress("");
+    setwarehouseCapacity("");
   };
 
   // Product Type handlers
@@ -533,36 +526,28 @@ export default function Settings() {
     setDeleteCarrierId(null);
   };
 
-  const handleSaveCompanySettings = () => {
-    toast({ title: "Settings Saved", description: "Company settings have been updated successfully." });
-  };
-
   return (
     <PageBackground>
       <div className="p-4 lg:p-6 max-w-[1600px] mx-auto space-y-6">
         {/* Page Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent">
-              Settings
+            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent">
+              Control Panel
             </h1>
-            <p className="text-muted-foreground mt-1">Manage categories, locations, and product types</p>
+            <p className="text-muted-foreground mt-1">Manage categories, warehouses, and product types</p>
           </div>
         </div>
 
-      <Tabs defaultValue="company" className="space-y-6">
-        <TabsList className="grid grid-cols-3 lg:grid-cols-8 gap-2">
-          <TabsTrigger value="company">
-            <Building2 className="h-4 w-4 mr-2" />
-            <span className="hidden lg:inline">Company</span>
-          </TabsTrigger>
+      <Tabs defaultValue="categories" className="space-y-6">
+        <TabsList className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-2">
           <TabsTrigger value="categories">
             <Package className="h-4 w-4 mr-2" />
             <span className="hidden lg:inline">Categories</span>
           </TabsTrigger>
-          <TabsTrigger value="locations">
+          <TabsTrigger value="warehouses">
             <MapPin className="h-4 w-4 mr-2" />
-            <span className="hidden lg:inline">Locations</span>
+            <span className="hidden lg:inline">Warehouses</span>
           </TabsTrigger>
           <TabsTrigger value="product-types">
             <Tag className="h-4 w-4 mr-2" />
@@ -585,40 +570,6 @@ export default function Settings() {
             <span className="hidden lg:inline">Carriers</span>
           </TabsTrigger>
         </TabsList>
-
-        {/* Company Settings Tab */}
-        <TabsContent value="company" className="space-y-6">
-          <Card className="border-primary/20">
-            <CardContent className="p-6">
-              <h3 className="text-lg font-semibold mb-4">Company Information</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                <div className="space-y-2">
-                  <Label htmlFor="company-name">Company Name *</Label>
-                  <Input id="company-name" value={companyName} onChange={(e) => setCompanyName(e.target.value)} />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="company-email">Email Address</Label>
-                  <Input id="company-email" type="email" value={companyEmail} onChange={(e) => setCompanyEmail(e.target.value)} />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="company-phone">Phone Number</Label>
-                  <Input id="company-phone" value={companyPhone} onChange={(e) => setCompanyPhone(e.target.value)} />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="company-tax-id">Tax ID / Registration Number</Label>
-                  <Input id="company-tax-id" value={companyTaxId} onChange={(e) => setCompanyTaxId(e.target.value)} />
-                </div>
-                <div className="space-y-2 md:col-span-2">
-                  <Label htmlFor="company-address">Address</Label>
-                  <Input id="company-address" value={companyAddress} onChange={(e) => setCompanyAddress(e.target.value)} />
-                </div>
-              </div>
-              <Button onClick={handleSaveCompanySettings}>
-                Save Company Settings
-              </Button>
-            </CardContent>
-          </Card>
-        </TabsContent>
 
         {/* Categories Tab */}
         <TabsContent value="categories" className="space-y-6">
@@ -677,7 +628,7 @@ export default function Settings() {
 
           <Card>
             <CardContent className="p-6">
-              <h3 className="text-lg font-semibold mb-4">Existing Categories</h3>
+              <h3 className="text-xl font-semibold mb-4">Existing Categories</h3>
               {categories.length === 0 ? (
                 <div className="text-center py-12 text-muted-foreground">
                   <Package className="h-12 w-12 mx-auto mb-3 opacity-50" />
@@ -728,56 +679,56 @@ export default function Settings() {
           </Card>
         </TabsContent>
 
-        {/* Locations Tab */}
-        <TabsContent value="locations" className="space-y-6">
+        {/* warehouses Tab */}
+        <TabsContent value="warehouses" className="space-y-6">
           <Card>
             <CardContent className="p-6">
               <h3 className="text-lg font-semibold mb-4">
-                {editingLocation ? "Edit Location" : "Add New Location"}
+                {editingWarehouse ? "Edit warehouse" : "Add New warehouse"}
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                 <div className="space-y-2">
-                  <Label htmlFor="location-name">Location Name *</Label>
+                  <Label htmlFor="warehouse-name">warehouse Name *</Label>
                   <Input
-                    id="location-name"
-                    value={locationName}
-                    onChange={(e) => setLocationName(e.target.value)}
+                    id="warehouse-name"
+                    value={warehouseName}
+                    onChange={(e) => setwarehouseName(e.target.value)}
                     placeholder="e.g., Warehouse A"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="location-address">Address</Label>
+                  <Label htmlFor="warehouse-address">Address</Label>
                   <Input
-                    id="location-address"
-                    value={locationAddress}
-                    onChange={(e) => setLocationAddress(e.target.value)}
+                    id="warehouse-address"
+                    value={warehouseAddress}
+                    onChange={(e) => setwarehouseAddress(e.target.value)}
                     placeholder="Full address"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="location-capacity">Capacity</Label>
+                  <Label htmlFor="warehouse-capacity">Capacity</Label>
                   <Input
-                    id="location-capacity"
-                    value={locationCapacity}
-                    onChange={(e) => setLocationCapacity(e.target.value)}
+                    id="warehouse-capacity"
+                    value={warehouseCapacity}
+                    onChange={(e) => setwarehouseCapacity(e.target.value)}
                     placeholder="e.g., 10000 sq ft"
                   />
                 </div>
               </div>
               <div className="flex gap-2">
-                {editingLocation ? (
+                {editingWarehouse ? (
                   <>
-                    <Button onClick={handleUpdateLocation} disabled={!locationName.trim()}>
-                      Update Location
+                    <Button onClick={handleUpdateWarehouse} disabled={!warehouseName.trim()}>
+                      Update warehouse
                     </Button>
-                    <Button variant="outline" onClick={handleCancelLocationEdit}>
+                    <Button variant="outline" onClick={handleCancelWarehouseEdit}>
                       Cancel
                     </Button>
                   </>
                 ) : (
-                  <Button onClick={handleAddLocation} disabled={!locationName.trim()}>
+                  <Button onClick={handleAddWarehouse} disabled={!warehouseName.trim()}>
                     <Plus className="h-4 w-4 mr-2" />
-                    Add Location
+                    Add warehouse
                   </Button>
                 )}
               </div>
@@ -786,35 +737,35 @@ export default function Settings() {
 
           <Card>
             <CardContent className="p-6">
-              <h3 className="text-lg font-semibold mb-4">Existing Locations</h3>
-              {locations.length === 0 ? (
+              <h3 className="text-xl font-semibold mb-4">Existing warehouses</h3>
+              {warehouses.length === 0 ? (
                 <div className="text-center py-12 text-muted-foreground">
                   <MapPin className="h-12 w-12 mx-auto mb-3 opacity-50" />
-                  <p className="font-medium">No locations yet</p>
-                  <p className="text-sm">Add your first warehouse location above</p>
+                  <p className="font-medium">No warehouses yet</p>
+                  <p className="text-sm">Add your first warehouse warehouse above</p>
                 </div>
               ) : (
                 <div className="space-y-3">
-                  {locations.map((location, index) => (
+                  {warehouses.map((warehouse, index) => (
                   <div
-                    key={location.id}
+                    key={warehouse.id}
                     className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-all duration-200 hover:shadow-md hover:border-primary/20 animate-fade-in"
                     style={{ animationDelay: `${index * 50}ms` }}
                   >
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
                         <MapPin className="h-4 w-4 text-muted-foreground" />
-                        <h4 className="font-medium">{location.name}</h4>
+                        <h4 className="font-medium">{warehouse.name}</h4>
                       </div>
                       <div className="space-y-1">
-                        {location.address && (
+                        {warehouse.address && (
                           <p className="text-sm text-muted-foreground">
-                            📍 {location.address}
+                            📍 {warehouse.address}
                           </p>
                         )}
-                        {location.capacity && (
+                        {warehouse.capacity && (
                           <p className="text-sm text-muted-foreground">
-                            📦 Capacity: {location.capacity}
+                            📦 Capacity: {warehouse.capacity}
                           </p>
                         )}
                       </div>
@@ -823,14 +774,14 @@ export default function Settings() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => handleEditLocation(location)}
+                        onClick={() => handleEditWarehouse(warehouse)}
                       >
                         <Pencil className="h-4 w-4" />
                       </Button>
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => setDeleteLocationId(location.id)}
+                        onClick={() => setDeleteWarehouseId(warehouse.id)}
                         className="text-destructive hover:text-destructive hover:bg-destructive/10"
                       >
                         <Trash2 className="h-4 w-4" />
@@ -894,7 +845,7 @@ export default function Settings() {
 
           <Card>
             <CardContent className="p-6">
-              <h3 className="text-lg font-semibold mb-4">Existing Product Types</h3>
+              <h3 className="text-xl font-semibold mb-4">Existing Product Types</h3>
               {productTypes.length === 0 ? (
                 <div className="text-center py-12 text-muted-foreground">
                   <Tag className="h-12 w-12 mx-auto mb-3 opacity-50" />
@@ -946,7 +897,7 @@ export default function Settings() {
         <TabsContent value="tax-rates" className="space-y-6">
           <Card className="border-primary/20">
             <CardContent className="p-6">
-              <h3 className="text-lg font-semibold mb-4">{editingTax ? "Edit Tax Rate" : "Add New Tax Rate"}</h3>
+              <h3 className="text-xl font-semibold mb-4">{editingTax ? "Edit Tax Rate" : "Add New Tax Rate"}</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                 <div className="space-y-2">
                   <Label htmlFor="tax-name">Tax Name *</Label>
@@ -975,7 +926,7 @@ export default function Settings() {
           </Card>
           <Card className="border-primary/20">
             <CardContent className="p-6">
-              <h3 className="text-lg font-semibold mb-4">Existing Tax Rates</h3>
+              <h3 className="text-xl font-semibold mb-4">Existing Tax Rates</h3>
               <div className="space-y-3">
                 {taxRates.map((tax, index) => (
                   <div key={tax.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-all" style={{ animationDelay: `${index * 50}ms` }}>
@@ -1001,7 +952,7 @@ export default function Settings() {
         <TabsContent value="payment-terms" className="space-y-6">
           <Card className="border-primary/20">
             <CardContent className="p-6">
-              <h3 className="text-lg font-semibold mb-4">{editingTerm ? "Edit Payment Term" : "Add New Payment Term"}</h3>
+              <h3 className="text-xl font-semibold mb-4">{editingTerm ? "Edit Payment Term" : "Add New Payment Term"}</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                 <div className="space-y-2">
                   <Label htmlFor="term-name">Term Name *</Label>
@@ -1030,7 +981,7 @@ export default function Settings() {
           </Card>
           <Card className="border-primary/20">
             <CardContent className="p-6">
-              <h3 className="text-lg font-semibold mb-4">Existing Payment Terms</h3>
+              <h3 className="text-xl font-semibold mb-4">Existing Payment Terms</h3>
               <div className="space-y-3">
                 {paymentTerms.map((term, index) => (
                   <div key={term.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-all" style={{ animationDelay: `${index * 50}ms` }}>
@@ -1056,7 +1007,7 @@ export default function Settings() {
         <TabsContent value="units" className="space-y-6">
           <Card className="border-primary/20">
             <CardContent className="p-6">
-              <h3 className="text-lg font-semibold mb-4">{editingUnit ? "Edit Unit" : "Add New Unit of Measure"}</h3>
+              <h3 className="text-xl font-semibold mb-4">{editingUnit ? "Edit Unit" : "Add New Unit of Measure"}</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                 <div className="space-y-2">
                   <Label htmlFor="unit-name">Unit Name *</Label>
@@ -1085,7 +1036,7 @@ export default function Settings() {
           </Card>
           <Card className="border-primary/20">
             <CardContent className="p-6">
-              <h3 className="text-lg font-semibold mb-4">Existing Units of Measure</h3>
+              <h3 className="text-xl font-semibold mb-4">Existing Units of Measure</h3>
               <div className="space-y-3">
                 {unitsOfMeasure.map((unit, index) => (
                   <div key={unit.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-all" style={{ animationDelay: `${index * 50}ms` }}>
@@ -1111,7 +1062,7 @@ export default function Settings() {
         <TabsContent value="carriers" className="space-y-6">
           <Card className="border-primary/20">
             <CardContent className="p-6">
-              <h3 className="text-lg font-semibold mb-4">{editingCarrier ? "Edit Carrier" : "Add New Shipping Carrier"}</h3>
+              <h3 className="text-xl font-semibold mb-4">{editingCarrier ? "Edit Carrier" : "Add New Shipping Carrier"}</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                 <div className="space-y-2">
                   <Label htmlFor="carrier-name">Carrier Name *</Label>
@@ -1140,7 +1091,7 @@ export default function Settings() {
           </Card>
           <Card className="border-primary/20">
             <CardContent className="p-6">
-              <h3 className="text-lg font-semibold mb-4">Existing Shipping Carriers</h3>
+              <h3 className="text-xl font-semibold mb-4">Existing Shipping Carriers</h3>
               <div className="space-y-3">
                 {shippingCarriers.map((carrier, index) => (
                   <div key={carrier.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-all" style={{ animationDelay: `${index * 50}ms` }}>
@@ -1237,19 +1188,19 @@ export default function Settings() {
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Delete Location Dialog */}
-      <AlertDialog open={!!deleteLocationId} onOpenChange={() => setDeleteLocationId(null)}>
+      {/* Delete warehouse Dialog */}
+      <AlertDialog open={!!deleteWarehouseId} onOpenChange={() => setDeleteWarehouseId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Location</AlertDialogTitle>
+            <AlertDialogTitle>Delete warehouse</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this location? This action cannot be undone.
+              Are you sure you want to delete this warehouse? This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
-              onClick={handleDeleteLocation}
+              onClick={handleDeleteWarehouse}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               Delete
