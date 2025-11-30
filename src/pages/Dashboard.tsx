@@ -51,22 +51,22 @@ interface LowStockItem {
 }
 
 const mockRecentOrders: RecentOrder[] = [
-  { id: "1", orderNumber: "PO-2024-0045", type: "PO", party: "Acme Corp", amount: 12500, status: "pending", date: "Today" },
-  { id: "2", orderNumber: "SO-2024-0123", type: "SO", party: "TechStart Inc", amount: 8750, status: "approved", date: "Today" },
-  { id: "3", orderNumber: "PO-2024-0044", type: "PO", party: "Global Supply", amount: 3200, status: "completed", date: "Yesterday" },
-  { id: "4", orderNumber: "SO-2024-0122", type: "SO", party: "Metro Retail", amount: 15600, status: "in_transit", date: "Yesterday" },
-  { id: "5", orderNumber: "SO-2024-0121", type: "SO", party: "City Stores", amount: 4800, status: "delivered", date: "2 days ago" },
+  { id: "1", orderNumber: "PO-2024-0045", type: "PO", party: "Dell Technologies", amount: 59375, status: "pending", date: "Today" },
+  { id: "2", orderNumber: "SO-2024-0123", type: "SO", party: "TechCorp Solutions", amount: 25750, status: "approved", date: "Today" },
+  { id: "3", orderNumber: "PO-2024-0044", type: "PO", party: "Samsung Electronics", amount: 31960, status: "completed", date: "Yesterday" },
+  { id: "4", orderNumber: "SO-2024-0122", type: "SO", party: "BestBuy Corporate", amount: 65200, status: "in_transit", date: "Yesterday" },
+  { id: "5", orderNumber: "SO-2024-0121", type: "SO", party: "Micro Center Distribution", amount: 18594, status: "delivered", date: "2 days ago" },
 ];
 
 const mockLowStockItems: LowStockItem[] = [
-  { id: "1", sku: "WDG-001", name: "Widget Alpha", currentStock: 12, reorderLevel: 50 },
-  { id: "2", sku: "GDG-023", name: "Gadget Pro", currentStock: 8, reorderLevel: 25 },
-  { id: "3", sku: "CMP-045", name: "Component X", currentStock: 3, reorderLevel: 20 },
+  { id: "1", sku: "LTP-0001", name: "Dell Latitude 5540 15.6\" Laptop", currentStock: 12, reorderLevel: 50 },
+  { id: "2", sku: "MON-0023", name: "Samsung 27\" 4K Monitor", currentStock: 8, reorderLevel: 25 },
+  { id: "3", sku: "PWR-0045", name: "Laptop Power Adapter 65W", currentStock: 3, reorderLevel: 20 },
 ];
 
 const mockOverdueInvoices = [
-  { id: "1", invoiceNumber: "INV-2024-0089", party: "Beta Industries", amount: 5600, daysOverdue: 15 },
-  { id: "2", invoiceNumber: "INV-2024-0076", party: "Delta Corp", amount: 12300, daysOverdue: 8 },
+  { id: "1", invoiceNumber: "INV-2024-0089", party: "CompuWorld Retailers", amount: 18450, daysOverdue: 15 },
+  { id: "2", invoiceNumber: "INV-2024-0076", party: "Insight Enterprises", amount: 42800, daysOverdue: 8 },
 ];
 
 export default function Dashboard() {

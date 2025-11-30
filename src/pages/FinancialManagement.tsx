@@ -108,10 +108,10 @@ const mockInvoices: Invoice[] = [
     id: "1", 
     invoiceNumber: "INV-2024-0100", 
     type: "customer", 
-    party: "TechStart Inc", 
+    party: "TechCorp Solutions", 
     issueDate: "2024-01-15", 
     dueDate: "2024-02-14", 
-    amount: 8750, 
+    amount: 25750, 
     paidAmount: 0, 
     status: "pending",
     approvalStatus: "pending_approval",
@@ -127,11 +127,11 @@ const mockInvoices: Invoice[] = [
     id: "2", 
     invoiceNumber: "INV-2024-0099", 
     type: "customer", 
-    party: "Metro Retail Group", 
+    party: "BestBuy Corporate", 
     issueDate: "2024-01-14", 
     dueDate: "2024-02-13", 
-    amount: 15600, 
-    paidAmount: 15600, 
+    amount: 65200, 
+    paidAmount: 65200, 
     status: "paid",
     approvalStatus: "approved",
     approvalLevel: 2,
@@ -142,18 +142,18 @@ const mockInvoices: Invoice[] = [
       { level: 2, approver: "Sarah Johnson (CFO)", action: "approved", date: "2024-01-14", comments: "Final approval granted" }
     ],
     payments: [
-      { id: "p1", paymentNumber: "PAY-2024-0080", paymentDate: "2024-01-15", amount: 15600, method: "Bank Transfer", reference: "TRF-456789", status: "completed", recordedBy: "Jane Doe" }
+      { id: "p1", paymentNumber: "PAY-2024-0080", paymentDate: "2024-01-15", amount: 65200, method: "Bank Transfer", reference: "TRF-456789", status: "completed", recordedBy: "Jane Doe" }
     ]
   },
   { 
     id: "3", 
     invoiceNumber: "INV-2024-0098", 
     type: "vendor", 
-    party: "Acme Corporation", 
+    party: "Dell Technologies", 
     issueDate: "2024-01-13", 
     dueDate: "2024-02-12", 
-    amount: 12500, 
-    paidAmount: 12500, 
+    amount: 59375, 
+    paidAmount: 59375, 
     status: "paid",
     approvalStatus: "approved",
     approvalLevel: 1,
@@ -163,17 +163,17 @@ const mockInvoices: Invoice[] = [
       { level: 1, approver: "John Smith (Finance Manager)", action: "approved", date: "2024-01-13", comments: "Verified and approved" }
     ],
     payments: [
-      { id: "p2", paymentNumber: "PAY-2024-0079", paymentDate: "2024-01-14", amount: 12500, method: "Check", reference: "CHK-001234", status: "completed", recordedBy: "Mike Wilson" }
+      { id: "p2", paymentNumber: "PAY-2024-0079", paymentDate: "2024-01-14", amount: 59375, method: "ACH Transfer", reference: "ACH-001234", status: "completed", recordedBy: "Mike Wilson" }
     ]
   },
   { 
     id: "4", 
     invoiceNumber: "INV-2024-0097", 
     type: "customer", 
-    party: "City Stores Ltd", 
+    party: "Micro Center Distribution", 
     issueDate: "2024-01-12", 
     dueDate: "2024-01-27", 
-    amount: 4800, 
+    amount: 18594, 
     paidAmount: 0, 
     status: "overdue",
     approvalStatus: "approved",
@@ -189,11 +189,11 @@ const mockInvoices: Invoice[] = [
     id: "5", 
     invoiceNumber: "INV-2024-0096", 
     type: "vendor", 
-    party: "Global Supply Co", 
+    party: "Samsung Electronics", 
     issueDate: "2024-01-11", 
     dueDate: "2024-02-25", 
-    amount: 8750, 
-    paidAmount: 4000, 
+    amount: 31960, 
+    paidAmount: 15000, 
     status: "partial",
     approvalStatus: "partially_approved",
     approvalLevel: 1,
@@ -204,18 +204,18 @@ const mockInvoices: Invoice[] = [
       { level: 2, approver: "Sarah Johnson (CFO)", action: "pending" }
     ],
     payments: [
-      { id: "p3", paymentNumber: "PAY-2024-0077", paymentDate: "2024-01-12", amount: 4000, method: "Bank Transfer", reference: "TRF-123456", status: "completed", recordedBy: "Jane Doe" }
+      { id: "p3", paymentNumber: "PAY-2024-0077", paymentDate: "2024-01-12", amount: 15000, method: "Bank Transfer", reference: "TRF-123456", status: "completed", recordedBy: "Jane Doe" }
     ]
   },
   { 
     id: "6", 
     invoiceNumber: "INV-2024-0095", 
     type: "customer", 
-    party: "Express Outlets", 
+    party: "Amazon Business Services", 
     issueDate: "2024-01-10", 
     dueDate: "2024-02-09", 
-    amount: 23400, 
-    paidAmount: 23400, 
+    amount: 134520, 
+    paidAmount: 134520, 
     status: "paid",
     approvalStatus: "approved",
     approvedBy: ["John Smith", "Sarah Johnson"],
@@ -224,17 +224,17 @@ const mockInvoices: Invoice[] = [
       { level: 2, approver: "Sarah Johnson (CFO)", action: "approved", date: "2024-01-10" }
     ],
     payments: [
-      { id: "p4", paymentNumber: "PAY-2024-0078", paymentDate: "2024-01-13", amount: 23400, method: "Credit Card", reference: "CC-789456", status: "completed", recordedBy: "Mike Wilson" }
+      { id: "p4", paymentNumber: "PAY-2024-0078", paymentDate: "2024-01-13", amount: 134520, method: "Wire Transfer", reference: "WIR-789456", status: "completed", recordedBy: "Mike Wilson" }
     ]
   },
   { 
     id: "7", 
     invoiceNumber: "INV-2024-0089", 
     type: "customer", 
-    party: "Beta Industries", 
+    party: "CompuWorld Retailers", 
     issueDate: "2024-01-01", 
     dueDate: "2024-01-15", 
-    amount: 5600, 
+    amount: 18450, 
     paidAmount: 0, 
     status: "overdue",
     approvalStatus: "approved",
@@ -248,11 +248,11 @@ const mockInvoices: Invoice[] = [
     id: "8", 
     invoiceNumber: "INV-2024-0094", 
     type: "vendor", 
-    party: "Quality Parts Inc", 
+    party: "HP Inc.", 
     issueDate: "2024-01-09", 
     dueDate: "2024-02-08", 
-    amount: 6700, 
-    paidAmount: 6700, 
+    amount: 20913, 
+    paidAmount: 20913, 
     status: "paid",
     approvalStatus: "approved",
     approvedBy: ["John Smith"],
@@ -260,18 +260,18 @@ const mockInvoices: Invoice[] = [
       { level: 1, approver: "John Smith (Finance Manager)", action: "approved", date: "2024-01-09" }
     ],
     payments: [
-      { id: "p5", paymentNumber: "PAY-2024-0075", paymentDate: "2024-01-10", amount: 6700, method: "Check", reference: "CHK-001233", status: "completed", recordedBy: "Jane Doe" }
+      { id: "p5", paymentNumber: "PAY-2024-0075", paymentDate: "2024-01-10", amount: 20913, method: "ACH Transfer", reference: "ACH-001233", status: "completed", recordedBy: "Jane Doe" }
     ]
   },
   { 
     id: "9", 
     invoiceNumber: "INV-2024-0093", 
     type: "customer", 
-    party: "Wholesale Partners", 
+    party: "CDW Corporation", 
     issueDate: "2024-01-08", 
     dueDate: "2024-02-07", 
-    amount: 34500, 
-    paidAmount: 34500, 
+    amount: 89760, 
+    paidAmount: 89760, 
     status: "paid",
     approvalStatus: "approved",
     approvedBy: ["John Smith", "Sarah Johnson"],
@@ -280,18 +280,18 @@ const mockInvoices: Invoice[] = [
       { level: 2, approver: "Sarah Johnson (CFO)", action: "approved", date: "2024-01-08" }
     ],
     payments: [
-      { id: "p6", paymentNumber: "PAY-2024-0074", paymentDate: "2024-01-09", amount: 34500, method: "Wire Transfer", reference: "WIR-445566", status: "completed", recordedBy: "Mike Wilson" }
+      { id: "p6", paymentNumber: "PAY-2024-0074", paymentDate: "2024-01-09", amount: 89760, method: "Wire Transfer", reference: "WIR-445566", status: "completed", recordedBy: "Mike Wilson" }
     ]
   },
   { 
     id: "10", 
     invoiceNumber: "INV-2024-0092", 
     type: "vendor", 
-    party: "Tech Components", 
+    party: "Lenovo Group Ltd", 
     issueDate: "2024-01-07", 
     dueDate: "2024-02-21", 
-    amount: 15600, 
-    paidAmount: 8000, 
+    amount: 77450, 
+    paidAmount: 40000, 
     status: "partial",
     approvalStatus: "approved",
     approvedBy: ["John Smith"],
@@ -299,17 +299,17 @@ const mockInvoices: Invoice[] = [
       { level: 1, approver: "John Smith (Finance Manager)", action: "approved", date: "2024-01-07" }
     ],
     payments: [
-      { id: "p7", paymentNumber: "PAY-2024-0073", paymentDate: "2024-01-08", amount: 8000, method: "Bank Transfer", reference: "TRF-556677", status: "completed", recordedBy: "Jane Doe" }
+      { id: "p7", paymentNumber: "PAY-2024-0073", paymentDate: "2024-01-08", amount: 40000, method: "Bank Transfer", reference: "TRF-556677", status: "completed", recordedBy: "Jane Doe" }
     ]
   },
   { 
     id: "11", 
     invoiceNumber: "INV-2024-0091", 
     type: "customer", 
-    party: "Prime Electronics", 
+    party: "Newegg Business", 
     issueDate: "2024-01-06", 
     dueDate: "2024-02-05", 
-    amount: 19800, 
+    amount: 76540, 
     paidAmount: 0, 
     status: "pending",
     approvalStatus: "pending_approval",
@@ -324,11 +324,11 @@ const mockInvoices: Invoice[] = [
     id: "12", 
     invoiceNumber: "INV-2024-0090", 
     type: "customer", 
-    party: "Global Trade Corp", 
+    party: "Global Tech Distributors", 
     issueDate: "2024-01-05", 
     dueDate: "2024-02-04", 
-    amount: 28900, 
-    paidAmount: 28900, 
+    amount: 112340, 
+    paidAmount: 112340, 
     status: "paid",
     approvalStatus: "approved",
     approvedBy: ["John Smith", "Sarah Johnson"],
@@ -337,17 +337,17 @@ const mockInvoices: Invoice[] = [
       { level: 2, approver: "Sarah Johnson (CFO)", action: "approved", date: "2024-01-05" }
     ],
     payments: [
-      { id: "p8", paymentNumber: "PAY-2024-0072", paymentDate: "2024-01-07", amount: 28900, method: "Bank Transfer", reference: "TRF-667788", status: "completed", recordedBy: "Mike Wilson" }
+      { id: "p8", paymentNumber: "PAY-2024-0072", paymentDate: "2024-01-07", amount: 112340, method: "Wire Transfer", reference: "WIR-667788", status: "completed", recordedBy: "Mike Wilson" }
     ]
   },
   { 
     id: "13", 
     invoiceNumber: "INV-2024-0088", 
     type: "vendor", 
-    party: "Supreme Electronics", 
+    party: "LG Electronics", 
     issueDate: "2023-12-31", 
     dueDate: "2024-01-30", 
-    amount: 18900, 
+    amount: 62840, 
     paidAmount: 0, 
     status: "pending",
     approvalStatus: "rejected",
@@ -362,11 +362,11 @@ const mockInvoices: Invoice[] = [
     id: "14", 
     invoiceNumber: "INV-2024-0087", 
     type: "customer", 
-    party: "Downtown Supermarket", 
+    party: "Office Depot Enterprise", 
     issueDate: "2023-12-30", 
     dueDate: "2024-01-29", 
-    amount: 6700, 
-    paidAmount: 6700, 
+    amount: 11850, 
+    paidAmount: 11850, 
     status: "paid",
     approvalStatus: "approved",
     approvedBy: ["John Smith"],
@@ -374,18 +374,18 @@ const mockInvoices: Invoice[] = [
       { level: 1, approver: "John Smith (Finance Manager)", action: "approved", date: "2023-12-30" }
     ],
     payments: [
-      { id: "p9", paymentNumber: "PAY-2024-0071", paymentDate: "2024-01-06", amount: 6700, method: "Credit Card", reference: "CC-778899", status: "completed", recordedBy: "Jane Doe" }
+      { id: "p9", paymentNumber: "PAY-2024-0071", paymentDate: "2024-01-06", amount: 11850, method: "ACH Transfer", reference: "ACH-778899", status: "completed", recordedBy: "Jane Doe" }
     ]
   },
   { 
     id: "15", 
     invoiceNumber: "INV-2024-0086", 
     type: "vendor", 
-    party: "Mega Manufacturing", 
+    party: "Acer America", 
     issueDate: "2023-12-29", 
     dueDate: "2024-02-13", 
-    amount: 29400, 
-    paidAmount: 15000, 
+    amount: 44950, 
+    paidAmount: 22000, 
     status: "partial",
     approvalStatus: "approved",
     approvedBy: ["John Smith", "Sarah Johnson"],
@@ -394,17 +394,17 @@ const mockInvoices: Invoice[] = [
       { level: 2, approver: "Sarah Johnson (CFO)", action: "approved", date: "2023-12-29" }
     ],
     payments: [
-      { id: "p10", paymentNumber: "PAY-2024-0070", paymentDate: "2024-01-05", amount: 15000, method: "Check", reference: "CHK-001232", status: "completed", recordedBy: "Mike Wilson" }
+      { id: "p10", paymentNumber: "PAY-2024-0070", paymentDate: "2024-01-05", amount: 22000, method: "ACH Transfer", reference: "ACH-001232", status: "completed", recordedBy: "Mike Wilson" }
     ]
   },
 ];
 
 const mockOrders = [
-  { orderNumber: "SO-2024-0123", party: "TechStart Inc", amount: 8750 },
-  { orderNumber: "PO-2024-0045", party: "Acme Corporation", amount: 12500 },
+  { orderNumber: "SO-2024-0123", party: "TechCorp Solutions", amount: 25750 },
+  { orderNumber: "PO-2024-0045", party: "Dell Technologies", amount: 59375 },
 ];
 
-const paymentMethods = ["Bank Transfer", "Check", "Credit Card", "Cash", "Wire Transfer"];
+const paymentMethods = ["Bank Transfer", "ACH Transfer", "Check", "Wire Transfer", "Credit Card"];
 
 export default function FinancialManagement() {
   const { toast } = useToast();

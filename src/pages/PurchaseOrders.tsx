@@ -42,30 +42,30 @@ interface PurchaseOrder {
 }
 
 const mockPurchaseOrders: PurchaseOrder[] = [
-  { id: "1", poNumber: "PO-2024-0045", vendor: "Acme Corporation", orderDate: "2024-01-15", expectedDate: "2024-01-25", totalAmount: 12500, status: "pending", items: 5 },
-  { id: "2", poNumber: "PO-2024-0044", vendor: "Global Supply Co", orderDate: "2024-01-14", expectedDate: "2024-01-24", totalAmount: 8750, status: "approved", items: 3 },
-  { id: "3", poNumber: "PO-2024-0043", vendor: "Quality Parts Inc", orderDate: "2024-01-13", expectedDate: "2024-01-23", totalAmount: 3200, status: "completed", items: 8 },
-  { id: "4", poNumber: "PO-2024-0042", vendor: "Tech Components", orderDate: "2024-01-12", expectedDate: "2024-01-22", totalAmount: 15600, status: "completed", items: 4 },
-  { id: "5", poNumber: "PO-2024-0041", vendor: "Prime Materials Ltd", orderDate: "2024-01-11", expectedDate: "2024-01-21", totalAmount: 4800, status: "cancelled", items: 2 },
-  { id: "6", poNumber: "PO-2024-0040", vendor: "Acme Corporation", orderDate: "2024-01-10", expectedDate: "2024-01-20", totalAmount: 22300, status: "completed", items: 6 },
-  { id: "7", poNumber: "PO-2024-0039", vendor: "Supreme Electronics", orderDate: "2024-01-09", expectedDate: "2024-01-19", totalAmount: 18900, status: "pending", items: 7 },
-  { id: "8", poNumber: "PO-2024-0038", vendor: "Mega Manufacturing", orderDate: "2024-01-08", expectedDate: "2024-01-18", totalAmount: 29400, status: "approved", items: 9 },
-  { id: "9", poNumber: "PO-2024-0037", vendor: "Alpha Distributors", orderDate: "2024-01-07", expectedDate: "2024-01-17", totalAmount: 11200, status: "completed", items: 4 },
-  { id: "10", poNumber: "PO-2024-0036", vendor: "Beta Supplies Ltd", orderDate: "2024-01-06", expectedDate: "2024-01-16", totalAmount: 16700, status: "completed", items: 6 },
-  { id: "11", poNumber: "PO-2024-0035", vendor: "Gamma Industries", orderDate: "2024-01-05", expectedDate: "2024-01-15", totalAmount: 24300, status: "pending", items: 8 },
-  { id: "12", poNumber: "PO-2024-0034", vendor: "Epsilon Materials", orderDate: "2024-01-04", expectedDate: "2024-01-14", totalAmount: 31800, status: "approved", items: 11 },
-  { id: "13", poNumber: "PO-2024-0033", vendor: "Zeta Trading Co", orderDate: "2024-01-03", expectedDate: "2024-01-13", totalAmount: 9600, status: "completed", items: 5 },
-  { id: "14", poNumber: "PO-2024-0032", vendor: "Theta Wholesale", orderDate: "2024-01-02", expectedDate: "2024-01-12", totalAmount: 19200, status: "completed", items: 7 },
-  { id: "15", poNumber: "PO-2024-0031", vendor: "Omega Solutions", orderDate: "2024-01-01", expectedDate: "2024-01-11", totalAmount: 35600, status: "pending", items: 12 },
-  { id: "16", poNumber: "PO-2024-0030", vendor: "Acme Corporation", orderDate: "2023-12-31", expectedDate: "2024-01-10", totalAmount: 14800, status: "approved", items: 6 },
-  { id: "17", poNumber: "PO-2024-0029", vendor: "Global Supply Co", orderDate: "2023-12-30", expectedDate: "2024-01-09", totalAmount: 21400, status: "completed", items: 8 },
-  { id: "18", poNumber: "PO-2024-0028", vendor: "Quality Parts Inc", orderDate: "2023-12-29", expectedDate: "2024-01-08", totalAmount: 7900, status: "completed", items: 4 },
-  { id: "19", poNumber: "PO-2024-0027", vendor: "Tech Components", orderDate: "2023-12-28", expectedDate: "2024-01-07", totalAmount: 28500, status: "cancelled", items: 10 },
-  { id: "20", poNumber: "PO-2024-0026", vendor: "Supreme Electronics", orderDate: "2023-12-27", expectedDate: "2024-01-06", totalAmount: 33700, status: "completed", items: 13 },
+  { id: "1", poNumber: "PO-2024-0045", vendor: "Dell Technologies", orderDate: "2024-01-15", expectedDate: "2024-01-25", totalAmount: 59375, status: "pending", items: 5 },
+  { id: "2", poNumber: "PO-2024-0044", vendor: "Samsung Electronics", orderDate: "2024-01-14", expectedDate: "2024-01-24", totalAmount: 31960, status: "approved", items: 3 },
+  { id: "3", poNumber: "PO-2024-0043", vendor: "HP Inc.", orderDate: "2024-01-13", expectedDate: "2024-01-23", totalAmount: 20913, status: "completed", items: 8 },
+  { id: "4", poNumber: "PO-2024-0042", vendor: "Lenovo Group Ltd", orderDate: "2024-01-12", expectedDate: "2024-01-22", totalAmount: 77450, status: "completed", items: 4 },
+  { id: "5", poNumber: "PO-2024-0041", vendor: "ASUS Computer", orderDate: "2024-01-11", expectedDate: "2024-01-21", totalAmount: 18200, status: "cancelled", items: 2 },
+  { id: "6", poNumber: "PO-2024-0040", vendor: "Dell Technologies", orderDate: "2024-01-10", expectedDate: "2024-01-20", totalAmount: 86249, status: "completed", items: 6 },
+  { id: "7", poNumber: "PO-2024-0039", vendor: "LG Electronics", orderDate: "2024-01-09", expectedDate: "2024-01-19", totalAmount: 62840, status: "pending", items: 7 },
+  { id: "8", poNumber: "PO-2024-0038", vendor: "Acer America", orderDate: "2024-01-08", expectedDate: "2024-01-18", totalAmount: 44950, status: "approved", items: 9 },
+  { id: "9", poNumber: "PO-2024-0037", vendor: "Microsoft Corporation", orderDate: "2024-01-07", expectedDate: "2024-01-17", totalAmount: 53900, status: "completed", items: 4 },
+  { id: "10", poNumber: "PO-2024-0036", vendor: "Apple Inc.", orderDate: "2024-01-06", expectedDate: "2024-01-16", totalAmount: 95920, status: "completed", items: 6 },
+  { id: "11", poNumber: "PO-2024-0035", vendor: "ViewSonic Corporation", orderDate: "2024-01-05", expectedDate: "2024-01-15", totalAmount: 34580, status: "pending", items: 8 },
+  { id: "12", poNumber: "PO-2024-0034", vendor: "BenQ America", orderDate: "2024-01-04", expectedDate: "2024-01-14", totalAmount: 22485, status: "approved", items: 11 },
+  { id: "13", poNumber: "PO-2024-0033", vendor: "AOC International", orderDate: "2024-01-03", expectedDate: "2024-01-13", totalAmount: 18670, status: "completed", items: 5 },
+  { id: "14", poNumber: "PO-2024-0032", vendor: "APC by Schneider", orderDate: "2024-01-02", expectedDate: "2024-01-12", totalAmount: 56890, status: "completed", items: 7 },
+  { id: "15", poNumber: "PO-2024-0031", vendor: "Belkin International", orderDate: "2024-01-01", expectedDate: "2024-01-11", totalAmount: 28340, status: "pending", items: 12 },
+  { id: "16", poNumber: "PO-2024-0030", vendor: "Logitech Inc.", orderDate: "2023-12-31", expectedDate: "2024-01-10", totalAmount: 15675, status: "approved", items: 6 },
+  { id: "17", poNumber: "PO-2024-0029", vendor: "Dell Technologies", orderDate: "2023-12-30", expectedDate: "2024-01-09", totalAmount: 35775, status: "completed", items: 8 },
+  { id: "18", poNumber: "PO-2024-0028", vendor: "Samsung Electronics", orderDate: "2023-12-29", expectedDate: "2024-01-08", totalAmount: 41970, status: "completed", items: 4 },
+  { id: "19", poNumber: "PO-2024-0027", vendor: "HP Inc.", orderDate: "2023-12-28", expectedDate: "2024-01-07", totalAmount: 67840, status: "cancelled", items: 10 },
+  { id: "20", poNumber: "PO-2024-0026", vendor: "Lenovo Group Ltd", orderDate: "2023-12-27", expectedDate: "2024-01-06", totalAmount: 92640, status: "completed", items: 13 },
 ];
 
-const mockVendors = ["Acme Corporation", "Global Supply Co", "Quality Parts Inc", "Tech Components", "Prime Materials Ltd"];
-const mockProducts = ["Widget Alpha", "Widget Beta", "Gadget Pro", "Component X", "Component Y"];
+const mockVendors = ["Dell Technologies", "HP Inc.", "Lenovo Group Ltd", "Samsung Electronics", "Apple Inc."];
+const mockProducts = ["Dell Latitude 5540 Laptop", "HP ProBook 450 G10", "Samsung 27\" 4K Monitor", "Laptop Power Adapter 65W", "USB-C Hub Docking Station"];
 
 interface LineItem {
   id: string;

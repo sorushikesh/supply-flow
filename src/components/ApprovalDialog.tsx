@@ -353,52 +353,54 @@ export function ApprovalDialog({
 
 // Mock data generator for approval requests
 export function generateMockApprovalRequests(): ApprovalRequest[] {
-  const documentTypes: ApprovalRequest["documentType"][] = ["purchase_order", "sales_order", "invoice"];
   const requesters = ["John Doe", "Jane Smith", "Mike Johnson", "Sarah Williams"];
-  const approvers = ["Manager", "Director", "Finance Head", "CEO"];
-  const statuses: ApprovalRequest["status"][] = ["pending", "approved", "rejected", "partially_approved"];
+  const approvers = ["Procurement Manager", "Operations Director", "Finance Head", "CFO"];
+  
+  // Realistic approval requests matching our electronics business
+  const approvalData = [
+    { docType: "purchase_order" as const, docNum: "PO-2024-0045", amount: 59375, party: "Dell Technologies", level: 1, totalLevels: 2, status: "pending" as const, daysAgo: 1 },
+    { docType: "sales_order" as const, docNum: "SO-2024-0123", amount: 25750, party: "TechCorp Solutions", level: 2, totalLevels: 2, status: "partially_approved" as const, daysAgo: 2 },
+    { docType: "invoice" as const, docNum: "INV-2024-0100", amount: 25750, party: "TechCorp Solutions", level: 1, totalLevels: 2, status: "pending" as const, daysAgo: 1 },
+    { docType: "purchase_order" as const, docNum: "PO-2024-0044", amount: 31960, party: "Samsung Electronics", level: 2, totalLevels: 2, status: "approved" as const, daysAgo: 3 },
+    { docType: "sales_order" as const, docNum: "SO-2024-0122", amount: 65200, party: "BestBuy Corporate", level: 2, totalLevels: 3, status: "partially_approved" as const, daysAgo: 2 },
+    { docType: "invoice" as const, docNum: "INV-2024-0097", amount: 18594, party: "Micro Center Distribution", level: 1, totalLevels: 1, status: "pending" as const, daysAgo: 0 },
+    { docType: "purchase_order" as const, docNum: "PO-2024-0043", amount: 20913, party: "HP Inc.", level: 1, totalLevels: 2, status: "pending" as const, daysAgo: 1 },
+    { docType: "sales_order" as const, docNum: "SO-2024-0121", amount: 18594, party: "Micro Center Distribution", level: 2, totalLevels: 2, status: "approved" as const, daysAgo: 4 },
+    { docType: "invoice" as const, docNum: "INV-2024-0096", amount: 31960, party: "Samsung Electronics", level: 2, totalLevels: 3, status: "partially_approved" as const, daysAgo: 3 },
+    { docType: "purchase_order" as const, docNum: "PO-2024-0042", amount: 77450, party: "Lenovo Group Ltd", level: 1, totalLevels: 2, status: "rejected" as const, daysAgo: 2 },
+    { docType: "sales_order" as const, docNum: "SO-2024-0120", amount: 134520, party: "Amazon Business Services", level: 3, totalLevels: 3, status: "approved" as const, daysAgo: 5 },
+    { docType: "invoice" as const, docNum: "INV-2024-0095", amount: 134520, party: "Amazon Business Services", level: 2, totalLevels: 2, status: "approved" as const, daysAgo: 4 },
+    { docType: "purchase_order" as const, docNum: "PO-2024-0041", amount: 18200, party: "ASUS Computer", level: 1, totalLevels: 1, status: "pending" as const, daysAgo: 0 },
+    { docType: "sales_order" as const, docNum: "SO-2024-0119", amount: 89760, party: "CDW Corporation", level: 2, totalLevels: 2, status: "partially_approved" as const, daysAgo: 2 },
+    { docType: "invoice" as const, docNum: "INV-2024-0091", amount: 76540, party: "Newegg Business", level: 2, totalLevels: 2, status: "pending" as const, daysAgo: 1 },
+  ];
 
-  return Array.from({ length: 15 }, (_, i) => {
-    const docType = documentTypes[Math.floor(Math.random() * documentTypes.length)];
-    const level = Math.floor(Math.random() * 3) + 1;
-    const totalLevels = Math.floor(Math.random() * 2) + 2; // 2 or 3 levels
-    const historyCount = Math.max(0, level - 1);
+  return approvalData.map((data, i) => {
+    const historyCount = Math.max(0, data.level - 1);
+    const docTypeLabel = data.docType.replace("_", " ");
     
-    let docPrefix = "";
-    switch (docType) {
-      case "purchase_order":
-        docPrefix = "PO";
-        break;
-      case "sales_order":
-        docPrefix = "SO";
-        break;
-      case "invoice":
-        docPrefix = "INV";
-        break;
-    }
-
     const history: ApprovalHistory[] = Array.from({ length: historyCount }, (_, j) => ({
       id: `hist-${i}-${j}`,
-      approver: requesters[Math.floor(Math.random() * requesters.length)],
+      approver: requesters[j % requesters.length],
       role: approvers[j],
       action: "approved" as const,
-      timestamp: new Date(Date.now() - (historyCount - j) * 24 * 60 * 60 * 1000).toISOString(),
-      comments: Math.random() > 0.5 ? "Approved. All details verified." : undefined,
+      timestamp: new Date(Date.now() - (data.daysAgo + historyCount - j) * 24 * 60 * 60 * 1000).toISOString(),
+      comments: j === 0 ? "Verified and approved. Documentation complete." : "Approved for next level.",
     }));
 
     return {
       id: `approval-${i + 1}`,
-      documentType: docType,
-      documentNumber: `${docPrefix}-2024-${String(100 + i).padStart(4, "0")}`,
+      documentType: data.docType,
+      documentNumber: data.docNum,
       documentId: String(i + 1),
-      amount: Math.floor(Math.random() * 50000) + 5000,
-      requestedBy: requesters[Math.floor(Math.random() * requesters.length)],
-      requestedDate: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString(),
-      currentApprover: approvers[level - 1],
-      approvalLevel: level,
-      totalLevels,
-      status: level === 1 ? "pending" : statuses[Math.floor(Math.random() * statuses.length)],
-      description: `Request for approval of ${docType.replace("_", " ")} with total amount of $${(Math.floor(Math.random() * 50000) + 5000).toLocaleString()}`,
+      amount: data.amount,
+      requestedBy: requesters[i % requesters.length],
+      requestedDate: new Date(Date.now() - data.daysAgo * 24 * 60 * 60 * 1000).toISOString(),
+      currentApprover: approvers[data.level - 1],
+      approvalLevel: data.level,
+      totalLevels: data.totalLevels,
+      status: data.status,
+      description: `${docTypeLabel.charAt(0).toUpperCase() + docTypeLabel.slice(1)} for ${data.party} - $${data.amount.toLocaleString()}`,
       history,
     };
   });

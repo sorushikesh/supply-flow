@@ -61,24 +61,24 @@ interface PurchaseHistoryItem {
 }
 
 const mockCustomers: Customer[] = [
-  { id: "1", code: "C-001", name: "TechStart Inc", email: "orders@techstart.com", phone: "+1 555-0201", address: "100 Innovation Blvd, Tech City", creditLimit: 50000, totalOrders: 67, totalRevenue: 234500, status: "active" },
-  { id: "2", code: "C-002", name: "Metro Retail Group", email: "purchasing@metroretail.com", phone: "+1 555-0202", address: "200 Shopping Center, Mall Town", creditLimit: 100000, totalOrders: 89, totalRevenue: 456000, status: "active" },
-  { id: "3", code: "C-003", name: "City Stores Ltd", email: "supply@citystores.com", phone: "+1 555-0203", address: "300 Main Street, Downtown", creditLimit: 75000, totalOrders: 45, totalRevenue: 178900, status: "active" },
-  { id: "4", code: "C-004", name: "Regional Distributors", email: "orders@regionaldist.com", phone: "+1 555-0204", address: "400 Highway Road, Suburb", creditLimit: 25000, totalOrders: 23, totalRevenue: 67800, status: "inactive" },
-  { id: "5", code: "C-005", name: "Express Outlets", email: "buy@expressoutlets.com", phone: "+1 555-0205", address: "500 Fast Lane, Commerce Park", creditLimit: 150000, totalOrders: 112, totalRevenue: 567000, status: "active" },
-  { id: "6", code: "C-006", name: "Wholesale Partners", email: "orders@wholesalepartners.com", phone: "+1 555-0206", address: "600 Bulk Blvd, Industrial Zone", creditLimit: 200000, totalOrders: 78, totalRevenue: 345600, status: "active" },
-  { id: "7", code: "C-007", name: "Prime Electronics", email: "buying@primeelec.com", phone: "+1 555-0207", address: "700 Circuit Ave, Silicon Valley", creditLimit: 120000, totalOrders: 94, totalRevenue: 412300, status: "active" },
-  { id: "8", code: "C-008", name: "Global Trade Corp", email: "orders@globaltrade.com", phone: "+1 555-0208", address: "800 International Blvd, Trade Hub", creditLimit: 180000, totalOrders: 156, totalRevenue: 687500, status: "active" },
-  { id: "9", code: "C-009", name: "Downtown Supermarket", email: "procurement@downtown.com", phone: "+1 555-0209", address: "900 Market Street, City Center", creditLimit: 65000, totalOrders: 38, totalRevenue: 145800, status: "active" },
-  { id: "10", code: "C-010", name: "Coastal Distributors", email: "supply@coastal.com", phone: "+1 555-0210", address: "1000 Seaside Road, Port City", creditLimit: 45000, totalOrders: 29, totalRevenue: 89700, status: "active" },
-  { id: "11", code: "C-011", name: "Mountain Retail Chain", email: "orders@mountainretail.com", phone: "+1 555-0211", address: "1100 Alpine Drive, Highland", creditLimit: 90000, totalOrders: 61, totalRevenue: 267400, status: "active" },
-  { id: "12", code: "C-012", name: "Urban Solutions LLC", email: "purchasing@urbansolutions.com", phone: "+1 555-0212", address: "1200 Metro Plaza, Uptown", creditLimit: 55000, totalOrders: 42, totalRevenue: 198600, status: "active" },
-  { id: "13", code: "C-013", name: "Sunset Trading Co", email: "orders@sunsettrading.com", phone: "+1 555-0213", address: "1300 Western Ave, Beach Town", creditLimit: 40000, totalOrders: 18, totalRevenue: 56900, status: "inactive" },
-  { id: "14", code: "C-014", name: "Northern Supplies", email: "buy@northernsupplies.com", phone: "+1 555-0214", address: "1400 Polar Street, North City", creditLimit: 70000, totalOrders: 53, totalRevenue: 223100, status: "active" },
-  { id: "15", code: "C-015", name: "Eastern Markets", email: "procurement@easternmarkets.com", phone: "+1 555-0215", address: "1500 Sunrise Blvd, East District", creditLimit: 110000, totalOrders: 87, totalRevenue: 398200, status: "active" },
-  { id: "16", code: "C-016", name: "Central Warehouse Hub", email: "orders@centralwh.com", phone: "+1 555-0216", address: "1600 Storage Lane, Midtown", creditLimit: 135000, totalOrders: 103, totalRevenue: 512800, status: "active" },
-  { id: "17", code: "C-017", name: "Southwest Commerce", email: "supply@swcommerce.com", phone: "+1 555-0217", address: "1700 Desert Road, Southwest", creditLimit: 30000, totalOrders: 21, totalRevenue: 72400, status: "inactive" },
-  { id: "18", code: "C-018", name: "Pacific Retailers", email: "orders@pacificretailers.com", phone: "+1 555-0218", address: "1800 Ocean Drive, Coastal City", creditLimit: 95000, totalOrders: 74, totalRevenue: 334500, status: "active" },
+  { id: "1", code: "C-001", name: "TechCorp Solutions", email: "procurement@techcorp.com", phone: "+1 (555) 201-4500", address: "1250 Tech Valley Drive, San Jose, CA 95131", creditLimit: 50000, totalOrders: 67, totalRevenue: 234500, status: "active" },
+  { id: "2", code: "C-002", name: "BestBuy Corporate", email: "purchasing@bestbuy.com", phone: "+1 (555) 202-8900", address: "7601 Penn Avenue South, Richfield, MN 55423", creditLimit: 100000, totalOrders: 89, totalRevenue: 456000, status: "active" },
+  { id: "3", code: "C-003", name: "Micro Center Distribution", email: "supply@microcenter.com", phone: "+1 (555) 203-3300", address: "4119 Leap Road, Hilliard, OH 43026", creditLimit: 75000, totalOrders: 45, totalRevenue: 178900, status: "active" },
+  { id: "4", code: "C-004", name: "CompuWorld Retailers", email: "orders@compuworld.com", phone: "+1 (555) 204-7700", address: "890 Commerce Boulevard, Northridge, CA 91324", creditLimit: 25000, totalOrders: 23, totalRevenue: 67800, status: "inactive" },
+  { id: "5", code: "C-005", name: "Amazon Business Services", email: "b2b@amazon.com", phone: "+1 (555) 205-1200", address: "410 Terry Avenue North, Seattle, WA 98109", creditLimit: 150000, totalOrders: 112, totalRevenue: 567000, status: "active" },
+  { id: "6", code: "C-006", name: "CDW Corporation", email: "orders@cdw.com", phone: "+1 (555) 206-3400", address: "200 N Milwaukee Avenue, Vernon Hills, IL 60061", creditLimit: 200000, totalOrders: 78, totalRevenue: 345600, status: "active" },
+  { id: "7", code: "C-007", name: "Newegg Business", email: "buying@newegg.com", phone: "+1 (555) 207-9900", address: "9997 Rose Hills Road, Whittier, CA 90601", creditLimit: 120000, totalOrders: 94, totalRevenue: 412300, status: "active" },
+  { id: "8", code: "C-008", name: "Global Tech Distributors", email: "orders@gtdistrib.com", phone: "+1 (555) 208-6100", address: "3350 Scott Boulevard, Santa Clara, CA 95054", creditLimit: 180000, totalOrders: 156, totalRevenue: 687500, status: "active" },
+  { id: "9", code: "C-009", name: "Office Depot Enterprise", email: "procurement@officedepot.com", phone: "+1 (555) 209-4400", address: "6600 North Military Trail, Boca Raton, FL 33496", creditLimit: 65000, totalOrders: 38, totalRevenue: 145800, status: "active" },
+  { id: "10", code: "C-010", name: "Staples Advantage", email: "supply@staples.com", phone: "+1 (555) 210-7800", address: "500 Staples Drive, Framingham, MA 01702", creditLimit: 45000, totalOrders: 29, totalRevenue: 89700, status: "active" },
+  { id: "11", code: "C-011", name: "B&H Photo Video", email: "orders@bhphoto.com", phone: "+1 (555) 211-8200", address: "420 9th Avenue, New York, NY 10001", creditLimit: 90000, totalOrders: 61, totalRevenue: 267400, status: "active" },
+  { id: "12", code: "C-012", name: "TigerDirect Commercial", email: "purchasing@tigerdirect.com", phone: "+1 (555) 212-5500", address: "7795 West Flagler Street, Miami, FL 33144", creditLimit: 55000, totalOrders: 42, totalRevenue: 198600, status: "active" },
+  { id: "13", code: "C-013", name: "Insight Enterprises", email: "orders@insight.com", phone: "+1 (555) 213-9100", address: "2701 East Insight Way, Chandler, AZ 85286", creditLimit: 40000, totalOrders: 18, totalRevenue: 56900, status: "inactive" },
+  { id: "14", code: "C-014", name: "Connection Enterprise", email: "buy@connection.com", phone: "+1 (555) 214-2300", address: "730 Milford Road, Merrimack, NH 03054", creditLimit: 70000, totalOrders: 53, totalRevenue: 223100, status: "active" },
+  { id: "15", code: "C-015", name: "SHI International", email: "procurement@shi.com", phone: "+1 (555) 215-6600", address: "290 Davidson Avenue, Somerset, NJ 08873", creditLimit: 110000, totalOrders: 87, totalRevenue: 398200, status: "active" },
+  { id: "16", code: "C-016", name: "Ingram Micro", email: "orders@ingrammicro.com", phone: "+1 (555) 216-1800", address: "1600 E St Andrew Place, Santa Ana, CA 92705", creditLimit: 135000, totalOrders: 103, totalRevenue: 512800, status: "active" },
+  { id: "17", code: "C-017", name: "Tech Data Corporation", email: "supply@techdata.com", phone: "+1 (555) 217-4700", address: "5350 Tech Data Drive, Clearwater, FL 33760", creditLimit: 30000, totalOrders: 21, totalRevenue: 72400, status: "inactive" },
+  { id: "18", code: "C-018", name: "Costco Business Center", email: "orders@costco.com", phone: "+1 (555) 218-9500", address: "999 Lake Drive, Issaquah, WA 98027", creditLimit: 95000, totalOrders: 74, totalRevenue: 334500, status: "active" },
 ];
 
 const mockPurchaseHistory: Record<string, PurchaseHistoryItem[]> = {
@@ -88,10 +88,10 @@ const mockPurchaseHistory: Record<string, PurchaseHistoryItem[]> = {
       orderNumber: "SO-2024-0098",
       date: "2024-11-25",
       products: [
-        { name: "Widget Alpha", sku: "WDG-001", quantity: 50, unitPrice: 125.00 },
-        { name: "Gadget Pro", sku: "GDG-023", quantity: 30, unitPrice: 89.99 },
+        { name: "Dell Latitude 5540 15.6\" Laptop", sku: "LTP-0001", quantity: 15, unitPrice: 1249.99 },
+        { name: "Samsung 27\" 4K Monitor", sku: "MON-0023", quantity: 20, unitPrice: 349.99 },
       ],
-      totalAmount: 8949.70,
+      totalAmount: 25749.65,
       status: "delivered"
     },
     {
@@ -99,10 +99,10 @@ const mockPurchaseHistory: Record<string, PurchaseHistoryItem[]> = {
       orderNumber: "SO-2024-0087",
       date: "2024-11-18",
       products: [
-        { name: "Component X", sku: "CMP-045", quantity: 100, unitPrice: 45.50 },
-        { name: "Widget Beta", sku: "WDG-002", quantity: 75, unitPrice: 98.00 },
+        { name: "Laptop Power Adapter 65W", sku: "PWR-0045", quantity: 50, unitPrice: 24.50 },
+        { name: "HP ProBook 450 G10", sku: "LTP-0002", quantity: 8, unitPrice: 899.00 },
       ],
-      totalAmount: 11900.00,
+      totalAmount: 8417.00,
       status: "delivered"
     },
     {
@@ -110,9 +110,9 @@ const mockPurchaseHistory: Record<string, PurchaseHistoryItem[]> = {
       orderNumber: "SO-2024-0076",
       date: "2024-11-10",
       products: [
-        { name: "Device Ultra", sku: "DEV-100", quantity: 25, unitPrice: 275.00 },
+        { name: "Lenovo ThinkPad T14 Gen 4", sku: "LTP-0003", quantity: 12, unitPrice: 1549.50 },
       ],
-      totalAmount: 6875.00,
+      totalAmount: 18594.00,
       status: "delivered"
     },
   ],
@@ -122,10 +122,10 @@ const mockPurchaseHistory: Record<string, PurchaseHistoryItem[]> = {
       orderNumber: "SO-2024-0125",
       date: "2024-11-28",
       products: [
-        { name: "Widget Alpha", sku: "WDG-001", quantity: 200, unitPrice: 125.00 },
-        { name: "Component X", sku: "CMP-045", quantity: 150, unitPrice: 45.50 },
+        { name: "Dell Latitude 5540 15.6\" Laptop", sku: "LTP-0001", quantity: 50, unitPrice: 1249.99 },
+        { name: "USB-C Hub 7-in-1 Docking Station", sku: "ACC-0002", quantity: 50, unitPrice: 54.00 },
       ],
-      totalAmount: 31825.00,
+      totalAmount: 65199.50,
       status: "pending"
     },
     {
@@ -133,10 +133,10 @@ const mockPurchaseHistory: Record<string, PurchaseHistoryItem[]> = {
       orderNumber: "SO-2024-0115",
       date: "2024-11-22",
       products: [
-        { name: "Gadget Pro", sku: "GDG-023", quantity: 100, unitPrice: 89.99 },
-        { name: "Widget Beta", sku: "WDG-002", quantity: 80, unitPrice: 98.00 },
+        { name: "Samsung 27\" 4K Monitor", sku: "MON-0023", quantity: 30, unitPrice: 349.99 },
+        { name: "Wireless Mouse & Keyboard Combo", sku: "ACC-0001", quantity: 30, unitPrice: 45.00 },
       ],
-      totalAmount: 16839.00,
+      totalAmount: 11849.70,
       status: "delivered"
     },
   ],

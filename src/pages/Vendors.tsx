@@ -61,21 +61,21 @@ interface PurchaseOrderHistory {
 }
 
 const mockVendors: Vendor[] = [
-  { id: "1", code: "V-001", name: "Acme Corporation", email: "sales@acme.com", phone: "+1 555-0101", address: "123 Industrial Ave, City", paymentTerms: "Net 30", totalOrders: 45, totalSpent: 156000, status: "active" },
-  { id: "2", code: "V-002", name: "Global Supply Co", email: "orders@globalsupply.com", phone: "+1 555-0102", address: "456 Commerce St, Town", paymentTerms: "Net 45", totalOrders: 32, totalSpent: 89500, status: "active" },
-  { id: "3", code: "V-003", name: "Quality Parts Inc", email: "info@qualityparts.com", phone: "+1 555-0103", address: "789 Factory Rd, Village", paymentTerms: "Net 15", totalOrders: 28, totalSpent: 67800, status: "active" },
-  { id: "4", code: "V-004", name: "Prime Materials Ltd", email: "contact@primematerials.com", phone: "+1 555-0104", address: "321 Supply Lane, Metro", paymentTerms: "Net 30", totalOrders: 18, totalSpent: 45200, status: "inactive" },
-  { id: "5", code: "V-005", name: "Tech Components", email: "orders@techcomp.com", phone: "+1 555-0105", address: "654 Tech Park, Hub", paymentTerms: "Net 60", totalOrders: 56, totalSpent: 234000, status: "active" },
-  { id: "6", code: "V-006", name: "Supreme Electronics", email: "sales@supremeelec.com", phone: "+1 555-0106", address: "987 Circuit Blvd, Tech City", paymentTerms: "Net 30", totalOrders: 41, totalSpent: 178900, status: "active" },
-  { id: "7", code: "V-007", name: "Mega Manufacturing", email: "orders@megamfg.com", phone: "+1 555-0107", address: "246 Factory Lane, Industrial Zone", paymentTerms: "Net 45", totalOrders: 63, totalSpent: 289400, status: "active" },
-  { id: "8", code: "V-008", name: "Alpha Distributors", email: "info@alphadist.com", phone: "+1 555-0108", address: "135 Warehouse Way, Distribution Hub", paymentTerms: "Net 20", totalOrders: 37, totalSpent: 123700, status: "active" },
-  { id: "9", code: "V-009", name: "Beta Supplies Ltd", email: "sales@betasupplies.com", phone: "+1 555-0109", address: "579 Supply Road, Business Park", paymentTerms: "Net 30", totalOrders: 29, totalSpent: 98600, status: "active" },
-  { id: "10", code: "V-010", name: "Gamma Industries", email: "orders@gammaindustries.com", phone: "+1 555-0110", address: "802 Production Ave, Factory District", paymentTerms: "Net 60", totalOrders: 48, totalSpent: 201500, status: "active" },
-  { id: "11", code: "V-011", name: "Delta Components", email: "contact@deltacomp.com", phone: "+1 555-0111", address: "913 Component St, Tech Valley", paymentTerms: "Net 30", totalOrders: 22, totalSpent: 76800, status: "inactive" },
-  { id: "12", code: "V-012", name: "Epsilon Materials", email: "sales@epsilonmaterials.com", phone: "+1 555-0112", address: "1024 Material Blvd, Industrial Park", paymentTerms: "Net 45", totalOrders: 54, totalSpent: 245300, status: "active" },
-  { id: "13", code: "V-013", name: "Zeta Trading Co", email: "orders@zetatrading.com", phone: "+1 555-0113", address: "1135 Trade Center, Commerce District", paymentTerms: "Net 15", totalOrders: 34, totalSpent: 112400, status: "active" },
-  { id: "14", code: "V-014", name: "Theta Wholesale", email: "info@thetawholesale.com", phone: "+1 555-0114", address: "1246 Wholesale Plaza, Market Zone", paymentTerms: "Net 30", totalOrders: 44, totalSpent: 167900, status: "active" },
-  { id: "15", code: "V-015", name: "Omega Solutions", email: "sales@omegasolutions.com", phone: "+1 555-0115", address: "1357 Solution Drive, Business Hub", paymentTerms: "Net 60", totalOrders: 58, totalSpent: 278600, status: "active" },
+  { id: "1", code: "V-001", name: "Dell Technologies", email: "b2b@dell.com", phone: "+1 (800) 289-3355", address: "One Dell Way, Round Rock, TX 78682", paymentTerms: "Net 30", totalOrders: 45, totalSpent: 156000, status: "active" },
+  { id: "2", code: "V-002", name: "HP Inc.", email: "orders@hp.com", phone: "+1 (650) 857-1501", address: "1501 Page Mill Road, Palo Alto, CA 94304", paymentTerms: "Net 45", totalOrders: 32, totalSpent: 89500, status: "active" },
+  { id: "3", code: "V-003", name: "Lenovo Group Ltd", email: "info@lenovo.com", phone: "+1 (855) 253-6686", address: "8001 Development Drive, Morrisville, NC 27560", paymentTerms: "Net 15", totalOrders: 28, totalSpent: 67800, status: "active" },
+  { id: "4", code: "V-004", name: "ASUS Computer International", email: "contact@asus.com", phone: "+1 (812) 282-2787", address: "800 Corporate Way, Fremont, CA 94539", paymentTerms: "Net 30", totalOrders: 18, totalSpent: 45200, status: "inactive" },
+  { id: "5", code: "V-005", name: "Samsung Electronics America", email: "orders@samsung.com", phone: "+1 (800) 726-7864", address: "85 Challenger Road, Ridgefield Park, NJ 07660", paymentTerms: "Net 60", totalOrders: 56, totalSpent: 234000, status: "active" },
+  { id: "6", code: "V-006", name: "LG Electronics USA", email: "sales@lge.com", phone: "+1 (800) 243-0000", address: "1000 Sylvan Avenue, Englewood Cliffs, NJ 07632", paymentTerms: "Net 30", totalOrders: 41, totalSpent: 178900, status: "active" },
+  { id: "7", code: "V-007", name: "Acer America Corporation", email: "orders@acer.com", phone: "+1 (254) 298-4000", address: "333 West San Carlos Street, San Jose, CA 95110", paymentTerms: "Net 45", totalOrders: 63, totalSpent: 289400, status: "active" },
+  { id: "8", code: "V-008", name: "Microsoft Corporation", email: "info@microsoft.com", phone: "+1 (425) 882-8080", address: "One Microsoft Way, Redmond, WA 98052", paymentTerms: "Net 20", totalOrders: 37, totalSpent: 123700, status: "active" },
+  { id: "9", code: "V-009", name: "Apple Inc.", email: "sales@apple.com", phone: "+1 (800) 692-7753", address: "One Apple Park Way, Cupertino, CA 95014", paymentTerms: "Net 30", totalOrders: 29, totalSpent: 98600, status: "active" },
+  { id: "10", code: "V-010", name: "ViewSonic Corporation", email: "orders@viewsonic.com", phone: "+1 (800) 888-8583", address: "10 Pointe Drive, Suite 200, Brea, CA 92821", paymentTerms: "Net 60", totalOrders: 48, totalSpent: 201500, status: "active" },
+  { id: "11", code: "V-011", name: "BenQ America Corp", email: "contact@benq.com", phone: "+1 (949) 255-5550", address: "16 Tesla, Irvine, CA 92618", paymentTerms: "Net 30", totalOrders: 22, totalSpent: 76800, status: "inactive" },
+  { id: "12", code: "V-012", name: "AOC International", email: "sales@aoc.com", phone: "+1 (888) 662-9888", address: "3435 E La Palma Avenue, Anaheim, CA 92806", paymentTerms: "Net 45", totalOrders: 54, totalSpent: 245300, status: "active" },
+  { id: "13", code: "V-013", name: "APC by Schneider Electric", email: "orders@apc.com", phone: "+1 (800) 800-4272", address: "132 Fairgrounds Road, West Kingston, RI 02892", paymentTerms: "Net 15", totalOrders: 34, totalSpent: 112400, status: "active" },
+  { id: "14", code: "V-014", name: "Belkin International", email: "info@belkin.com", phone: "+1 (310) 898-1100", address: "12045 E Waterfront Drive, Playa Vista, CA 90094", paymentTerms: "Net 30", totalOrders: 44, totalSpent: 167900, status: "active" },
+  { id: "15", code: "V-015", name: "Logitech Inc.", email: "sales@logitech.com", phone: "+1 (510) 795-8500", address: "3930 North First Street, San Jose, CA 95134", paymentTerms: "Net 60", totalOrders: 58, totalSpent: 278600, status: "active" },
 ];
 
 const mockPurchaseOrders: Record<string, PurchaseOrderHistory[]> = {
@@ -85,10 +85,10 @@ const mockPurchaseOrders: Record<string, PurchaseOrderHistory[]> = {
       orderNumber: "PO-2024-0045",
       date: "2024-11-20",
       products: [
-        { name: "Widget Alpha", sku: "WDG-001", quantity: 200, unitPrice: 22.50 },
-        { name: "Component X", sku: "CMP-045", quantity: 500, unitPrice: 8.75 },
+        { name: "Dell Latitude 5540 15.6\" Laptop", sku: "LTP-0001", quantity: 50, unitPrice: 1149.99 },
+        { name: "Laptop Power Adapter 65W", sku: "PWR-0045", quantity: 100, unitPrice: 18.75 },
       ],
-      totalAmount: 8875.00,
+      totalAmount: 59374.50,
       status: "completed"
     },
     {
@@ -96,9 +96,9 @@ const mockPurchaseOrders: Record<string, PurchaseOrderHistory[]> = {
       orderNumber: "PO-2024-0038",
       date: "2024-11-10",
       products: [
-        { name: "Widget Beta", sku: "WDG-002", quantity: 150, unitPrice: 28.00 },
+        { name: "Dell Latitude 5540 15.6\" Laptop", sku: "LTP-0001", quantity: 75, unitPrice: 1149.99 },
       ],
-      totalAmount: 4200.00,
+      totalAmount: 86249.25,
       status: "completed"
     },
     {
@@ -106,10 +106,10 @@ const mockPurchaseOrders: Record<string, PurchaseOrderHistory[]> = {
       orderNumber: "PO-2024-0029",
       date: "2024-11-01",
       products: [
-        { name: "Gadget Pro", sku: "GDG-023", quantity: 100, unitPrice: 125.00 },
-        { name: "Accessory Pack", sku: "ACC-001", quantity: 200, unitPrice: 12.50 },
+        { name: "Dell Latitude 5540 15.6\" Laptop", sku: "LTP-0001", quantity: 30, unitPrice: 1149.99 },
+        { name: "USB-C Hub 7-in-1 Docking Station", sku: "ACC-0002", quantity: 30, unitPrice: 42.50 },
       ],
-      totalAmount: 15000.00,
+      totalAmount: 35774.70,
       status: "completed"
     },
   ],
@@ -119,9 +119,9 @@ const mockPurchaseOrders: Record<string, PurchaseOrderHistory[]> = {
       orderNumber: "PO-2024-0042",
       date: "2024-11-18",
       products: [
-        { name: "Component Y", sku: "CMP-046", quantity: 1000, unitPrice: 6.50 },
+        { name: "HP ProBook 450 G10", sku: "LTP-0002", quantity: 40, unitPrice: 799.00 },
       ],
-      totalAmount: 6500.00,
+      totalAmount: 31960.00,
       status: "pending"
     },
     {
@@ -129,10 +129,10 @@ const mockPurchaseOrders: Record<string, PurchaseOrderHistory[]> = {
       orderNumber: "PO-2024-0035",
       date: "2024-11-08",
       products: [
-        { name: "Device Ultra", sku: "DEV-100", quantity: 50, unitPrice: 220.00 },
-        { name: "Widget Gamma", sku: "WDG-003", quantity: 75, unitPrice: 38.00 },
+        { name: "HP ProBook 450 G10", sku: "LTP-0002", quantity: 25, unitPrice: 799.00 },
+        { name: "Laptop Power Adapter 65W", sku: "PWR-0045", quantity: 50, unitPrice: 18.75 },
       ],
-      totalAmount: 13850.00,
+      totalAmount: 20912.50,
       status: "completed"
     },
   ],

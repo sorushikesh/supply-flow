@@ -21,8 +21,8 @@ import {
 } from "@/components/ui/tooltip";
 
 const mockNotifications = [
-  { id: 1, title: "Low Stock Alert", description: "Widget A is below reorder level", time: "2 min ago", type: "alert" },
-  { id: 2, title: "PO Approved", description: "PO-2024-0042 has been approved", time: "15 min ago", type: "approval" },
+  { id: 1, title: "Low Stock Alert", description: "Dell Latitude laptops below reorder level", time: "2 min ago", type: "alert" },
+  { id: 2, title: "PO Approved", description: "PO-2024-0042 from HP has been approved", time: "15 min ago", type: "approval" },
   { id: 3, title: "Invoice Overdue", description: "INV-2024-0089 is overdue by 5 days", time: "1 hour ago", type: "alert" },
   { id: 4, title: "Approval Required", description: "Purchase Order PO-2024-0045 awaits your approval", time: "5 min ago", type: "approval" },
 ];

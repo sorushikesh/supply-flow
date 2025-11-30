@@ -38,32 +38,32 @@ interface DispatchRecord {
 }
 
 const mockDispatches: DispatchRecord[] = [
-  { id: "1", dispatchNumber: "DSP-2024-0050", soNumber: "SO-2024-0122", customer: "Metro Retail Group", dispatchDate: "2024-01-15", carrier: "FedEx", trackingNumber: "FX123456789", status: "in_transit" },
-  { id: "2", dispatchNumber: "DSP-2024-0049", soNumber: "SO-2024-0121", customer: "City Stores Ltd", dispatchDate: "2024-01-14", carrier: "UPS", trackingNumber: "UP987654321", status: "delivered" },
-  { id: "3", dispatchNumber: "DSP-2024-0048", soNumber: "SO-2024-0120", customer: "Express Outlets", dispatchDate: "2024-01-13", carrier: "DHL", trackingNumber: "DH456789123", status: "delivered" },
-  { id: "4", dispatchNumber: "DSP-2024-0047", soNumber: "SO-2024-0119", customer: "Wholesale Partners", dispatchDate: "2024-01-12", carrier: "FedEx", trackingNumber: "FX789123456", status: "delivered" },
-  { id: "5", dispatchNumber: "DSP-2024-0046", soNumber: "SO-2024-0118", customer: "TechStart Inc", dispatchDate: "2024-01-11", carrier: "UPS", trackingNumber: "UP654321987", status: "delivered" },
-  { id: "6", dispatchNumber: "DSP-2024-0045", soNumber: "SO-2024-0117", customer: "Prime Electronics", dispatchDate: "2024-01-10", carrier: "DHL", trackingNumber: "DH321654987", status: "pending" },
-  { id: "7", dispatchNumber: "DSP-2024-0044", soNumber: "SO-2024-0116", customer: "Global Trade Corp", dispatchDate: "2024-01-09", carrier: "FedEx", trackingNumber: "FX987456123", status: "in_transit" },
-  { id: "8", dispatchNumber: "DSP-2024-0043", soNumber: "SO-2024-0115", customer: "Downtown Supermarket", dispatchDate: "2024-01-08", carrier: "Local Delivery", trackingNumber: "LD123789456", status: "delivered" },
-  { id: "9", dispatchNumber: "DSP-2024-0042", soNumber: "SO-2024-0114", customer: "Coastal Distributors", dispatchDate: "2024-01-07", carrier: "UPS", trackingNumber: "UP456123789", status: "delivered" },
-  { id: "10", dispatchNumber: "DSP-2024-0041", soNumber: "SO-2024-0113", customer: "Mountain Retail Chain", dispatchDate: "2024-01-06", carrier: "FedEx", trackingNumber: "FX654987321", status: "delivered" },
-  { id: "11", dispatchNumber: "DSP-2024-0040", soNumber: "SO-2024-0112", customer: "Urban Solutions LLC", dispatchDate: "2024-01-05", carrier: "DHL", trackingNumber: "DH789321654", status: "pending" },
-  { id: "12", dispatchNumber: "DSP-2024-0039", soNumber: "SO-2024-0111", customer: "Northern Supplies", dispatchDate: "2024-01-04", carrier: "UPS", trackingNumber: "UP321789654", status: "in_transit" },
-  { id: "13", dispatchNumber: "DSP-2024-0038", soNumber: "SO-2024-0110", customer: "Eastern Markets", dispatchDate: "2024-01-03", carrier: "FedEx", trackingNumber: "FX147258369", status: "in_transit" },
-  { id: "14", dispatchNumber: "DSP-2024-0037", soNumber: "SO-2024-0109", customer: "Central Warehouse Hub", dispatchDate: "2024-01-02", carrier: "DHL", trackingNumber: "DH963852741", status: "delivered" },
-  { id: "15", dispatchNumber: "DSP-2024-0036", soNumber: "SO-2024-0108", customer: "Pacific Retailers", dispatchDate: "2024-01-01", carrier: "UPS", trackingNumber: "UP741963852", status: "delivered" },
-  { id: "16", dispatchNumber: "DSP-2024-0035", soNumber: "SO-2024-0107", customer: "TechStart Inc", dispatchDate: "2023-12-31", carrier: "Local Delivery", trackingNumber: "LD852741963", status: "delivered" },
-  { id: "17", dispatchNumber: "DSP-2024-0034", soNumber: "SO-2024-0106", customer: "Metro Retail Group", dispatchDate: "2023-12-30", carrier: "FedEx", trackingNumber: "FX258963147", status: "pending" },
-  { id: "18", dispatchNumber: "DSP-2024-0033", soNumber: "SO-2024-0105", customer: "Express Outlets", dispatchDate: "2023-12-29", carrier: "UPS", trackingNumber: "UP369147258", status: "delivered" },
+  { id: "1", dispatchNumber: "DSP-2024-0050", soNumber: "SO-2024-0122", customer: "BestBuy Corporate", dispatchDate: "2024-01-15", carrier: "FedEx", trackingNumber: "FX123456789", status: "in_transit" },
+  { id: "2", dispatchNumber: "DSP-2024-0049", soNumber: "SO-2024-0121", customer: "Micro Center Distribution", dispatchDate: "2024-01-14", carrier: "UPS", trackingNumber: "UP987654321", status: "delivered" },
+  { id: "3", dispatchNumber: "DSP-2024-0048", soNumber: "SO-2024-0120", customer: "Amazon Business Services", dispatchDate: "2024-01-13", carrier: "DHL", trackingNumber: "DH456789123", status: "delivered" },
+  { id: "4", dispatchNumber: "DSP-2024-0047", soNumber: "SO-2024-0119", customer: "CDW Corporation", dispatchDate: "2024-01-12", carrier: "FedEx", trackingNumber: "FX789123456", status: "delivered" },
+  { id: "5", dispatchNumber: "DSP-2024-0046", soNumber: "SO-2024-0118", customer: "TechCorp Solutions", dispatchDate: "2024-01-11", carrier: "UPS", trackingNumber: "UP654321987", status: "delivered" },
+  { id: "6", dispatchNumber: "DSP-2024-0045", soNumber: "SO-2024-0117", customer: "Newegg Business", dispatchDate: "2024-01-10", carrier: "DHL", trackingNumber: "DH321654987", status: "pending" },
+  { id: "7", dispatchNumber: "DSP-2024-0044", soNumber: "SO-2024-0116", customer: "Global Tech Distributors", dispatchDate: "2024-01-09", carrier: "FedEx", trackingNumber: "FX987456123", status: "in_transit" },
+  { id: "8", dispatchNumber: "DSP-2024-0043", soNumber: "SO-2024-0115", customer: "Office Depot Enterprise", dispatchDate: "2024-01-08", carrier: "USPS", trackingNumber: "US123789456", status: "delivered" },
+  { id: "9", dispatchNumber: "DSP-2024-0042", soNumber: "SO-2024-0114", customer: "Staples Advantage", dispatchDate: "2024-01-07", carrier: "UPS", trackingNumber: "UP456123789", status: "delivered" },
+  { id: "10", dispatchNumber: "DSP-2024-0041", soNumber: "SO-2024-0113", customer: "B&H Photo Video", dispatchDate: "2024-01-06", carrier: "FedEx", trackingNumber: "FX654987321", status: "delivered" },
+  { id: "11", dispatchNumber: "DSP-2024-0040", soNumber: "SO-2024-0112", customer: "TigerDirect Commercial", dispatchDate: "2024-01-05", carrier: "DHL", trackingNumber: "DH789321654", status: "pending" },
+  { id: "12", dispatchNumber: "DSP-2024-0039", soNumber: "SO-2024-0111", customer: "Connection Enterprise", dispatchDate: "2024-01-04", carrier: "UPS", trackingNumber: "UP321789654", status: "in_transit" },
+  { id: "13", dispatchNumber: "DSP-2024-0038", soNumber: "SO-2024-0110", customer: "SHI International", dispatchDate: "2024-01-03", carrier: "FedEx", trackingNumber: "FX147258369", status: "in_transit" },
+  { id: "14", dispatchNumber: "DSP-2024-0037", soNumber: "SO-2024-0109", customer: "Ingram Micro", dispatchDate: "2024-01-02", carrier: "DHL", trackingNumber: "DH963852741", status: "delivered" },
+  { id: "15", dispatchNumber: "DSP-2024-0036", soNumber: "SO-2024-0108", customer: "Costco Business Center", dispatchDate: "2024-01-01", carrier: "UPS", trackingNumber: "UP741963852", status: "delivered" },
+  { id: "16", dispatchNumber: "DSP-2024-0035", soNumber: "SO-2024-0107", customer: "TechCorp Solutions", dispatchDate: "2023-12-31", carrier: "USPS", trackingNumber: "US852741963", status: "delivered" },
+  { id: "17", dispatchNumber: "DSP-2024-0034", soNumber: "SO-2024-0106", customer: "BestBuy Corporate", dispatchDate: "2023-12-30", carrier: "FedEx", trackingNumber: "FX258963147", status: "pending" },
+  { id: "18", dispatchNumber: "DSP-2024-0033", soNumber: "SO-2024-0105", customer: "Amazon Business Services", dispatchDate: "2023-12-29", carrier: "UPS", trackingNumber: "UP369147258", status: "delivered" },
 ];
 
 const mockPendingSOs = [
-  { soNumber: "SO-2024-0123", customer: "TechStart Inc", address: "100 Innovation Blvd, Tech City", items: 3 },
-  { soNumber: "SO-2024-0124", customer: "Metro Retail Group", address: "200 Shopping Center, Mall Town", items: 5 },
+  { soNumber: "SO-2024-0123", customer: "TechCorp Solutions", address: "1250 Tech Valley Drive, San Jose, CA 95131", items: 3 },
+  { soNumber: "SO-2024-0124", customer: "BestBuy Corporate", address: "7601 Penn Avenue South, Richfield, MN 55423", items: 5 },
 ];
 
-const carriers = ["FedEx", "UPS", "DHL", "USPS", "Local Delivery"];
+const carriers = ["FedEx", "UPS", "DHL", "USPS"];
 
 export default function Dispatch() {
   const { toast } = useToast();

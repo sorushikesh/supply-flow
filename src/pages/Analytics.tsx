@@ -20,32 +20,32 @@ import {
 import { useState } from "react";
 
 const mockSalesData = [
-  { month: "Jan", sales: 45000, purchases: 32000 },
-  { month: "Feb", sales: 52000, purchases: 38000 },
-  { month: "Mar", sales: 48000, purchases: 35000 },
-  { month: "Apr", sales: 61000, purchases: 42000 },
-  { month: "May", sales: 55000, purchases: 39000 },
-  { month: "Jun", sales: 67000, purchases: 45000 },
+  { month: "Jan", sales: 245000, purchases: 182000 },
+  { month: "Feb", sales: 268000, purchases: 195000 },
+  { month: "Mar", sales: 252000, purchases: 189000 },
+  { month: "Apr", sales: 291000, purchases: 218000 },
+  { month: "May", sales: 279000, purchases: 203000 },
+  { month: "Jun", sales: 315000, purchases: 235000 },
 ];
 
 const mockTopProducts = [
-  { name: "Widget Alpha", revenue: 45600, units: 1520 },
-  { name: "Gadget Pro", revenue: 38900, units: 260 },
-  { name: "Widget Beta", revenue: 32400, units: 1012 },
-  { name: "Component X", revenue: 28700, units: 2296 },
-  { name: "Accessory Pack", revenue: 21500, units: 1433 },
+  { name: "Dell Latitude 5540 Laptop", revenue: 187500, units: 150 },
+  { name: "Samsung 27\" 4K Monitor", revenue: 105000, units: 300 },
+  { name: "HP ProBook 450 G10", revenue: 89900, units: 100 },
+  { name: "Lenovo ThinkPad T14", revenue: 154950, units: 100 },
+  { name: "USB-C Hub Docking Station", revenue: 77220, units: 1430 },
 ];
 
 const mockTopVendors = [
-  { name: "Tech Components", spend: 234000, orders: 56 },
-  { name: "Acme Corporation", spend: 156000, orders: 45 },
-  { name: "Global Supply Co", spend: 89500, orders: 32 },
+  { name: "Samsung Electronics", spend: 234000, orders: 56 },
+  { name: "Dell Technologies", spend: 156000, orders: 45 },
+  { name: "HP Inc.", spend: 89500, orders: 32 },
 ];
 
 const mockTopCustomers = [
-  { name: "Express Outlets", revenue: 567000, orders: 112 },
-  { name: "Metro Retail Group", revenue: 456000, orders: 89 },
-  { name: "Wholesale Partners", revenue: 345600, orders: 78 },
+  { name: "Amazon Business Services", revenue: 567000, orders: 112 },
+  { name: "BestBuy Corporate", revenue: 456000, orders: 89 },
+  { name: "CDW Corporation", revenue: 345600, orders: 78 },
 ];
 
 export default function Analytics() {
