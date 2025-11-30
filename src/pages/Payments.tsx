@@ -202,9 +202,17 @@ export default function Payments() {
         onSubmit={handleSubmit}
         submitLabel="Record Payment"
       >
+        {/* Invoice Selection Section */}
         <div className="space-y-4">
+          <div className="pb-2 border-b">
+            <h3 className="text-sm font-semibold text-foreground">Invoice Selection</h3>
+            <p className="text-xs text-muted-foreground mt-1">Choose invoice to record payment for</p>
+          </div>
+          
           <div className="space-y-2">
-            <Label>Select Invoice *</Label>
+            <Label className="text-sm font-medium flex items-center gap-1">
+              Select Invoice <span className="text-destructive">*</span>
+            </Label>
             <Select value={selectedInvoice} onValueChange={setSelectedInvoice}>
               <SelectTrigger data-testid="select-invoice">
                 <SelectValue placeholder="Select pending invoice" />
@@ -222,10 +230,11 @@ export default function Payments() {
                 ))}
               </SelectContent>
             </Select>
+            <p className="text-xs text-muted-foreground">Select from pending invoices</p>
           </div>
 
           {selectedInvoice && (
-            <div className="p-3 rounded-lg bg-muted/50 flex justify-between items-center">
+            <div className="p-3 rounded-lg bg-muted/50 flex justify-between items-center animate-fade-in">
               <div>
                 <p className="font-medium">
                   {mockPendingInvoices.find((i) => i.invoiceNumber === selectedInvoice)?.party}
@@ -244,22 +253,40 @@ export default function Payments() {
               </div>
             </div>
           )}
+        </div>
 
+        {/* Payment Details Section */}
+        <div className="space-y-4 pt-4">
+          <div className="pb-2 border-b">
+            <h3 className="text-sm font-semibold text-foreground">Payment Details</h3>
+            <p className="text-xs text-muted-foreground mt-1">Amount and payment information</p>
+          </div>
+          
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="amount">Amount *</Label>
-              <Input
-                id="amount"
-                type="number"
-                step="0.01"
-                value={amount}
+              <Label htmlFor="amount" className="text-sm font-medium flex items-center gap-1">
+                Amount <span className="text-destructive">*</span>
+              </Label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">$</span>
+                <Input
+                  id="amount"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 placeholder="0.00"
                 data-testid="input-payment-amount"
+                className="pl-7 transition-all duration-200"
               />
             </div>
+            <p className="text-xs text-muted-foreground">Payment amount received</p>
+            </div>
             <div className="space-y-2">
-              <Label>Payment Method *</Label>
+              <Label className="text-sm font-medium flex items-center gap-1">
+                Payment Method <span className="text-destructive">*</span>
+              </Label>
               <Select value={method} onValueChange={setMethod}>
                 <SelectTrigger data-testid="select-method">
                   <SelectValue placeholder="Select method" />
@@ -272,23 +299,36 @@ export default function Payments() {
                   ))}
                 </SelectContent>
               </Select>
+              <p className="text-xs text-muted-foreground">How payment was received</p>
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="reference">Reference Number</Label>
+            <Label htmlFor="reference" className="text-sm font-medium">
+              Reference Number
+            </Label>
             <Input
               id="reference"
               value={reference}
               onChange={(e) => setReference(e.target.value)}
               placeholder="e.g., TRF-123456, CHK-001234"
               data-testid="input-reference"
+              className="transition-all duration-200"
             />
+            <p className="text-xs text-muted-foreground">Transaction or check number</p>
           </div>
 
           <div className="space-y-2">
-            <Label>Payment Date</Label>
-            <Input type="date" defaultValue={new Date().toISOString().split("T")[0]} data-testid="input-payment-date" />
+            <Label className="text-sm font-medium">
+              Payment Date
+            </Label>
+            <Input 
+              type="date" 
+              defaultValue={new Date().toISOString().split("T")[0]} 
+              data-testid="input-payment-date"
+              className="transition-all duration-200"
+            />
+            <p className="text-xs text-muted-foreground">Date payment was received</p>
           </div>
         </div>
       </FormModal>
