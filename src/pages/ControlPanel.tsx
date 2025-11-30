@@ -67,28 +67,28 @@ interface ShippingCarrier {
 }
 
 const mockCategories: Category[] = [
-  { id: "1", name: "Widgets", description: "Basic widget products" },
-  { id: "2", name: "Gadgets", description: "Electronic gadgets and devices" },
-  { id: "3", name: "Components", description: "Parts and components" },
-  { id: "4", name: "Accessories", description: "Product accessories" },
+  { id: "1", name: "Laptops", description: "Business and consumer laptops" },
+  { id: "2", name: "Monitors", description: "Display screens and monitors" },
+  { id: "3", name: "Power Supplies", description: "Chargers, adapters, and power equipment" },
+  { id: "4", name: "Accessories", description: "Cables, hubs, peripherals, and accessories" },
 ];
 
 const mockWarehouses: Warehouse[] = [
-  { id: "1", name: "Warehouse A", address: "123 Industrial Blvd", capacity: "10000 sq ft" },
-  { id: "2", name: "Warehouse B", address: "456 Storage Ave", capacity: "8000 sq ft" },
-  { id: "3", name: "Warehouse C", address: "789 Distribution Way", capacity: "12000 sq ft" },
+  { id: "1", name: "Main Warehouse", address: "5500 Corporate Drive, Indianapolis, IN 46241", capacity: "50,000 sq ft" },
+  { id: "2", name: "Electronics Depot", address: "1800 Technology Way, Austin, TX 78758", capacity: "35,000 sq ft" },
+  { id: "3", name: "Regional Storage", address: "2400 Distribution Blvd, Memphis, TN 38118", capacity: "42,000 sq ft" },
 ];
 
 const mockProductTypes: ProductType[] = [
-  { id: "1", name: "Raw Material", prefix: "RM" },
-  { id: "2", name: "Finished Goods", prefix: "FG" },
-  { id: "3", name: "Work in Progress", prefix: "WIP" },
+  { id: "1", name: "Finished Goods", prefix: "FG" },
+  { id: "2", name: "Components", prefix: "CMP" },
+  { id: "3", name: "Accessories", prefix: "ACC" },
 ];
 
 const mockTaxRates: TaxRate[] = [
-  { id: "1", name: "Standard VAT", rate: "20", type: "VAT" },
-  { id: "2", name: "Reduced VAT", rate: "5", type: "VAT" },
-  { id: "3", name: "Sales Tax", rate: "8.5", type: "Sales Tax" },
+  { id: "1", name: "Standard Sales Tax", rate: "7.5", type: "Sales Tax" },
+  { id: "2", name: "California Sales Tax", rate: "9.5", type: "Sales Tax" },
+  { id: "3", name: "Texas Sales Tax", rate: "8.25", type: "Sales Tax" },
 ];
 
 const mockPaymentTerms: PaymentTerm[] = [
@@ -105,9 +105,10 @@ const mockUnitsOfMeasure: UnitOfMeasure[] = [
 ];
 
 const mockShippingCarriers: ShippingCarrier[] = [
-  { id: "1", name: "FedEx", contactEmail: "support@fedex.com", trackingUrl: "https://fedex.com/track?id=" },
-  { id: "2", name: "UPS", contactEmail: "support@ups.com", trackingUrl: "https://ups.com/track?id=" },
-  { id: "3", name: "DHL", contactEmail: "support@dhl.com", trackingUrl: "https://dhl.com/track?id=" },
+  { id: "1", name: "FedEx", contactEmail: "support@fedex.com", trackingUrl: "https://www.fedex.com/fedextrack/?trknbr=" },
+  { id: "2", name: "UPS", contactEmail: "support@ups.com", trackingUrl: "https://www.ups.com/track?tracknum=" },
+  { id: "3", name: "USPS", contactEmail: "support@usps.com", trackingUrl: "https://tools.usps.com/go/TrackConfirmAction?tLabels=" },
+  { id: "4", name: "DHL", contactEmail: "support@dhl.com", trackingUrl: "https://www.dhl.com/us-en/home/tracking.html?tracking-id=" },
 ];
 
 export default function ControlPanel() {
@@ -528,14 +529,12 @@ export default function ControlPanel() {
 
   return (
     <PageBackground>
-      <div className="p-4 lg:p-6 max-w-[1600px] mx-auto space-y-6">
+      <div className="p-6 max-w-[1600px] mx-auto">
         {/* Page Header */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="mb-6 flex items-center justify-between gap-4">
           <div>
-            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent">
-              Control Panel
-            </h1>
-            <p className="text-muted-foreground mt-1">Manage categories, warehouses, and product types</p>
+            <h1 className="text-3xl font-bold mb-2">Control Panel</h1>
+            <p className="text-muted-foreground">Manage system configurations and master data</p>
           </div>
         </div>
 

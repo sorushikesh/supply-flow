@@ -22,7 +22,6 @@ import {
   Clock,
   CheckCircle2,
   XCircle,
-  Loader2,
   ArrowUpRight,
   ArrowDownRight,
   Eye,
@@ -51,27 +50,61 @@ interface LowStockItem {
   reorderLevel: number;
 }
 
+import { 
+  products, 
+  purchaseOrders, 
+  salesOrders, 
+  invoices,
+  getVendorById,
+  getCustomerById 
+} from "@/data/mockData";
+
 const mockRecentOrders: RecentOrder[] = [
-  { id: "1", orderNumber: "PO-2024-0045", type: "PO", party: "Acme Corp", amount: 12500, status: "pending", date: "Today" },
-  { id: "2", orderNumber: "SO-2024-0123", type: "SO", party: "TechStart Inc", amount: 8750, status: "approved", date: "Today" },
-  { id: "3", orderNumber: "PO-2024-0044", type: "PO", party: "Global Supply", amount: 3200, status: "completed", date: "Yesterday" },
-  { id: "4", orderNumber: "SO-2024-0122", type: "SO", party: "Metro Retail", amount: 15600, status: "in_transit", date: "Yesterday" },
-  { id: "5", orderNumber: "SO-2024-0121", type: "SO", party: "City Stores", amount: 4800, status: "delivered", date: "2 days ago" },
+  ...purchaseOrders.slice(0, 2).map(po => ({
+    id: po.id,
+    orderNumber: po.poNumber,
+    type: "PO" as const,
+    party: getVendorById(po.vendor)?.name || "Unknown",
+    amount: po.totalAmount,
+    status: po.status,
+    date: po.orderDate === new Date().toISOString().split('T')[0] ? "Today" : "Recently"
+  })),
+  ...salesOrders.slice(0, 3).map(so => ({
+    id: so.id,
+    orderNumber: so.soNumber,
+    type: "SO" as const,
+    party: getCustomerById(so.customer)?.name || "Unknown",
+    amount: so.totalAmount,
+    status: so.status,
+    date: so.orderDate === new Date().toISOString().split('T')[0] ? "Today" : "Recently"
+  }))
 ];
 
-const mockLowStockItems: LowStockItem[] = [
-  { id: "1", sku: "WDG-001", name: "Widget Alpha", currentStock: 12, reorderLevel: 50 },
-  { id: "2", sku: "GDG-023", name: "Gadget Pro", currentStock: 8, reorderLevel: 25 },
-  { id: "3", sku: "CMP-045", name: "Component X", currentStock: 3, reorderLevel: 20 },
-];
+const mockLowStockItems: LowStockItem[] = products
+  .filter(p => p.stockQuantity <= p.reorderLevel)
+  .slice(0, 5)
+  .map(p => ({
+    id: p.id,
+    sku: p.sku,
+    name: p.name,
+    currentStock: p.stockQuantity,
+    reorderLevel: p.reorderLevel
+  }));
 
-const mockOverdueInvoices = [
-  { id: "1", invoiceNumber: "INV-2024-0089", party: "Beta Industries", amount: 5600, daysOverdue: 15 },
-  { id: "2", invoiceNumber: "INV-2024-0076", party: "Delta Corp", amount: 12300, daysOverdue: 8 },
-];
+const mockOverdueInvoices = invoices
+  .filter(inv => inv.status === 'pending' && inv.paidAmount === 0)
+  .slice(0, 3)
+  .map((inv, idx) => ({
+    id: inv.id,
+    invoiceNumber: inv.invoiceNumber,
+    party: inv.type === 'customer' 
+      ? getCustomerById(inv.customerId!)?.name || "Unknown"
+      : getVendorById(inv.vendorId!)?.name || "Unknown",
+    amount: inv.amount,
+    daysOverdue: idx * 5 + 3
+  }));
 
 export default function Dashboard() {
-
   const orderColumns: Column<RecentOrder>[] = [
     { key: "orderNumber", header: "Order #", className: "font-mono text-sm" },
     {
@@ -117,104 +150,129 @@ export default function Dashboard() {
 
   return (
     <PageBackground>
-      <div className="p-4 lg:p-6 max-w-[1600px] mx-auto space-y-6">
-        {/* Hero Header Section */}
-        <div className="relative overflow-hidden rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/10 via-blue-500/5 to-purple-500/10 p-6 sm:p-8">
-          <div className="absolute inset-0 bg-grid-white/5" aria-hidden="true" />
-          <div className="relative z-10">
-            <div className="flex flex-col sm:flex-row items-start sm:items-start justify-between gap-4 mb-6">
-              <div>
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-3">
-                  <span className="bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent">
-                    Supply Flow
-                  </span>
-                </h1>
-                <p className="text-base sm:text-lg text-muted-foreground max-w-2xl">
-                  Real-time supply chain intelligence and operational insights
-                </p>
-              </div>
-              <div className="flex items-center gap-3">
-                <Badge variant="outline" className="gap-2 px-4 py-2 border-green-500/30 bg-green-500/10">
-                  <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                  <span className="text-sm font-medium">Live</span>
-                </Badge>
-                <Button variant="outline" size="icon" className="h-10 w-10">
-                  <RefreshCw className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-
-            {/* Key Metrics Row */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-              <Link href="/inventory" className="group relative overflow-hidden rounded-xl border border-primary/30 bg-background/50 backdrop-blur-xl p-4 hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" aria-label="View inventory details">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="p-2.5 rounded-lg bg-primary/10">
-                    <Package className="h-5 w-5 text-primary" aria-hidden="true" />
-                  </div>
-                  <ArrowUpRight className="h-4 w-4 text-green-500" aria-hidden="true" />
-                </div>
-                <div className="space-y-1">
-                  <p className="text-xs text-muted-foreground font-medium">Total Inventory</p>
-                  <p className="text-2xl font-bold">$284.5K</p>
-                  <div className="flex items-center gap-2 text-xs">
-                    <span className="text-green-500 font-medium" aria-label="Increased by 12.5 percent">+12.5%</span>
-                    <span className="text-muted-foreground">vs last month</span>
-                  </div>
-                </div>
-              </Link>
-
-              <Link href="/purchase-orders" className="group relative overflow-hidden rounded-xl border border-blue-500/30 bg-background/50 backdrop-blur-xl p-4 hover:shadow-lg hover:shadow-blue-500/20 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" aria-label="View active orders">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="p-2.5 rounded-lg bg-blue-500/10">
-                    <ShoppingCart className="h-5 w-5 text-blue-500" aria-hidden="true" />
-                  </div>
-                  <ArrowDownRight className="h-4 w-4 text-orange-500" aria-hidden="true" />
-                </div>
-                <div className="space-y-1">
-                  <p className="text-xs text-muted-foreground font-medium">Active Orders</p>
-                  <p className="text-2xl font-bold">23</p>
-                  <div className="flex items-center gap-2 text-xs">
-                    <span className="text-orange-500 font-medium" aria-label="Decreased by 8 percent">-8%</span>
-                    <span className="text-muted-foreground">vs last week</span>
-                  </div>
-                </div>
-              </Link>
-
-              <Link href="/invoices" className="group relative overflow-hidden rounded-xl border border-purple-500/30 bg-background/50 backdrop-blur-xl p-4 hover:shadow-lg hover:shadow-purple-500/20 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2" aria-label="View open invoices">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="p-2.5 rounded-lg bg-purple-500/10">
-                    <FileText className="h-5 w-5 text-purple-500" aria-hidden="true" />
-                  </div>
-                  <ArrowUpRight className="h-4 w-4 text-green-500" aria-hidden="true" />
-                </div>
-                <div className="space-y-1">
-                  <p className="text-xs text-muted-foreground font-medium">Open Invoices</p>
-                  <p className="text-2xl font-bold">$67.9K</p>
-                  <div className="flex items-center gap-2 text-xs">
-                    <span className="text-green-500 font-medium" aria-label="Increased by 5.2 percent">+5.2%</span>
-                    <span className="text-muted-foreground">12 pending</span>
-                  </div>
-                </div>
-              </Link>
-
-              <Link href="/analytics" className="group relative overflow-hidden rounded-xl border border-green-500/30 bg-background/50 backdrop-blur-xl p-4 hover:shadow-lg hover:shadow-green-500/20 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2" aria-label="View revenue analytics">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="p-2.5 rounded-lg bg-green-500/10">
-                    <DollarSign className="h-5 w-5 text-green-500" aria-hidden="true" />
-                  </div>
-                  <ArrowUpRight className="h-4 w-4 text-green-500" aria-hidden="true" />
-                </div>
-                <div className="space-y-1">
-                  <p className="text-xs text-muted-foreground font-medium">Revenue MTD</p>
-                  <p className="text-2xl font-bold">$156.3K</p>
-                  <div className="flex items-center gap-2 text-xs">
-                    <span className="text-green-500 font-medium" aria-label="Increased by 18.3 percent">+18.3%</span>
-                    <span className="text-muted-foreground">trending up</span>
-                  </div>
-                </div>
-              </Link>
-            </div>
+      <div className="relative z-10 p-6">
+        {/* Page Header */}
+        <div className="mb-6 flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold mb-2">
+              <span className="bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent animate-gradient">
+                Dashboard
+              </span>
+            </h1>
+            <p className="text-muted-foreground">Real-time supply chain intelligence and operational insights</p>
           </div>
+          <div className="flex items-center gap-3">
+            <Badge variant="outline" className="gap-2 px-4 py-2 border-green-500/30 bg-green-500/10 animate-pulse-subtle">
+              <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+              <span className="text-sm font-medium">Live</span>
+            </Badge>
+            <Button variant="outline" size="icon" className="h-10 w-10 hover:rotate-180 transition-transform duration-500">
+              <RefreshCw className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          <Link href="/inventory" className="group block">
+            <Card className="border-primary/20 hover:border-primary/40 transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1">
+              <CardHeader className="pb-2">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                    Total Inventory
+                  </CardTitle>
+                  <Package className="h-4 w-4 text-primary opacity-60 group-hover:opacity-100 transition-opacity" />
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-end justify-between">
+                  <div>
+                    <p className="text-2xl font-bold">$284.5K</p>
+                    <div className="flex items-center gap-1 mt-1">
+                      <ArrowUpRight className="h-3 w-3 text-green-500" />
+                      <span className="text-xs text-green-500 font-medium">+12.5%</span>
+                    </div>
+                  </div>
+                  <Package className="h-8 w-8 text-primary opacity-20 group-hover:opacity-30 transition-opacity" />
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link href="/purchase-orders" className="group block">
+            <Card className="border-blue-500/20 hover:border-blue-500/40 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20 hover:-translate-y-1">
+              <CardHeader className="pb-2">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                    Active Orders
+                  </CardTitle>
+                  <ShoppingCart className="h-4 w-4 text-blue-500 opacity-60 group-hover:opacity-100 transition-opacity" />
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-end justify-between">
+                  <div>
+                    <p className="text-2xl font-bold">23</p>
+                    <div className="flex items-center gap-1 mt-1">
+                      <ArrowDownRight className="h-3 w-3 text-orange-500" />
+                      <span className="text-xs text-orange-500 font-medium">-8%</span>
+                    </div>
+                  </div>
+                  <ShoppingCart className="h-8 w-8 text-blue-500 opacity-20 group-hover:opacity-30 transition-opacity" />
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link href="/financial" className="group block">
+            <Card className="border-purple-500/20 hover:border-purple-500/40 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/20 hover:-translate-y-1">
+              <CardHeader className="pb-2">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                    Open Invoices
+                  </CardTitle>
+                  <FileText className="h-4 w-4 text-purple-500 opacity-60 group-hover:opacity-100 transition-opacity" />
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-end justify-between">
+                  <div>
+                    <p className="text-2xl font-bold">$67.9K</p>
+                    <div className="flex items-center gap-1 mt-1">
+                      <ArrowUpRight className="h-3 w-3 text-green-500" />
+                      <span className="text-xs text-green-500 font-medium">+5.2%</span>
+                    </div>
+                  </div>
+                  <FileText className="h-8 w-8 text-purple-500 opacity-20 group-hover:opacity-30 transition-opacity" />
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link href="/analytics" className="group block">
+            <Card className="border-green-500/20 hover:border-green-500/40 transition-all duration-300 hover:shadow-lg hover:shadow-green-500/20 hover:-translate-y-1">
+              <CardHeader className="pb-2">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                    Revenue MTD
+                  </CardTitle>
+                  <DollarSign className="h-4 w-4 text-green-500 opacity-60 group-hover:opacity-100 transition-opacity" />
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-end justify-between">
+                  <div>
+                    <p className="text-2xl font-bold">$156.3K</p>
+                    <div className="flex items-center gap-1 mt-1">
+                      <ArrowUpRight className="h-3 w-3 text-green-500" />
+                      <span className="text-xs text-green-500 font-medium">+18.3%</span>
+                    </div>
+                  </div>
+                  <DollarSign className="h-8 w-8 text-green-500 opacity-20 group-hover:opacity-30 transition-opacity" />
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
         </div>
 
         {/* Main Content Grid */}
@@ -222,11 +280,11 @@ export default function Dashboard() {
           {/* Left Column - 2/3 width */}
           <div className="xl:col-span-2 space-y-6">
             {/* Performance Metrics */}
-            <Card className="border-primary/20">
+            <Card className="border-primary/20 hover:border-primary/30 transition-colors duration-300">
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-lg bg-primary/10">
+                    <div className="p-2 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors">
                       <Activity className="h-5 w-5 text-primary" />
                     </div>
                     <div>
@@ -235,7 +293,7 @@ export default function Dashboard() {
                     </div>
                   </div>
                   <Badge variant="outline" className="gap-1.5">
-                    <Zap className="h-3 w-3 text-yellow-500" />
+                    <Zap className="h-3 w-3 text-yellow-500 animate-pulse" />
                     <span className="text-xs">Optimal</span>
                   </Badge>
                 </div>
@@ -279,27 +337,25 @@ export default function Dashboard() {
             </Card>
 
             {/* Recent Transactions */}
-            <Card className="border-primary/20">
-              <CardHeader>
-                <div className="flex items-center justify-between">
+            <Card className="border-primary/20 hover:border-primary/30 transition-colors duration-300">
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-lg bg-blue-500/10">
+                    <div className="p-2 rounded-lg bg-blue-500/10 group-hover:bg-blue-500/20 transition-colors">
                       <BarChart3 className="h-5 w-5 text-blue-500" />
                     </div>
                     <div>
-                      <CardTitle className="text-base">Recent Transactions</CardTitle>
+                      <h3 className="text-base font-semibold">Recent Transactions</h3>
                       <p className="text-xs text-muted-foreground mt-0.5">Latest order activity</p>
                     </div>
                   </div>
                   <Link href="/purchase-orders">
-                    <Button variant="ghost" size="sm" className="gap-2">
+                    <Button variant="ghost" size="sm" className="gap-2 hover:gap-3 transition-all">
                       <span className="text-xs">View All</span>
                       <ArrowRight className="h-3 w-3" />
                     </Button>
                   </Link>
                 </div>
-              </CardHeader>
-              <CardContent>
                 <DataTable
                   columns={orderColumns}
                   data={mockRecentOrders}
@@ -310,36 +366,34 @@ export default function Dashboard() {
             </Card>
 
             {/* Overdue Invoices */}
-            <Card className="border-red-500/30 bg-gradient-to-br from-red-500/5 to-orange-500/5">
-              <CardHeader>
-                <div className="flex items-center justify-between">
+            <Card className="border-red-500/30 bg-gradient-to-br from-red-500/5 to-orange-500/5 hover:border-red-500/40 transition-colors duration-300">
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-lg bg-red-500/10">
+                    <div className="p-2 rounded-lg bg-red-500/10 group-hover:bg-red-500/20 transition-colors">
                       <XCircle className="h-5 w-5 text-red-500" />
                     </div>
                     <div>
-                      <CardTitle className="text-base">Overdue Payments</CardTitle>
+                      <h3 className="text-base font-semibold">Overdue Payments</h3>
                       <p className="text-xs text-muted-foreground mt-0.5">Requires immediate attention</p>
                     </div>
                   </div>
-                  <Link href="/invoices">
-                    <Button variant="ghost" size="sm" className="gap-2">
+                  <Link href="/financial">
+                    <Button variant="ghost" size="sm" className="gap-2 hover:gap-3 transition-all">
                       <span className="text-xs">View All</span>
                       <ArrowRight className="h-3 w-3" />
                     </Button>
                   </Link>
                 </div>
-              </CardHeader>
-              <CardContent>
                 <div className="space-y-3">
                   {mockOverdueInvoices.map((inv, index) => (
                     <div
                       key={inv.id}
-                      className="group relative rounded-lg border border-red-500/20 bg-background/80 backdrop-blur-sm p-4 hover:border-red-500/40 hover:bg-red-500/5 transition-all cursor-pointer"
+                      className="group relative rounded-lg border border-red-500/20 bg-background/80 backdrop-blur-sm p-4 hover:border-red-500/40 hover:bg-red-500/5 transition-all cursor-pointer hover:scale-[1.02] duration-200"
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <div className="p-2 rounded-lg bg-red-500/10">
+                          <div className="p-2 rounded-lg bg-red-500/10 group-hover:bg-red-500/20 transition-colors">
                             <AlertTriangle className="h-4 w-4 text-red-500" />
                           </div>
                           <div>
@@ -365,28 +419,26 @@ export default function Dashboard() {
           {/* Right Column - 1/3 width */}
           <div className="space-y-6">
             {/* Critical Alerts */}
-            <Card className="border-amber-500/30 bg-gradient-to-br from-amber-500/10 to-red-500/5">
-              <CardHeader>
-                <div className="flex items-center justify-between">
+            <Card className="border-amber-500/30 bg-gradient-to-br from-amber-500/10 to-red-500/5 hover:border-amber-500/40 transition-colors duration-300">
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-2">
                     <div className="relative">
-                      <AlertTriangle className="h-5 w-5 text-amber-500" />
+                      <AlertTriangle className="h-5 w-5 text-amber-500 animate-pulse" />
                       <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-ping" />
                       <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full" />
                     </div>
                     <div>
-                      <CardTitle className="text-sm">Critical Stock Alerts</CardTitle>
+                      <h3 className="text-sm font-semibold">Critical Stock Alerts</h3>
                       <p className="text-xs text-muted-foreground mt-0.5">Reorder required</p>
                     </div>
                   </div>
-                  <Badge variant="destructive">{mockLowStockItems.length}</Badge>
+                  <Badge variant="destructive" className="animate-pulse-subtle">{mockLowStockItems.length}</Badge>
                 </div>
-              </CardHeader>
-              <CardContent className="space-y-3">
                 {mockLowStockItems.map((item) => (
                   <div
                     key={item.id}
-                    className="group rounded-lg border border-amber-500/20 bg-background/80 backdrop-blur-sm p-3 hover:border-amber-500/40 hover:bg-amber-500/5 transition-all cursor-pointer"
+                    className="group rounded-lg border border-amber-500/20 bg-background/80 backdrop-blur-sm p-3 hover:border-amber-500/40 hover:bg-amber-500/5 transition-all cursor-pointer hover:scale-[1.02] duration-200"
                   >
                     <div className="flex items-start justify-between mb-2">
                       <div>
@@ -418,86 +470,46 @@ export default function Dashboard() {
             </Card>
 
             {/* Activity Feed */}
-            <Card className="border-primary/20">
-              <CardHeader>
-                <div className="flex items-center gap-2">
+            <Card className="border-primary/20 hover:border-primary/30 transition-colors duration-300">
+              <CardContent className="pt-6">
+                <div className="flex items-center gap-2 mb-4">
                   <div className="p-2 rounded-lg bg-primary/10">
-                    <Activity className="h-4 w-4 text-primary" />
+                    <Activity className="h-4 w-4 text-primary animate-pulse" />
                   </div>
                   <div>
-                    <CardTitle className="text-sm">Live Activity</CardTitle>
+                    <h3 className="text-sm font-semibold">Live Activity</h3>
                     <p className="text-xs text-muted-foreground mt-0.5">Last 24 hours</p>
                   </div>
                 </div>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex gap-3 p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                <div className="space-y-3">
+                <div className="flex gap-3 p-3 rounded-lg bg-green-500/10 border border-green-500/20 hover:bg-green-500/15 transition-colors cursor-pointer">
                   <CheckCircle2 className="h-4 w-4 text-green-500 flex-shrink-0 mt-0.5" />
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-medium">Order delivered successfully</p>
                     <p className="text-xs text-muted-foreground">#SO-2024-0125 • 2m ago</p>
                   </div>
                 </div>
-                <div className="flex gap-3 p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
-                  <Loader2 className="h-4 w-4 text-blue-500 animate-spin flex-shrink-0 mt-0.5" />
+                <div className="flex gap-3 p-3 rounded-lg bg-blue-500/10 border border-blue-500/20 hover:bg-blue-500/15 transition-colors cursor-pointer">
+                  <Clock className="h-4 w-4 text-blue-500 flex-shrink-0 mt-0.5" />
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-medium">Processing payment</p>
                     <p className="text-xs text-muted-foreground">$8,750 • 5m ago</p>
                   </div>
                 </div>
-                <div className="flex gap-3 p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                <div className="flex gap-3 p-3 rounded-lg bg-purple-500/10 border border-purple-500/20 hover:bg-purple-500/15 transition-colors cursor-pointer">
                   <CheckCircle2 className="h-4 w-4 text-purple-500 flex-shrink-0 mt-0.5" />
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-medium">Invoice sent to customer</p>
                     <p className="text-xs text-muted-foreground">#INV-2024-0101 • 12m ago</p>
                   </div>
                 </div>
-                <div className="flex gap-3 p-3 rounded-lg bg-orange-500/10 border border-orange-500/20">
-                  <AlertTriangle className="h-4 w-4 text-orange-500 flex-shrink-0 mt-0.5" />
+                <div className="flex gap-3 p-3 rounded-lg bg-orange-500/10 border border-orange-500/20 hover:bg-orange-500/15 transition-colors cursor-pointer">
+                  <AlertTriangle className="h-4 w-4 text-orange-500 flex-shrink-0 mt-0.5 animate-pulse" />
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-medium">Payment overdue alert</p>
                     <p className="text-xs text-muted-foreground">Delta Corp • 1h ago</p>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-
-            {/* Quick Stats */}
-            <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-purple-500/5">
-              <CardHeader>
-                <CardTitle className="text-sm">Quick Stats</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Users className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm text-muted-foreground">Active Customers</span>
-                  </div>
-                  <span className="text-sm font-bold">248</span>
-                </div>
-                <Separator />
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Building2 className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm text-muted-foreground">Active Vendors</span>
-                  </div>
-                  <span className="text-sm font-bold">87</span>
-                </div>
-                <Separator />
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Package className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm text-muted-foreground">Products in Stock</span>
-                  </div>
-                  <span className="text-sm font-bold">1,245</span>
-                </div>
-                <Separator />
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <ShoppingCart className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm text-muted-foreground">Orders This Month</span>
-                  </div>
-                  <span className="text-sm font-bold">364</span>
                 </div>
               </CardContent>
             </Card>

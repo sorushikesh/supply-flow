@@ -4,7 +4,7 @@ import { SearchFilter } from "@/components/SearchFilter";
 import { DataTable, type Column } from "@/components/DataTable";
 import { StatusBadge, type StatusType } from "@/components/StatusBadge";
 import { FormModal } from "@/components/FormModal";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -20,10 +20,16 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Package, CheckCircle2, AlertTriangle } from "lucide-react";
+import { Package, CheckCircle2, AlertTriangle, PackageX, History, Download, Filter, DollarSign, Plus } from "lucide-react";
+import { EmptyState } from "@/components/EmptyState";
+import { BulkActions } from "@/components/BulkActions";
+import { ExportDialog } from "@/components/ExportDialog";
+import { ActivityLogDialog, generateMockActivityLogs, type ActivityLog } from "@/components/ActivityLog";
+import { AdvancedFilterDialog, applyAdvancedFilters, type FilterCondition, type SavedFilter } from "@/components/AdvancedFilter";
 
 interface GRNRecord {
   id: string;
@@ -36,28 +42,42 @@ interface GRNRecord {
   status: StatusType;
 }
 
-const mockGRNs: GRNRecord[] = [
-  { id: "1", grnNumber: "GRN-2024-0030", poNumber: "PO-2024-0044", vendor: "Global Supply Co", receivedDate: "2024-01-15", orderedQty: 100, receivedQty: 100, status: "completed" },
-  { id: "2", grnNumber: "GRN-2024-0029", poNumber: "PO-2024-0043", vendor: "Quality Parts Inc", receivedDate: "2024-01-14", orderedQty: 250, receivedQty: 245, status: "partial" },
-  { id: "3", grnNumber: "GRN-2024-0028", poNumber: "PO-2024-0042", vendor: "Tech Components", receivedDate: "2024-01-13", orderedQty: 50, receivedQty: 50, status: "completed" },
-  { id: "4", grnNumber: "GRN-2024-0027", poNumber: "PO-2024-0040", vendor: "Acme Corporation", receivedDate: "2024-01-12", orderedQty: 200, receivedQty: 200, status: "completed" },
-  { id: "5", grnNumber: "GRN-2024-0026", poNumber: "PO-2024-0039", vendor: "Prime Materials Ltd", receivedDate: "2024-01-11", orderedQty: 75, receivedQty: 70, status: "partial" },
-  { id: "6", grnNumber: "GRN-2024-0025", poNumber: "PO-2024-0038", vendor: "Mega Manufacturing", receivedDate: "2024-01-10", orderedQty: 180, receivedQty: 180, status: "completed" },
-  { id: "7", grnNumber: "GRN-2024-0024", poNumber: "PO-2024-0037", vendor: "Alpha Distributors", receivedDate: "2024-01-09", orderedQty: 120, receivedQty: 115, status: "partial" },
-  { id: "8", grnNumber: "GRN-2024-0023", poNumber: "PO-2024-0036", vendor: "Beta Supplies Ltd", receivedDate: "2024-01-08", orderedQty: 95, receivedQty: 95, status: "completed" },
-  { id: "9", grnNumber: "GRN-2024-0022", poNumber: "PO-2024-0035", vendor: "Gamma Industries", receivedDate: "2024-01-07", orderedQty: 150, receivedQty: 150, status: "completed" },
-  { id: "10", grnNumber: "GRN-2024-0021", poNumber: "PO-2024-0034", vendor: "Epsilon Materials", receivedDate: "2024-01-06", orderedQty: 220, receivedQty: 210, status: "partial" },
-  { id: "11", grnNumber: "GRN-2024-0020", poNumber: "PO-2024-0033", vendor: "Zeta Trading Co", receivedDate: "2024-01-05", orderedQty: 65, receivedQty: 65, status: "completed" },
-  { id: "12", grnNumber: "GRN-2024-0019", poNumber: "PO-2024-0032", vendor: "Theta Wholesale", receivedDate: "2024-01-04", orderedQty: 135, receivedQty: 135, status: "completed" },
-  { id: "13", grnNumber: "GRN-2024-0018", poNumber: "PO-2024-0031", vendor: "Omega Solutions", receivedDate: "2024-01-03", orderedQty: 280, receivedQty: 270, status: "partial" },
-  { id: "14", grnNumber: "GRN-2024-0017", poNumber: "PO-2024-0030", vendor: "Acme Corporation", receivedDate: "2024-01-02", orderedQty: 110, receivedQty: 110, status: "completed" },
-  { id: "15", grnNumber: "GRN-2024-0016", poNumber: "PO-2024-0029", vendor: "Global Supply Co", receivedDate: "2024-01-01", orderedQty: 160, receivedQty: 160, status: "completed" },
+import { getGRNData, getPendingPOs } from "@/data/dataTransformers";
+
+const mockGRNs: GRNRecord[] = getGRNData().map(grn => ({
+  id: grn.id,
+  grnNumber: grn.grnNumber,
+  poNumber: grn.poNumber,
+  vendor: grn.vendor,
+  receivedDate: grn.receiptDate,
+  orderedQty: grn.items.reduce((sum, item) => sum + item.orderedQty, 0),
+  receivedQty: grn.items.reduce((sum, item) => sum + item.receivedQty, 0),
+  status: grn.status as StatusType
+}));
+
+const _mockGRNs_removed = [
+  { id: "1", grnNumber: "GRN-2024-0030", poNumber: "PO-2024-0044", vendor: "Samsung Electronics", receivedDate: "2024-01-15", orderedQty: 40, receivedQty: 40, status: "completed" },
+  { id: "2", grnNumber: "GRN-2024-0029", poNumber: "PO-2024-0043", vendor: "HP Inc.", receivedDate: "2024-01-14", orderedQty: 50, receivedQty: 47, status: "partial" },
+  { id: "3", grnNumber: "GRN-2024-0028", poNumber: "PO-2024-0042", vendor: "Lenovo Group Ltd", receivedDate: "2024-01-13", orderedQty: 50, receivedQty: 50, status: "completed" },
+  { id: "4", grnNumber: "GRN-2024-0027", poNumber: "PO-2024-0040", vendor: "Dell Technologies", receivedDate: "2024-01-12", orderedQty: 75, receivedQty: 75, status: "completed" },
+  { id: "5", grnNumber: "GRN-2024-0026", poNumber: "PO-2024-0039", vendor: "LG Electronics", receivedDate: "2024-01-11", orderedQty: 180, receivedQty: 175, status: "partial" },
+  { id: "6", grnNumber: "GRN-2024-0025", poNumber: "PO-2024-0038", vendor: "Acer America", receivedDate: "2024-01-10", orderedQty: 60, receivedQty: 60, status: "completed" },
+  { id: "7", grnNumber: "GRN-2024-0024", poNumber: "PO-2024-0037", vendor: "Microsoft Corporation", receivedDate: "2024-01-09", orderedQty: 45, receivedQty: 42, status: "partial" },
+  { id: "8", grnNumber: "GRN-2024-0023", poNumber: "PO-2024-0036", vendor: "Apple Inc.", receivedDate: "2024-01-08", orderedQty: 80, receivedQty: 80, status: "completed" },
+  { id: "9", grnNumber: "GRN-2024-0022", poNumber: "PO-2024-0035", vendor: "ViewSonic Corporation", receivedDate: "2024-01-07", orderedQty: 150, receivedQty: 150, status: "completed" },
+  { id: "10", grnNumber: "GRN-2024-0021", poNumber: "PO-2024-0034", vendor: "BenQ America", receivedDate: "2024-01-06", orderedQty: 150, receivedQty: 145, status: "partial" },
+  { id: "11", grnNumber: "GRN-2024-0020", poNumber: "PO-2024-0033", vendor: "AOC International", receivedDate: "2024-01-05", orderedQty: 120, receivedQty: 120, status: "completed" },
+  { id: "12", grnNumber: "GRN-2024-0019", poNumber: "PO-2024-0032", vendor: "APC by Schneider", receivedDate: "2024-01-04", orderedQty: 300, receivedQty: 300, status: "completed" },
+  { id: "13", grnNumber: "GRN-2024-0018", poNumber: "PO-2024-0031", vendor: "Belkin International", receivedDate: "2024-01-03", orderedQty: 650, receivedQty: 630, status: "partial" },
+  { id: "14", grnNumber: "GRN-2024-0017", poNumber: "PO-2024-0030", vendor: "Logitech Inc.", receivedDate: "2024-01-02", orderedQty: 350, receivedQty: 350, status: "completed" },
+  { id: "15", grnNumber: "GRN-2024-0016", poNumber: "PO-2024-0029", vendor: "Dell Technologies", receivedDate: "2024-01-01", orderedQty: 30, receivedQty: 30, status: "completed" },
 ];
 
-const mockPendingPOs = [
-  { poNumber: "PO-2024-0045", vendor: "Acme Corporation", items: "Widget Alpha x 50, Widget Beta x 30" },
-  { poNumber: "PO-2024-0046", vendor: "Global Supply Co", items: "Gadget Pro x 25" },
-];
+const mockPendingPOs = getPendingPOs().map(po => ({
+  poNumber: po.poNumber,
+  vendor: po.vendor,
+  items: "Pending items"
+}));
 
 export default function GRN() {
   const { toast } = useToast();
@@ -67,6 +87,27 @@ export default function GRN() {
   const [selectedPO, setSelectedPO] = useState("");
   const [receivedQty, setReceivedQty] = useState("");
   const [notes, setNotes] = useState("");
+  
+  // New features state
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [exportDialogOpen, setExportDialogOpen] = useState(false);
+  const [activityLogOpen, setActivityLogOpen] = useState(false);
+  const [advancedFilterOpen, setAdvancedFilterOpen] = useState(false);
+  const [activityLogs] = useState<ActivityLog[]>(generateMockActivityLogs());
+  const [filterConditions, setFilterConditions] = useState<FilterCondition[]>([]);
+  const [savedFilters, setSavedFilters] = useState<SavedFilter[]>([
+    {
+      id: "1",
+      name: "Partial Receipts",
+      conditions: [{ id: "1", field: "status", operator: "equals", value: "partial", fieldType: "select" }],
+      isFavorite: true,
+    },
+    {
+      id: "2",
+      name: "Recent GRNs",
+      conditions: [{ id: "1", field: "receivedDate", operator: "greater", value: "2024-01-10", fieldType: "date" }],
+    },
+  ]);
 
   const filteredData = mockGRNs.filter((grn) => {
     const matchesSearch =
@@ -77,7 +118,39 @@ export default function GRN() {
     return matchesSearch && matchesStatus;
   });
 
+  // Apply advanced filters if any
+  const finalData = filterConditions.length > 0 
+    ? applyAdvancedFilters(filteredData, filterConditions)
+    : filteredData;
+
   const columns: Column<GRNRecord>[] = [
+    {
+      key: "select",
+      header: () => (
+        <Checkbox
+          checked={selectedItems.length === finalData.length && finalData.length > 0}
+          onCheckedChange={(checked) => {
+            if (checked) {
+              setSelectedItems(finalData.map((item) => item.id));
+            } else {
+              setSelectedItems([]);
+            }
+          }}
+        />
+      ),
+      render: (grn) => (
+        <Checkbox
+          checked={selectedItems.includes(grn.id)}
+          onCheckedChange={(checked) => {
+            if (checked) {
+              setSelectedItems([...selectedItems, grn.id]);
+            } else {
+              setSelectedItems(selectedItems.filter((id) => id !== grn.id));
+            }
+          }}
+        />
+      ),
+    },
     { 
       key: "grnNumber", 
       header: "GRN Number", 
@@ -147,86 +220,240 @@ export default function GRN() {
     setNotes("");
   };
 
+  // Bulk operation handlers
+  const handleBulkExport = () => {
+    setExportDialogOpen(true);
+  };
+
+  const handleBulkEmail = () => {
+    toast({
+      title: "Email Sent",
+      description: `Report for ${selectedItems.length} GRN records has been sent to your email.`,
+    });
+  };
+
+  const handleBulkStatusChange = (newStatus: string) => {
+    toast({
+      title: "Status Updated",
+      description: `${selectedItems.length} GRN records have been updated to ${newStatus}.`,
+    });
+    setSelectedItems([]);
+  };
+
+  const handleBulkDelete = () => {
+    toast({
+      title: "GRN Records Deleted",
+      description: `${selectedItems.length} GRN records have been deleted successfully.`,
+      variant: "destructive",
+    });
+    setSelectedItems([]);
+  };
+
+  const handleApplyFilters = (conditions: FilterCondition[]) => {
+    setFilterConditions(conditions);
+    toast({
+      title: "Filters Applied",
+      description: `Applied ${conditions.length} filter condition(s).`,
+    });
+  };
+
+  const handleSaveFilter = (name: string, conditions: FilterCondition[]) => {
+    const newFilter: SavedFilter = {
+      id: String(Date.now()),
+      name,
+      conditions,
+    };
+    setSavedFilters([...savedFilters, newFilter]);
+    toast({
+      title: "Filter Saved",
+      description: `Filter "${name}" has been saved successfully.`,
+    });
+  };
+
   const completedGRNs = mockGRNs.filter((grn) => grn.status === "completed").length;
   const partialGRNs = mockGRNs.filter((grn) => grn.status === "partial").length;
+  const pendingGRNs = mockGRNs.filter((grn) => grn.status === "pending").length;
+  const totalReceivedValue = mockGRNs
+    .filter((grn) => grn.status === "completed")
+    .reduce((sum, grn) => sum + (grn.receivedQty * 100), 0); // Approximate value
 
   return (
     <PageBackground>
-      <div className="p-4 lg:p-6 max-w-[1600px] mx-auto space-y-6">
+      <div className="relative z-10 p-6">
         {/* Page Header */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent">
-              Goods Receipt Notes
-            </h1>
-            <p className="text-muted-foreground mt-1">Record incoming inventory</p>
-          </div>
-          <Button onClick={() => setModalOpen(true)} className="gap-2">
-            <Package className="h-4 w-4" />
-            Create GRN
-          </Button>
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold mb-2">Goods Receipt Notes</h1>
+          <p className="text-muted-foreground">Track and manage incoming inventory receipts</p>
         </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Card className="border-primary/20">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-2">
-              <Package className="h-4 w-4 text-primary" />
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Total GRNs
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <p className="text-2xl font-bold">{mockGRNs.length}</p>
+                <Package className="h-8 w-8 text-blue-500" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Pending
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <p className="text-2xl font-bold">{pendingGRNs}</p>
+                <Package className="h-8 w-8 text-yellow-500" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Completed
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <p className="text-2xl font-bold">{completedGRNs}</p>
+                <CheckCircle2 className="h-8 w-8 text-green-500" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Partial
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <p className="text-2xl font-bold">{partialGRNs}</p>
+                <AlertTriangle className="h-8 w-8 text-orange-500" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Total Value
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <p className="text-2xl font-bold text-green-600">${(totalReceivedValue / 1000).toFixed(1)}k</p>
+                <DollarSign className="h-8 w-8 text-green-500" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Toolbar */}
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex flex-col lg:flex-row gap-4">
+              {/* Search */}
+              <div className="flex-1">
+                <SearchFilter
+                  searchValue={search}
+                  onSearchChange={setSearch}
+                  searchPlaceholder="Search by GRN, PO number or vendor..."
+                />
+              </div>
+
+              {/* Filters */}
+              <div className="flex flex-wrap gap-2">
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger className="w-[150px]">
+                    <SelectValue placeholder="Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="All">All Status</SelectItem>
+                    <SelectItem value="Completed">Complete</SelectItem>
+                    <SelectItem value="Partial">Partial</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                <Button
+                  variant="outline"
+                  onClick={() => setAdvancedFilterOpen(true)}
+                >
+                  <Filter className="h-4 w-4 mr-2" />
+                  Advanced
+                  {filterConditions.length > 0 && (
+                    <Badge variant="secondary" className="ml-2">
+                      {filterConditions.length}
+                    </Badge>
+                  )}
+                </Button>
+
+                <Button
+                  variant="outline"
+                  onClick={() => setActivityLogOpen(true)}
+                >
+                  <History className="h-4 w-4 mr-2" />
+                  Activity Log
+                </Button>
+              </div>
+
+              {/* Actions */}
+              <div className="flex gap-2">
+                <Button onClick={() => setModalOpen(true)}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Create GRN
+                </Button>
+              </div>
             </div>
-            <p className="text-xs text-muted-foreground font-medium">Total GRNs</p>
-            <p className="text-2xl font-bold mt-1">{mockGRNs.length}</p>
           </CardContent>
         </Card>
-        <Card className="border-green-500/30 bg-gradient-to-br from-green-500/10 to-transparent">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-2">
-              <CheckCircle2 className="h-4 w-4 text-green-500" />
-            </div>
-            <p className="text-xs text-muted-foreground font-medium">Complete Receipts</p>
-            <p className="text-2xl font-bold mt-1 text-green-600">{completedGRNs}</p>
-          </CardContent>
-        </Card>
-        <Card className="border-amber-500/30 bg-gradient-to-br from-amber-500/10 to-transparent">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-2">
-              <AlertTriangle className="h-4 w-4 text-amber-500" />
-            </div>
-            <p className="text-xs text-muted-foreground font-medium">Partial Receipts</p>
-            <p className="text-2xl font-bold mt-1 text-amber-600">{partialGRNs}</p>
+
+        {/* Bulk Actions */}
+        {selectedItems.length > 0 && (
+          <BulkActions
+            selectedCount={selectedItems.length}
+            onExport={handleBulkExport}
+            onEmail={handleBulkEmail}
+            onStatusChange={handleBulkStatusChange}
+            onDelete={handleBulkDelete}
+            statusOptions={["Pending", "Received", "Partial", "Completed"]}
+          />
+        )}
+
+        {/* Data Table */}
+        <Card>
+          <CardContent className="pt-6">
+            {filteredData.length === 0 ? (
+            <EmptyState
+              icon={PackageX}
+              title={search || statusFilter !== "All" ? "No GRN records found" : "No goods receipts yet"}
+              description={
+                search || statusFilter !== "All"
+                  ? "No goods receipt notes match your search criteria. Try adjusting your filters."
+                  : "Record your first goods receipt to track incoming inventory."
+              }
+              action={{
+                label: "Record GRN",
+                onClick: () => setModalOpen(true),
+                icon: Package,
+              }}
+            />
+            ) : (
+              <DataTable
+                columns={columns}
+                data={finalData}
+                testIdPrefix="grn"
+              />
+            )}
           </CardContent>
         </Card>
       </div>
-
-      {/* Main Content */}
-      <Card className="border-primary/20">
-        <CardContent className="p-6">
-          <SearchFilter
-            searchPlaceholder="Search by GRN, PO number or vendor..."
-            searchValue={search}
-            onSearchChange={setSearch}
-            filters={[
-              {
-                key: "status",
-                label: "Status",
-                options: [
-                  { value: "All", label: "All Status" },
-                  { value: "Completed", label: "Complete" },
-                  { value: "Partial", label: "Partial" },
-                ],
-                value: statusFilter,
-                onChange: setStatusFilter,
-              },
-            ]}
-          />
-
-          <DataTable
-            columns={columns}
-            data={filteredData}
-            testIdPrefix="grn"
-          />
-        </CardContent>
-      </Card>
 
       <FormModal
         open={modalOpen}
@@ -337,7 +564,47 @@ export default function GRN() {
           </div>
         </div>
       </FormModal>
-      </div>
+
+      {/* Export Dialog */}
+      <ExportDialog
+        open={exportDialogOpen}
+        onOpenChange={setExportDialogOpen}
+        columns={[
+          { key: "grnNumber", label: "GRN Number" },
+          { key: "poNumber", label: "PO Number" },
+          { key: "vendor", label: "Vendor" },
+          { key: "receivedDate", label: "Date" },
+          { key: "orderedQty", label: "Ordered Qty" },
+          { key: "receivedQty", label: "Received Qty" },
+          { key: "status", label: "Status" },
+        ]}
+        data={finalData.filter((item) => selectedItems.length === 0 || selectedItems.includes(item.id))}
+        filename="grn-records"
+      />
+
+      {/* Activity Log Dialog */}
+      <ActivityLogDialog
+        open={activityLogOpen}
+        onOpenChange={setActivityLogOpen}
+        logs={activityLogs}
+        title="GRN Activity Log"
+      />
+
+      {/* Advanced Filter Dialog */}
+      <AdvancedFilterDialog
+        open={advancedFilterOpen}
+        onOpenChange={setAdvancedFilterOpen}
+        fields={[
+          { value: "grnNumber", label: "GRN Number", type: "text" },
+          { value: "poNumber", label: "PO Number", type: "text" },
+          { value: "vendor", label: "Vendor", type: "text" },
+          { value: "receivedDate", label: "Date", type: "date" },
+          { value: "status", label: "Status", type: "select" },
+        ]}
+        onApplyFilters={handleApplyFilters}
+        savedFilters={savedFilters}
+        onSaveFilter={handleSaveFilter}
+      />
     </PageBackground>
   );
 }

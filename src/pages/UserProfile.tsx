@@ -105,14 +105,12 @@ export default function UserProfile() {
 
   return (
     <PageBackground>
-      <div className="p-4 lg:p-6 max-w-[1600px] mx-auto space-y-6">
+      <div className="p-6 max-w-[1600px] mx-auto">
         {/* Page Header */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="mb-6 flex items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent">
-              User Profile
-            </h1>
-            <p className="text-muted-foreground mt-1 text-sm sm:text-base">View and manage your profile information</p>
+            <h1 className="text-3xl font-bold mb-2">User Profile</h1>
+            <p className="text-muted-foreground">View and manage your profile information</p>
           </div>
           {!isEditing ? (
             <Button 
@@ -246,34 +244,38 @@ export default function UserProfile() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="user-name" className="flex items-center gap-2">
+                    <Label htmlFor="user-name" className="flex items-center gap-2 text-sm font-medium">
                       <User className="h-4 w-4 text-primary" />
-                      Full Name *
+                      Full Name <span className="text-destructive ml-1">*</span>
                     </Label>
                     <Input
                       id="user-name"
                       value={userName}
                       onChange={(e) => setUserName(e.target.value)}
-                      placeholder="Enter full name"
+                      placeholder="John Doe"
+                      className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
                     />
+                    <p className="text-xs text-muted-foreground">Your full legal name</p>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="user-email" className="flex items-center gap-2">
+                    <Label htmlFor="user-email" className="flex items-center gap-2 text-sm font-medium">
                       <Mail className="h-4 w-4 text-primary" />
-                      Email Address
+                      Email Address <span className="text-destructive ml-1">*</span>
                     </Label>
                     <Input
                       id="user-email"
                       type="email"
                       value={userEmail}
                       onChange={(e) => setUserEmail(e.target.value)}
-                      placeholder="Enter email address"
+                      placeholder="john.doe@company.com"
+                      className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
                     />
+                    <p className="text-xs text-muted-foreground">Your work email address</p>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="user-phone" className="flex items-center gap-2">
+                    <Label htmlFor="user-phone" className="flex items-center gap-2 text-sm font-medium">
                       <Phone className="h-4 w-4 text-primary" />
                       Phone Number
                     </Label>
@@ -281,14 +283,16 @@ export default function UserProfile() {
                       id="user-phone"
                       value={userPhone}
                       onChange={(e) => setUserPhone(e.target.value)}
-                      placeholder="Enter phone number"
+                      placeholder="+1 555-0123"
+                      className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
                     />
+                    <p className="text-xs text-muted-foreground">Direct contact number</p>
                   </div>
                 </div>
 
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="user-address" className="flex items-center gap-2">
+                    <Label htmlFor="user-address" className="flex items-center gap-2 text-sm font-medium">
                       <MapPin className="h-4 w-4 text-primary" />
                       Address
                     </Label>
@@ -296,12 +300,14 @@ export default function UserProfile() {
                       id="user-address"
                       value={userAddress}
                       onChange={(e) => setUserAddress(e.target.value)}
-                      placeholder="Enter address"
+                      placeholder="123 Main St, City, State"
+                      className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
                     />
+                    <p className="text-xs text-muted-foreground">Your current address</p>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="user-role" className="flex items-center gap-2">
+                    <Label htmlFor="user-role" className="flex items-center gap-2 text-sm font-medium">
                       <Briefcase className="h-4 w-4 text-primary" />
                       Role
                     </Label>
@@ -309,12 +315,14 @@ export default function UserProfile() {
                       id="user-role"
                       value={userRole}
                       onChange={(e) => setUserRole(e.target.value)}
-                      placeholder="Enter role"
+                      placeholder="e.g., Supply Chain Manager"
+                      className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
                     />
+                    <p className="text-xs text-muted-foreground">Your job title or role</p>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="user-department" className="flex items-center gap-2">
+                    <Label htmlFor="user-department" className="flex items-center gap-2 text-sm font-medium">
                       <Briefcase className="h-4 w-4 text-primary" />
                       Department
                     </Label>
@@ -322,8 +330,10 @@ export default function UserProfile() {
                       id="user-department"
                       value={userDepartment}
                       onChange={(e) => setUserDepartment(e.target.value)}
-                      placeholder="Enter department"
+                      placeholder="e.g., Operations"
+                      className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
                     />
+                    <p className="text-xs text-muted-foreground">Your department or team</p>
                   </div>
                 </div>
               </div>
