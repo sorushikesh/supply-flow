@@ -28,11 +28,11 @@ export function TopHeader({ breadcrumb }: TopHeaderProps) {
   const [, setLocation] = useLocation();
 
   return (
-    <header className="h-16 border-b flex items-center justify-between gap-4 px-6 bg-background/80 backdrop-blur-xl sticky top-0 z-50 shadow-sm">
-      <div className="flex items-center gap-4">
-        <SidebarTrigger data-testid="button-sidebar-toggle" className="transition-transform duration-200 hover:scale-110" />
+    <header className="h-14 border-b flex items-center justify-between gap-4 px-4 lg:px-6 bg-background/95 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+      <div className="flex items-center gap-3">
+        <SidebarTrigger data-testid="button-sidebar-toggle" className="transition-transform duration-200 hover:scale-110 h-8 w-8" />
         {breadcrumb && (
-          <nav className="text-sm text-muted-foreground hidden sm:block" data-testid="breadcrumb">
+          <nav className="text-sm text-muted-foreground hidden md:block" data-testid="breadcrumb">
             <span className="transition-colors duration-200 hover:text-foreground cursor-pointer">Home</span>
             <span className="mx-2 text-muted-foreground/50">/</span>
             <span className="text-foreground font-medium">{breadcrumb}</span>
@@ -40,18 +40,18 @@ export function TopHeader({ breadcrumb }: TopHeaderProps) {
         )}
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-1.5">
         {/* Quick Actions Dropdown */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button 
-              variant="default"
-              size="default"
-              className="gap-2 h-10 px-4 font-medium shadow-sm hover:shadow-md transition-all"
+              variant="ghost"
+              size="sm"
+              className="gap-1.5 h-8 px-2.5 font-medium hover:bg-accent transition-all text-xs"
               data-testid="button-quick-actions"
             >
-              <Zap className="h-4 w-4" />
-              Quick Actions
+              <Zap className="h-3.5 w-3.5" />
+              <span className="hidden lg:inline">Quick Actions</span>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-72">
@@ -114,13 +114,21 @@ export function TopHeader({ breadcrumb }: TopHeaderProps) {
           </DropdownMenuContent>
         </DropdownMenu>
 
+        {/* Divider */}
+        <div className="h-6 w-px bg-border hidden lg:block" />
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button size="icon" variant="ghost" className="relative h-10 w-10" data-testid="button-notifications">
-              <Bell className="h-5 w-5" />
+            <Button 
+              size="icon" 
+              variant="ghost" 
+              className="relative h-8 w-8 hover:bg-accent transition-colors" 
+              data-testid="button-notifications"
+            >
+              <Bell className="h-4 w-4" />
               <Badge
                 variant="destructive"
-                className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center text-[10px]"
+                className="absolute -top-0.5 -right-0.5 h-4 w-4 p-0 flex items-center justify-center text-[9px] font-bold"
               >
                 3
               </Badge>
@@ -144,21 +152,23 @@ export function TopHeader({ breadcrumb }: TopHeaderProps) {
           </DropdownMenuContent>
         </DropdownMenu>
 
+        {/* Divider */}
+        <div className="h-6 w-px bg-border hidden lg:block" />
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
-              className="flex items-center gap-2 h-10 px-3"
+              className="flex items-center gap-2 h-8 px-2 hover:bg-accent transition-colors"
               data-testid="button-user-menu"
             >
-              <Avatar className="h-8 w-8 ring-2 ring-border">
-                <AvatarFallback className="bg-primary text-primary-foreground text-xs font-medium">
+              <Avatar className="h-6 w-6 ring-1 ring-border">
+                <AvatarFallback className="bg-gradient-to-br from-primary via-blue-600 to-purple-600 text-primary-foreground text-[10px] font-bold">
                   JD
                 </AvatarFallback>
               </Avatar>
-              <div className="text-left hidden md:block">
-                <p className="text-sm font-medium leading-none">John Doe</p>
-                <p className="text-xs text-muted-foreground leading-none mt-1">Admin</p>
+              <div className="text-left hidden xl:block">
+                <p className="text-xs font-medium leading-tight">John Doe</p>
               </div>
             </Button>
           </DropdownMenuTrigger>
