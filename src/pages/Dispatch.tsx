@@ -207,83 +207,135 @@ export default function Dispatch() {
         open={modalOpen}
         onOpenChange={setModalOpen}
         title="Create Dispatch"
-        description="Select a sales order and enter shipping details."
+        description="Prepare shipment for a sales order."
         onSubmit={handleSubmit}
         submitLabel="Create Dispatch"
+        maxWidth="lg"
       >
         <div className="space-y-4">
-          <div className="space-y-2">
-            <Label>Sales Order *</Label>
-            <Select value={selectedSO} onValueChange={setSelectedSO}>
-              <SelectTrigger data-testid="select-so">
-                <SelectValue placeholder="Select pending SO" />
-              </SelectTrigger>
-              <SelectContent>
-                {mockPendingSOs.map((so) => (
-                  <SelectItem key={so.soNumber} value={so.soNumber}>
-                    <div className="flex flex-col">
-                      <span className="font-mono">{so.soNumber}</span>
-                      <span className="text-xs text-muted-foreground">{so.customer}</span>
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {selectedSO && (
-            <div className="p-3 rounded-lg bg-muted/50 space-y-2">
-              <p className="text-sm font-medium">Delivery Address</p>
-              <div className="flex items-start gap-2">
-                <MapPin className="h-4 w-4 text-muted-foreground mt-0.5" />
-                <p className="text-sm text-muted-foreground">
-                  {mockPendingSOs.find((s) => s.soNumber === selectedSO)?.address}
-                </p>
-              </div>
-              <Badge variant="secondary">
-                {mockPendingSOs.find((s) => s.soNumber === selectedSO)?.items} items
-              </Badge>
+          {/* Sales Order Section */}
+          <div className="space-y-3">
+            <div className="pb-2 border-b">
+              <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                <Package className="h-4 w-4 text-primary" />
+                Sales Order Selection
+              </h3>
+              <p className="text-xs text-muted-foreground mt-1">Choose the order to dispatch</p>
             </div>
-          )}
-
-          <div className="grid grid-cols-2 gap-4">
+            
             <div className="space-y-2">
-              <Label>Carrier *</Label>
-              <Select value={carrier} onValueChange={setCarrier}>
-                <SelectTrigger data-testid="select-carrier">
-                  <SelectValue placeholder="Select carrier" />
+              <Label className="text-sm font-medium flex items-center gap-1">
+                Sales Order <span className="text-destructive">*</span>
+              </Label>
+              <Select value={selectedSO} onValueChange={setSelectedSO}>
+                <SelectTrigger data-testid="select-so" className="transition-all duration-200">
+                  <SelectValue placeholder="Choose a pending sales order" />
                 </SelectTrigger>
                 <SelectContent>
-                  {carriers.map((c) => (
-                    <SelectItem key={c} value={c}>
-                      {c}
+                  {mockPendingSOs.map((so) => (
+                    <SelectItem key={so.soNumber} value={so.soNumber}>
+                      <div className="flex flex-col py-1">
+                        <span className="font-mono font-medium">{so.soNumber}</span>
+                        <span className="text-xs text-muted-foreground">{so.customer}</span>
+                      </div>
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="tracking">Tracking Number</Label>
-              <Input
-                id="tracking"
-                value={trackingNumber}
-                onChange={(e) => setTrackingNumber(e.target.value)}
-                placeholder="e.g., FX123456789"
-                data-testid="input-tracking"
-              />
+              <p className="text-xs text-muted-foreground">Select from approved sales orders</p>
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="notes">Shipping Notes</Label>
-            <Textarea
-              id="notes"
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              placeholder="Special delivery instructions..."
-              rows={2}
-              data-testid="input-dispatch-notes"
-            />
+          {/* SO Details Display */}
+          {selectedSO && (
+            <div className="p-4 rounded-lg border-2 border-primary/20 bg-muted/30 space-y-3">
+              <div className="flex items-center gap-2 pb-2 border-b">
+                <MapPin className="h-4 w-4 text-primary" />
+                <p className="text-sm font-semibold">Delivery Information</p>
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-start gap-2">
+                  <MapPin className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+                  <div className="flex-1">
+                    <p className="text-xs text-muted-foreground">Delivery Address</p>
+                    <p className="text-sm font-medium mt-0.5">
+                      {mockPendingSOs.find((s) => s.soNumber === selectedSO)?.address}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 pt-2">
+                  <Package className="h-4 w-4 text-muted-foreground" />
+                  <Badge variant="secondary" className="text-xs">
+                    {mockPendingSOs.find((s) => s.soNumber === selectedSO)?.items} items to ship
+                  </Badge>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Shipping Details */}
+          <div className="space-y-3 pt-2">
+            <div className="pb-2 border-b">
+              <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                <Truck className="h-4 w-4 text-primary" />
+                Shipping Details
+              </h3>
+              <p className="text-xs text-muted-foreground mt-1">Carrier and tracking information</p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label className="text-sm font-medium flex items-center gap-1">
+                  Carrier <span className="text-destructive">*</span>
+                </Label>
+                <Select value={carrier} onValueChange={setCarrier}>
+                  <SelectTrigger data-testid="select-carrier" className="transition-all duration-200">
+                    <SelectValue placeholder="Select carrier" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {carriers.map((c) => (
+                      <SelectItem key={c} value={c}>
+                        <div className="flex items-center gap-2">
+                          <Truck className="h-3 w-3" />
+                          {c}
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">Shipping company</p>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="tracking" className="text-sm font-medium">
+                  Tracking Number
+                </Label>
+                <Input
+                  id="tracking"
+                  value={trackingNumber}
+                  onChange={(e) => setTrackingNumber(e.target.value)}
+                  placeholder="e.g., FX123456789"
+                  data-testid="input-tracking"
+                  className="transition-all duration-200 font-mono"
+                />
+                <p className="text-xs text-muted-foreground">Optional tracking ID</p>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="notes" className="text-sm font-medium">
+                Shipping Instructions
+              </Label>
+              <Textarea
+                id="notes"
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="Special delivery instructions, handling requirements..."
+                rows={3}
+                data-testid="input-dispatch-notes"
+                className="resize-none transition-all duration-200"
+              />
+              <p className="text-xs text-muted-foreground">Any special delivery notes</p>
+            </div>
           </div>
         </div>
       </FormModal>

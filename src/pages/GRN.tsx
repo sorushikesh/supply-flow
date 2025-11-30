@@ -232,62 +232,108 @@ export default function GRN() {
         open={modalOpen}
         onOpenChange={setModalOpen}
         title="Record Goods Received"
-        description="Select a PO and record received quantities."
+        description="Document the receipt of goods from a purchase order."
         onSubmit={handleSubmit}
-        submitLabel="Record GRN"
+        submitLabel="Create GRN"
+        maxWidth="lg"
       >
         <div className="space-y-4">
-          <div className="space-y-2">
-            <Label>Purchase Order *</Label>
-            <Select value={selectedPO} onValueChange={setSelectedPO}>
-              <SelectTrigger data-testid="select-po">
-                <SelectValue placeholder="Select pending PO" />
-              </SelectTrigger>
-              <SelectContent>
-                {mockPendingPOs.map((po) => (
-                  <SelectItem key={po.poNumber} value={po.poNumber}>
-                    <div className="flex flex-col">
-                      <span className="font-mono">{po.poNumber}</span>
-                      <span className="text-xs text-muted-foreground">{po.vendor}</span>
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          {/* Purchase Order Section */}
+          <div className="space-y-3">
+            <div className="pb-2 border-b">
+              <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                <Package className="h-4 w-4 text-primary" />
+                Purchase Order Selection
+              </h3>
+              <p className="text-xs text-muted-foreground mt-1">Select the PO you're receiving goods for</p>
+            </div>
+            
+            <div className="space-y-2">
+              <Label className="text-sm font-medium flex items-center gap-1">
+                Purchase Order <span className="text-destructive">*</span>
+              </Label>
+              <Select value={selectedPO} onValueChange={setSelectedPO}>
+                <SelectTrigger data-testid="select-po" className="transition-all duration-200">
+                  <SelectValue placeholder="Choose a pending purchase order" />
+                </SelectTrigger>
+                <SelectContent>
+                  {mockPendingPOs.map((po) => (
+                    <SelectItem key={po.poNumber} value={po.poNumber}>
+                      <div className="flex flex-col py-1">
+                        <span className="font-mono font-medium">{po.poNumber}</span>
+                        <span className="text-xs text-muted-foreground">{po.vendor}</span>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground">Select from pending purchase orders</p>
+            </div>
           </div>
 
+          {/* PO Details Display */}
           {selectedPO && (
-            <div className="p-3 rounded-lg bg-muted/50 space-y-2">
-              <p className="text-sm font-medium">PO Details</p>
-              <p className="text-xs text-muted-foreground">
-                {mockPendingPOs.find((p) => p.poNumber === selectedPO)?.items}
-              </p>
-              <Badge variant="secondary">Pending Receipt</Badge>
+            <div className="p-4 rounded-lg border-2 border-primary/20 bg-muted/30 space-y-3">
+              <div className="flex items-center gap-2 pb-2 border-b">
+                <CheckCircle2 className="h-4 w-4 text-primary" />
+                <p className="text-sm font-semibold">Purchase Order Details</p>
+              </div>
+              <div className="space-y-2">
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-muted-foreground">Vendor</span>
+                  <span className="font-medium">{mockPendingPOs.find((p) => p.poNumber === selectedPO)?.vendor}</span>
+                </div>
+                <div className="flex justify-between items-start text-sm">
+                  <span className="text-muted-foreground">Items</span>
+                  <span className="font-medium text-right max-w-[60%]">{mockPendingPOs.find((p) => p.poNumber === selectedPO)?.items}</span>
+                </div>
+              </div>
+              <Badge variant="secondary" className="text-xs">Awaiting Receipt</Badge>
             </div>
           )}
 
-          <div className="space-y-2">
-            <Label htmlFor="receivedQty">Received Quantity *</Label>
-            <Input
-              id="receivedQty"
-              type="number"
-              value={receivedQty}
-              onChange={(e) => setReceivedQty(e.target.value)}
-              placeholder="Enter total quantity received"
-              data-testid="input-received-qty"
-            />
-          </div>
+          {/* Receipt Information */}
+          <div className="space-y-3 pt-2">
+            <div className="pb-2 border-b">
+              <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                <Package className="h-4 w-4 text-primary" />
+                Receipt Information
+              </h3>
+              <p className="text-xs text-muted-foreground mt-1">Record what you received</p>
+            </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="notes">Notes (Quality check, damages, etc.)</Label>
-            <Textarea
-              id="notes"
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              placeholder="Any notes about the received goods..."
-              rows={3}
-              data-testid="input-grn-notes"
-            />
+            <div className="space-y-2">
+              <Label htmlFor="receivedQty" className="text-sm font-medium flex items-center gap-1">
+                Received Quantity <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                id="receivedQty"
+                type="number"
+                min="0"
+                value={receivedQty}
+                onChange={(e) => setReceivedQty(e.target.value)}
+                placeholder="Enter total quantity received"
+                data-testid="input-received-qty"
+                className="transition-all duration-200"
+              />
+              <p className="text-xs text-muted-foreground">Total units received in this shipment</p>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="notes" className="text-sm font-medium">
+                Inspection Notes
+              </Label>
+              <Textarea
+                id="notes"
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="Quality check results, damages, discrepancies..."
+                rows={3}
+                data-testid="input-grn-notes"
+                className="resize-none transition-all duration-200"
+              />
+              <p className="text-xs text-muted-foreground">Document any issues or observations</p>
+            </div>
           </div>
         </div>
       </FormModal>
