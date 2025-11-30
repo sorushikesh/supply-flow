@@ -101,37 +101,51 @@ export const getStockMovements = (): Record<string, StockMovement[]> => {
 // ============================================
 export interface Vendor {
   id: string;
+  code: string;
   name: string;
   contact: string;
   email: string;
   phone: string;
   address: string;
+  paymentTerms: string;
   totalPurchases: number;
+  totalSpent: number;
+  totalOrders: number;
   status: "active" | "inactive";
   rating: number;
 }
 
 export interface PurchaseOrderHistory {
-  poNumber: string;
+  id: string;
+  orderNumber: string;
   date: string;
-  amount: number;
+  totalAmount: number;
   status: string;
-  items: string;
+  products: Array<{
+    name: string;
+    sku: string;
+    quantity: number;
+    unitPrice: number;
+  }>;
 }
 
 export const getVendorsData = (): Vendor[] => {
   return vendors.map(vendor => {
     const vendorPOs = purchaseOrders.filter(po => po.vendor === vendor.id);
-    const totalPurchases = vendorPOs.reduce((sum, po) => sum + po.totalAmount, 0);
+    const totalSpent = vendorPOs.reduce((sum, po) => sum + po.totalAmount, 0);
     
     return {
       id: vendor.id,
+      code: vendor.id.toUpperCase().replace('-', ''),
       name: vendor.name,
       contact: vendor.contact,
       email: vendor.email,
       phone: vendor.phone,
       address: vendor.address,
-      totalPurchases,
+      paymentTerms: vendor.paymentTerms,
+      totalPurchases: totalSpent,
+      totalSpent: totalSpent,
+      totalOrders: vendorPOs.length,
       status: vendor.status as "active" | "inactive",
       rating: vendor.rating
     };
@@ -144,14 +158,20 @@ export const getVendorPurchaseHistory = (): Record<string, PurchaseOrderHistory[
   vendors.forEach(vendor => {
     const vendorPOs = purchaseOrders.filter(po => po.vendor === vendor.id);
     history[vendor.id] = vendorPOs.map(po => ({
-      poNumber: po.poNumber,
+      id: po.id,
+      orderNumber: po.poNumber,
       date: po.orderDate,
-      amount: po.totalAmount,
+      totalAmount: po.totalAmount,
       status: po.status,
-      items: po.items.map(item => {
+      products: po.items.map(item => {
         const product = getProductById(item.productId);
-        return `${product?.name || 'Unknown'} (${item.quantity})`;
-      }).join(', ')
+        return {
+          name: product?.name || 'Unknown',
+          sku: product?.sku || 'N/A',
+          quantity: item.quantity,
+          unitPrice: item.unitPrice
+        };
+      })
     }));
   });
   

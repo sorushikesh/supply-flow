@@ -14,7 +14,9 @@ export type StatusType =
   | "cancelled"
   | "processing"
   | "pending_approval"
-  | "changes_requested";
+  | "changes_requested"
+  | "received"
+  | "shipped";
 
 interface StatusBadgeProps {
   status: StatusType;
@@ -36,6 +38,8 @@ const statusConfig: Record<StatusType, { label: string; variant: "default" | "se
   processing: { label: "Processing", variant: "secondary" },
   pending_approval: { label: "Pending Approval", variant: "secondary" },
   changes_requested: { label: "Changes Requested", variant: "outline" },
+  received: { label: "Received", variant: "default" },
+  shipped: { label: "Shipped", variant: "secondary" },
 };
 
 export function StatusBadge({ status, className }: StatusBadgeProps) {

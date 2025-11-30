@@ -181,7 +181,7 @@ export default function Vendors() {
       key: "totalSpent",
       header: "Total Spent",
       className: "text-right font-mono",
-      render: (vendor) => `$${vendor.totalSpent.toLocaleString()}`,
+      render: (vendor) => `$${(vendor.totalSpent ?? 0).toLocaleString()}`,
     },
     {
       key: "status",
@@ -274,10 +274,10 @@ export default function Vendors() {
     });
   };
 
-  const totalSpent = mockVendors.reduce((sum, v) => sum + v.totalSpent, 0);
+  const totalSpent = mockVendors.reduce((sum, v) => sum + (v.totalSpent ?? 0), 0);
   const activeVendors = mockVendors.filter((v) => v.status === "active").length;
   const inactiveVendors = mockVendors.filter((v) => v.status === "inactive").length;
-  const totalOrders = mockVendors.reduce((sum, v) => sum + v.totalOrders, 0);
+  const totalOrders = mockVendors.reduce((sum, v) => sum + (v.totalOrders ?? 0), 0);
   const avgOrderValue = totalOrders > 0 ? totalSpent / totalOrders : 0;
 
   return (
@@ -645,7 +645,7 @@ export default function Vendors() {
                       </div>
                       <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Total Orders</p>
                     </div>
-                    <p className="text-3xl font-bold">{selectedVendor?.totalOrders}</p>
+                    <p className="text-3xl font-bold">{selectedVendor?.totalOrders ?? 0}</p>
                     <p className="text-xs text-muted-foreground mt-1">Purchase orders</p>
                   </CardContent>
                 </Card>
@@ -658,7 +658,7 @@ export default function Vendors() {
                       <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Total Spent</p>
                     </div>
                     <p className="text-3xl font-bold font-mono text-orange-600">
-                      ${selectedVendor?.totalSpent.toLocaleString()}
+                      ${(selectedVendor?.totalSpent ?? 0).toLocaleString()}
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">Lifetime spending</p>
                   </CardContent>
