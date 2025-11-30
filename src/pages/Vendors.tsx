@@ -309,7 +309,6 @@ export default function Vendors() {
           <DataTable
             columns={columns}
             data={filteredData}
-            onRowClick={(vendor) => setSelectedVendor(vendor)}
             testIdPrefix="vendors"
           />
         </CardContent>

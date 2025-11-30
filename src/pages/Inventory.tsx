@@ -125,7 +125,6 @@ export default function Inventory() {
   const [editingItem, setEditingItem] = useState<InventoryItem | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<InventoryItem | null>(null);
-  const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [formData, setFormData] = useState({
     sku: "",
     name: "",
@@ -396,52 +395,6 @@ export default function Inventory() {
       {/* Main Content */}
       <Card className="border-primary/20">
         <CardContent className="p-6">
-          {selectedItems.length > 0 && (
-            <Card className="mb-4 border-primary">
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <p className="text-sm font-medium">
-                    {selectedItems.length} item{selectedItems.length > 1 ? 's' : ''} selected
-                  </p>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        toast({
-                          title: "Bulk Update",
-                          description: `Updated ${selectedItems.length} items`,
-                        });
-                        setSelectedItems([]);
-                      }}
-                    >
-                      Update Stock
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        toast({
-                          title: "Export Started",
-                          description: `Exporting ${selectedItems.length} items to CSV`,
-                        });
-                      }}
-                    >
-                      Export Selected
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setSelectedItems([])}
-                    >
-                      Clear Selection
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
           <SearchFilter
             searchPlaceholder="Search by SKU or product name..."
             searchValue={search}
@@ -468,7 +421,6 @@ export default function Inventory() {
           <DataTable
             columns={columns}
             data={filteredData}
-            selectable
             testIdPrefix="inventory"
           />
         </CardContent>

@@ -1,6 +1,4 @@
-import { useState, useEffect } from "react";
 import { PageBackground } from "@/components/PageBackground";
-import { useToast } from "@/hooks/use-toast";
 import { DataTable, type Column } from "@/components/DataTable";
 import { StatusBadge, type StatusType } from "@/components/StatusBadge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -74,20 +72,6 @@ const mockOverdueInvoices = [
 ];
 
 export default function Dashboard() {
-  const { toast } = useToast();
-  const [selectedOrder, setSelectedOrder] = useState<RecentOrder | null>(null);
-  const [activeMetric, setActiveMetric] = useState<string>("revenue");
-
-  useEffect(() => {
-    // Show low stock alert on dashboard load
-    if (mockLowStockItems.length > 0) {
-      toast({
-        title: "Low Stock Alert",
-        description: `${mockLowStockItems.length} items are below reorder level`,
-        variant: "destructive",
-      });
-    }
-  }, []);
 
   const orderColumns: Column<RecentOrder>[] = [
     { key: "orderNumber", header: "Order #", className: "font-mono text-sm" },
@@ -320,7 +304,6 @@ export default function Dashboard() {
                 <DataTable
                   columns={orderColumns}
                   data={mockRecentOrders}
-                  onRowClick={(order) => setSelectedOrder(order)}
                   pageSize={5}
                   testIdPrefix="recent-orders"
                 />

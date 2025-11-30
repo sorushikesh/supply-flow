@@ -72,8 +72,6 @@ export default function SalesOrders() {
   const { toast } = useToast();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
-  const [dateFrom, setDateFrom] = useState("");
-  const [dateTo, setDateTo] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [customer, setCustomer] = useState("");
   const [deliveryDate, setDeliveryDate] = useState("");
@@ -86,16 +84,7 @@ export default function SalesOrders() {
       so.soNumber.toLowerCase().includes(search.toLowerCase()) ||
       so.customer.toLowerCase().includes(search.toLowerCase());
     const matchesStatus = statusFilter === "All" || so.status === statusFilter.toLowerCase().replace(" ", "_");
-    
-    let matchesDateRange = true;
-    if (dateFrom) {
-      matchesDateRange = matchesDateRange && new Date(so.orderDate) >= new Date(dateFrom);
-    }
-    if (dateTo) {
-      matchesDateRange = matchesDateRange && new Date(so.orderDate) <= new Date(dateTo);
-    }
-    
-    return matchesSearch && matchesStatus && matchesDateRange;
+    return matchesSearch && matchesStatus;
   });
 
   const columns: Column<SalesOrder>[] = [

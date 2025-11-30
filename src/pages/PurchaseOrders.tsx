@@ -72,8 +72,6 @@ export default function PurchaseOrders() {
   const { toast } = useToast();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
-  const [dateFrom, setDateFrom] = useState("");
-  const [dateTo, setDateTo] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [vendor, setVendor] = useState("");
   const [expectedDate, setExpectedDate] = useState("");
@@ -86,16 +84,7 @@ export default function PurchaseOrders() {
       po.poNumber.toLowerCase().includes(search.toLowerCase()) ||
       po.vendor.toLowerCase().includes(search.toLowerCase());
     const matchesStatus = statusFilter === "All" || po.status === statusFilter.toLowerCase();
-    
-    let matchesDateRange = true;
-    if (dateFrom) {
-      matchesDateRange = matchesDateRange && new Date(po.orderDate) >= new Date(dateFrom);
-    }
-    if (dateTo) {
-      matchesDateRange = matchesDateRange && new Date(po.orderDate) <= new Date(dateTo);
-    }
-    
-    return matchesSearch && matchesStatus && matchesDateRange;
+    return matchesSearch && matchesStatus;
   });
 
   const columns: Column<PurchaseOrder>[] = [
