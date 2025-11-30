@@ -1439,48 +1439,184 @@ export default function FinancialManagement() {
         {/* Approval Modal */}
         {selectedInvoice && (
           <Dialog open={approvalModalOpen} onOpenChange={setApprovalModalOpen}>
-            <DialogContent>
+            <DialogContent className="max-w-2xl">
               <DialogHeader>
-                <DialogTitle>Review Invoice - {selectedInvoice.invoiceNumber}</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-sm text-muted-foreground">Party</p>
-                    <p className="font-semibold">{selectedInvoice.party}</p>
+                <div className="flex items-center gap-3">
+                  <div className="p-3 rounded-lg bg-gradient-to-br from-primary/20 to-blue-500/20">
+                    <CheckCircle className="h-6 w-6 text-primary" />
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Amount</p>
-                    <p className="text-lg font-bold">${selectedInvoice.amount.toLocaleString()}</p>
+                    <DialogTitle className="text-xl">Review Invoice</DialogTitle>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {selectedInvoice.invoiceNumber} • Level {selectedInvoice.approvalLevel || 1} Approval
+                    </p>
                   </div>
                 </div>
-                <div>
-                  <Label htmlFor="comments">Comments (Optional)</Label>
+              </DialogHeader>
+
+              <div className="space-y-6">
+                {/* Invoice Summary */}
+                <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
+                  <CardContent className="pt-6">
+                    <div className="grid grid-cols-3 gap-4">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 rounded-lg bg-blue-500/10">
+                          <User className="h-5 w-5 text-blue-600" />
+                        </div>
+                        <div>
+                          <p className="text-xs text-muted-foreground">Party</p>
+                          <p className="font-semibold text-sm">{selectedInvoice.party}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 rounded-lg bg-green-500/10">
+                          <DollarSign className="h-5 w-5 text-green-600" />
+                        </div>
+                        <div>
+                          <p className="text-xs text-muted-foreground">Amount</p>
+                          <p className="text-lg font-bold text-green-600">${selectedInvoice.amount.toLocaleString()}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 rounded-lg bg-purple-500/10">
+                          <Calendar className="h-5 w-5 text-purple-600" />
+                        </div>
+                        <div>
+                          <p className="text-xs text-muted-foreground">Due Date</p>
+                          <p className="font-semibold text-sm">{selectedInvoice.dueDate}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Approval Progress */}
+                {selectedInvoice.totalApprovalLevels && selectedInvoice.totalApprovalLevels > 1 && (
+                  <div className="p-4 rounded-lg border bg-muted/30">
+                    <div className="flex items-center justify-between mb-3">
+                      <p className="text-sm font-medium flex items-center gap-2">
+                        <TrendingUp className="h-4 w-4" />
+                        Approval Progress
+                      </p>
+                      <Badge variant="outline">
+                        Level {selectedInvoice.approvalLevel || 1} of {selectedInvoice.totalApprovalLevels}
+                      </Badge>
+                    </div>
+                    <div className="flex gap-2">
+                      {Array.from({ length: selectedInvoice.totalApprovalLevels }).map((_, i) => (
+                        <div
+                          key={i}
+                          className={`h-2 flex-1 rounded-full transition-all ${
+                            i < (selectedInvoice.approvalLevel || 1) - 1
+                              ? "bg-green-500"
+                              : i === (selectedInvoice.approvalLevel || 1) - 1
+                              ? "bg-primary animate-pulse"
+                              : "bg-muted"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-2">
+                      {selectedInvoice.approvalLevel === selectedInvoice.totalApprovalLevels
+                        ? "This is the final approval level"
+                        : `${selectedInvoice.totalApprovalLevels - (selectedInvoice.approvalLevel || 1)} more level(s) required after this`}
+                    </p>
+                  </div>
+                )}
+
+                {/* Previous Approvals */}
+                {selectedInvoice.approvalHistory && selectedInvoice.approvalHistory.filter(a => a.action === "approved").length > 0 && (
+                  <div className="space-y-2">
+                    <p className="text-sm font-medium flex items-center gap-2">
+                      <History className="h-4 w-4" />
+                      Previous Approvals
+                    </p>
+                    <div className="space-y-2">
+                      {selectedInvoice.approvalHistory
+                        .filter(a => a.action === "approved")
+                        .map((approval, idx) => (
+                          <div key={idx} className="flex items-center gap-2 text-sm p-2 rounded bg-green-500/5 border border-green-500/20">
+                            <CheckCircle className="h-4 w-4 text-green-600" />
+                            <span className="font-medium">Level {approval.level}</span>
+                            <span className="text-muted-foreground">•</span>
+                            <span className="text-muted-foreground">{approval.approver}</span>
+                            {approval.date && (
+                              <>
+                                <span className="text-muted-foreground">•</span>
+                                <span className="text-xs text-muted-foreground">{approval.date}</span>
+                              </>
+                            )}
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Comments Section */}
+                <div className="space-y-2">
+                  <Label htmlFor="approval-comments-modal" className="text-sm font-medium flex items-center gap-2">
+                    <FileText className="h-4 w-4" />
+                    Your Decision & Comments
+                  </Label>
                   <Textarea
-                    id="comments"
-                    placeholder="Add approval comments..."
+                    id="approval-comments-modal"
+                    placeholder="Provide your feedback, reasoning, or any additional notes for this decision..."
+                    className="min-h-[100px] resize-none"
                     value={approvalComments}
                     onChange={(e) => setApprovalComments(e.target.value)}
                   />
-                </div>
-                <div className="p-3 bg-blue-50 dark:bg-blue-950 rounded-lg">
-                  <p className="text-sm text-blue-900 dark:text-blue-100">
-                    <AlertCircle className="h-4 w-4 inline mr-2" />
-                    Current approval level: {selectedInvoice.approvalLevel}
+                  <p className="text-xs text-muted-foreground flex items-center gap-1">
+                    <AlertCircle className="h-3 w-3" />
+                    Comments will be added to approval history and visible to all stakeholders
                   </p>
                 </div>
+
+                {/* Action Guidance */}
+                <Card className="border-amber-500/30 bg-gradient-to-br from-amber-500/5 to-orange-500/5">
+                  <CardContent className="pt-4 pb-4">
+                    <div className="flex gap-3">
+                      <AlertTriangle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                      <div className="space-y-2 text-sm">
+                        <p className="font-medium text-amber-900 dark:text-amber-100">Before you decide:</p>
+                        <ul className="space-y-1 text-muted-foreground">
+                          <li className="flex items-start gap-2">
+                            <span className="text-primary mt-0.5">•</span>
+                            <span>Verify invoice details and amount are correct</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span className="text-primary mt-0.5">•</span>
+                            <span>Ensure party information matches your records</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span className="text-primary mt-0.5">•</span>
+                            <span>Check if additional documentation is required</span>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setApprovalModalOpen(false)}>
+
+              <DialogFooter className="gap-2">
+                <Button variant="outline" onClick={() => setApprovalModalOpen(false)} className="gap-2">
+                  <XCircle className="h-4 w-4" />
                   Cancel
                 </Button>
-                <Button variant="destructive" onClick={handleReject}>
-                  <XCircle className="h-4 w-4 mr-2" />
-                  Reject
+                <Button 
+                  variant="destructive" 
+                  onClick={handleReject}
+                  className="gap-2 hover:scale-105 transition-transform"
+                >
+                  <XCircle className="h-4 w-4" />
+                  Reject Invoice
                 </Button>
-                <Button onClick={handleApprove}>
-                  <CheckCircle className="h-4 w-4 mr-2" />
-                  Approve
+                <Button 
+                  onClick={handleApprove}
+                  className="gap-2 hover:scale-105 transition-transform shadow-md hover:shadow-lg"
+                >
+                  <CheckCircle className="h-4 w-4" />
+                  Approve Invoice
                 </Button>
               </DialogFooter>
             </DialogContent>
@@ -1490,64 +1626,183 @@ export default function FinancialManagement() {
         {/* Record Payment Modal */}
         {selectedInvoice && (
           <Dialog open={paymentModalOpen} onOpenChange={setPaymentModalOpen}>
-            <DialogContent>
+            <DialogContent className="max-w-2xl">
               <DialogHeader>
-                <DialogTitle>Record Payment - {selectedInvoice.invoiceNumber}</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4">
-                <div className="p-4 bg-muted rounded-lg">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm text-muted-foreground">Total Amount</p>
-                      <p className="text-lg font-bold">${selectedInvoice.amount.toLocaleString()}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">Balance Due</p>
-                      <p className="text-lg font-bold text-red-600">
-                        ${(selectedInvoice.amount - selectedInvoice.paidAmount).toLocaleString()}
-                      </p>
-                    </div>
+                <div className="flex items-center gap-3">
+                  <div className="p-3 rounded-lg bg-gradient-to-br from-green-500/20 to-emerald-500/20">
+                    <CreditCard className="h-6 w-6 text-green-600" />
+                  </div>
+                  <div>
+                    <DialogTitle className="text-xl">Record Payment</DialogTitle>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {selectedInvoice.invoiceNumber} • {selectedInvoice.party}
+                    </p>
                   </div>
                 </div>
-                <div>
-                  <Label htmlFor="paymentAmount">Payment Amount</Label>
-                  <Input
-                    id="paymentAmount"
-                    type="number"
-                    placeholder="0.00"
-                    value={paymentAmount}
-                    onChange={(e) => setPaymentAmount(e.target.value)}
-                  />
+              </DialogHeader>
+
+              <div className="space-y-6">
+                {/* Invoice Summary */}
+                <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
+                  <CardContent className="pt-6">
+                    <div className="grid grid-cols-3 gap-4">
+                      <div className="flex flex-col items-center justify-center p-4 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <p className="text-xs text-muted-foreground mb-1">Invoice Total</p>
+                        <p className="text-2xl font-bold">${selectedInvoice.amount.toLocaleString()}</p>
+                      </div>
+                      <div className="flex flex-col items-center justify-center p-4 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <p className="text-xs text-muted-foreground mb-1">Already Paid</p>
+                        <p className="text-2xl font-bold text-green-600">
+                          ${selectedInvoice.paidAmount.toLocaleString()}
+                        </p>
+                      </div>
+                      <div className="flex flex-col items-center justify-center p-4 rounded-lg bg-red-500/10 border border-red-500/20">
+                        <p className="text-xs text-muted-foreground mb-1">Balance Due</p>
+                        <p className="text-2xl font-bold text-red-600">
+                          ${(selectedInvoice.amount - selectedInvoice.paidAmount).toLocaleString()}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Payment Progress */}
+                    <div className="mt-4">
+                      <div className="flex items-center justify-between text-xs text-muted-foreground mb-2">
+                        <span>Payment Progress</span>
+                        <span className="font-medium">
+                          {Math.round((selectedInvoice.paidAmount / selectedInvoice.amount) * 100)}% Complete
+                        </span>
+                      </div>
+                      <div className="h-2 bg-muted rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-gradient-to-r from-green-500 to-emerald-500 transition-all duration-500"
+                          style={{ width: `${(selectedInvoice.paidAmount / selectedInvoice.amount) * 100}%` }}
+                        />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Payment Details Form */}
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="paymentAmount" className="text-sm font-medium flex items-center gap-2 mb-2">
+                      <DollarSign className="h-4 w-4" />
+                      Payment Amount
+                    </Label>
+                    <div className="relative">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground font-medium">$</span>
+                      <Input
+                        id="paymentAmount"
+                        type="number"
+                        placeholder="0.00"
+                        className="pl-7 text-lg font-semibold"
+                        value={paymentAmount}
+                        onChange={(e) => setPaymentAmount(e.target.value)}
+                      />
+                    </div>
+                    <div className="flex gap-2 mt-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setPaymentAmount(((selectedInvoice.amount - selectedInvoice.paidAmount) / 2).toFixed(2))}
+                        className="text-xs"
+                      >
+                        50% Balance
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setPaymentAmount((selectedInvoice.amount - selectedInvoice.paidAmount).toFixed(2))}
+                        className="text-xs"
+                      >
+                        Full Balance
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="paymentMethod" className="text-sm font-medium flex items-center gap-2 mb-2">
+                      <CreditCard className="h-4 w-4" />
+                      Payment Method
+                    </Label>
+                    <Select value={paymentMethod} onValueChange={setPaymentMethod}>
+                      <SelectTrigger id="paymentMethod">
+                        <SelectValue placeholder="Select payment method" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {paymentMethods.map(method => (
+                          <SelectItem key={method} value={method}>
+                            <div className="flex items-center gap-2">
+                              <CreditCard className="h-4 w-4" />
+                              {method}
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="reference" className="text-sm font-medium flex items-center gap-2 mb-2">
+                      <FileText className="h-4 w-4" />
+                      Reference / Transaction Number
+                    </Label>
+                    <Input
+                      id="reference"
+                      placeholder="e.g., TRN-123456, Check #789"
+                      value={paymentReference}
+                      onChange={(e) => setPaymentReference(e.target.value)}
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Enter transaction ID, check number, or any reference for this payment
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <Label htmlFor="paymentMethod">Payment Method</Label>
-                  <Select value={paymentMethod} onValueChange={setPaymentMethod}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select method" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {paymentMethods.map(method => (
-                        <SelectItem key={method} value={method}>{method}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label htmlFor="reference">Reference Number</Label>
-                  <Input
-                    id="reference"
-                    placeholder="Enter reference number"
-                    value={paymentReference}
-                    onChange={(e) => setPaymentReference(e.target.value)}
-                  />
-                </div>
+
+                {/* Payment Info */}
+                <Card className="border-blue-500/30 bg-gradient-to-br from-blue-500/5 to-cyan-500/5">
+                  <CardContent className="pt-4 pb-4">
+                    <div className="flex gap-3">
+                      <AlertCircle className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                      <div className="space-y-2 text-sm">
+                        <p className="font-medium text-blue-900 dark:text-blue-100">Payment Information:</p>
+                        <ul className="space-y-1 text-muted-foreground">
+                          <li className="flex items-start gap-2">
+                            <span className="text-primary mt-0.5">•</span>
+                            <span>Payment will be recorded immediately upon submission</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span className="text-primary mt-0.5">•</span>
+                            <span>Invoice status will update based on the payment amount</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span className="text-primary mt-0.5">•</span>
+                            <span>Payment history will be visible in invoice details</span>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setPaymentModalOpen(false)}>
+
+              <DialogFooter className="gap-2">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setPaymentModalOpen(false)}
+                  className="gap-2"
+                >
+                  <XCircle className="h-4 w-4" />
                   Cancel
                 </Button>
-                <Button onClick={handleRecordPayment}>
-                  <CreditCard className="h-4 w-4 mr-2" />
+                <Button 
+                  onClick={handleRecordPayment}
+                  className="gap-2 hover:scale-105 transition-transform shadow-md hover:shadow-lg"
+                  disabled={!paymentAmount || !paymentMethod || !paymentReference}
+                >
+                  <CheckCircle className="h-4 w-4" />
                   Record Payment
                 </Button>
               </DialogFooter>
