@@ -138,6 +138,15 @@
     animation: scaleIn 0.3s ease-out;
   }
   
+  .animate-pulse-subtle {
+    animation: pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  
+  .animate-gradient {
+    background-size: 200% 200%;
+    animation: gradient-shift 3s ease infinite;
+  }
+  
   /* Futuristic glow effect */
   .glow-effect {
     position: relative;
@@ -309,6 +318,15 @@
   }
   50% {
     opacity: 0.5;
+  }
+}
+
+@keyframes pulse-subtle {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
   }
 }
 

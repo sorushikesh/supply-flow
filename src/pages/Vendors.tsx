@@ -9,6 +9,14 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Dialog,
   DialogContent,
@@ -23,108 +31,17 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
-import { Building2, Mail, Phone, Package, ShoppingCart, Calendar, DollarSign, TrendingDown } from "lucide-react";
+import { Building2, Mail, Phone, Package, ShoppingCart, Calendar, DollarSign, TrendingDown, TrendingUp, Building, History, Download, Filter, Pencil, Trash2, Eye, Plus } from "lucide-react";
+import { EmptyState } from "@/components/EmptyState";
+import { BulkActions } from "@/components/BulkActions";
+import { ExportDialog } from "@/components/ExportDialog";
+import { ActivityLogDialog, generateMockActivityLogs, type ActivityLog } from "@/components/ActivityLog";
+import { AdvancedFilterDialog, applyAdvancedFilters, type FilterCondition, type SavedFilter } from "@/components/AdvancedFilter";
+import { getVendorsData, getVendorPurchaseHistory, type Vendor, type PurchaseOrderHistory } from "@/data/dataTransformers";
 
-interface Vendor {
-  id: string;
-  code: string;
-  name: string;
-  email: string;
-  phone: string;
-  address: string;
-  paymentTerms: string;
-  totalOrders: number;
-  totalSpent: number;
-  status: "active" | "inactive";
-}
-
-interface PurchaseOrderHistory {
-  id: string;
-  orderNumber: string;
-  date: string;
-  products: { name: string; sku: string; quantity: number; unitPrice: number }[];
-  totalAmount: number;
-  status: "completed" | "pending" | "cancelled";
-}
-
-const mockVendors: Vendor[] = [
-  { id: "1", code: "V-001", name: "Acme Corporation", email: "sales@acme.com", phone: "+1 555-0101", address: "123 Industrial Ave, City", paymentTerms: "Net 30", totalOrders: 45, totalSpent: 156000, status: "active" },
-  { id: "2", code: "V-002", name: "Global Supply Co", email: "orders@globalsupply.com", phone: "+1 555-0102", address: "456 Commerce St, Town", paymentTerms: "Net 45", totalOrders: 32, totalSpent: 89500, status: "active" },
-  { id: "3", code: "V-003", name: "Quality Parts Inc", email: "info@qualityparts.com", phone: "+1 555-0103", address: "789 Factory Rd, Village", paymentTerms: "Net 15", totalOrders: 28, totalSpent: 67800, status: "active" },
-  { id: "4", code: "V-004", name: "Prime Materials Ltd", email: "contact@primematerials.com", phone: "+1 555-0104", address: "321 Supply Lane, Metro", paymentTerms: "Net 30", totalOrders: 18, totalSpent: 45200, status: "inactive" },
-  { id: "5", code: "V-005", name: "Tech Components", email: "orders@techcomp.com", phone: "+1 555-0105", address: "654 Tech Park, Hub", paymentTerms: "Net 60", totalOrders: 56, totalSpent: 234000, status: "active" },
-  { id: "6", code: "V-006", name: "Supreme Electronics", email: "sales@supremeelec.com", phone: "+1 555-0106", address: "987 Circuit Blvd, Tech City", paymentTerms: "Net 30", totalOrders: 41, totalSpent: 178900, status: "active" },
-  { id: "7", code: "V-007", name: "Mega Manufacturing", email: "orders@megamfg.com", phone: "+1 555-0107", address: "246 Factory Lane, Industrial Zone", paymentTerms: "Net 45", totalOrders: 63, totalSpent: 289400, status: "active" },
-  { id: "8", code: "V-008", name: "Alpha Distributors", email: "info@alphadist.com", phone: "+1 555-0108", address: "135 Warehouse Way, Distribution Hub", paymentTerms: "Net 20", totalOrders: 37, totalSpent: 123700, status: "active" },
-  { id: "9", code: "V-009", name: "Beta Supplies Ltd", email: "sales@betasupplies.com", phone: "+1 555-0109", address: "579 Supply Road, Business Park", paymentTerms: "Net 30", totalOrders: 29, totalSpent: 98600, status: "active" },
-  { id: "10", code: "V-010", name: "Gamma Industries", email: "orders@gammaindustries.com", phone: "+1 555-0110", address: "802 Production Ave, Factory District", paymentTerms: "Net 60", totalOrders: 48, totalSpent: 201500, status: "active" },
-  { id: "11", code: "V-011", name: "Delta Components", email: "contact@deltacomp.com", phone: "+1 555-0111", address: "913 Component St, Tech Valley", paymentTerms: "Net 30", totalOrders: 22, totalSpent: 76800, status: "inactive" },
-  { id: "12", code: "V-012", name: "Epsilon Materials", email: "sales@epsilonmaterials.com", phone: "+1 555-0112", address: "1024 Material Blvd, Industrial Park", paymentTerms: "Net 45", totalOrders: 54, totalSpent: 245300, status: "active" },
-  { id: "13", code: "V-013", name: "Zeta Trading Co", email: "orders@zetatrading.com", phone: "+1 555-0113", address: "1135 Trade Center, Commerce District", paymentTerms: "Net 15", totalOrders: 34, totalSpent: 112400, status: "active" },
-  { id: "14", code: "V-014", name: "Theta Wholesale", email: "info@thetawholesale.com", phone: "+1 555-0114", address: "1246 Wholesale Plaza, Market Zone", paymentTerms: "Net 30", totalOrders: 44, totalSpent: 167900, status: "active" },
-  { id: "15", code: "V-015", name: "Omega Solutions", email: "sales@omegasolutions.com", phone: "+1 555-0115", address: "1357 Solution Drive, Business Hub", paymentTerms: "Net 60", totalOrders: 58, totalSpent: 278600, status: "active" },
-];
-
-const mockPurchaseOrders: Record<string, PurchaseOrderHistory[]> = {
-  "1": [
-    {
-      id: "1",
-      orderNumber: "PO-2024-0045",
-      date: "2024-11-20",
-      products: [
-        { name: "Widget Alpha", sku: "WDG-001", quantity: 200, unitPrice: 22.50 },
-        { name: "Component X", sku: "CMP-045", quantity: 500, unitPrice: 8.75 },
-      ],
-      totalAmount: 8875.00,
-      status: "completed"
-    },
-    {
-      id: "2",
-      orderNumber: "PO-2024-0038",
-      date: "2024-11-10",
-      products: [
-        { name: "Widget Beta", sku: "WDG-002", quantity: 150, unitPrice: 28.00 },
-      ],
-      totalAmount: 4200.00,
-      status: "completed"
-    },
-    {
-      id: "3",
-      orderNumber: "PO-2024-0029",
-      date: "2024-11-01",
-      products: [
-        { name: "Gadget Pro", sku: "GDG-023", quantity: 100, unitPrice: 125.00 },
-        { name: "Accessory Pack", sku: "ACC-001", quantity: 200, unitPrice: 12.50 },
-      ],
-      totalAmount: 15000.00,
-      status: "completed"
-    },
-  ],
-  "2": [
-    {
-      id: "4",
-      orderNumber: "PO-2024-0042",
-      date: "2024-11-18",
-      products: [
-        { name: "Component Y", sku: "CMP-046", quantity: 1000, unitPrice: 6.50 },
-      ],
-      totalAmount: 6500.00,
-      status: "pending"
-    },
-    {
-      id: "5",
-      orderNumber: "PO-2024-0035",
-      date: "2024-11-08",
-      products: [
-        { name: "Device Ultra", sku: "DEV-100", quantity: 50, unitPrice: 220.00 },
-        { name: "Widget Gamma", sku: "WDG-003", quantity: 75, unitPrice: 38.00 },
-      ],
-      totalAmount: 13850.00,
-      status: "completed"
-    },
-  ],
-};
-
+const mockVendors = getVendorsData();
+const mockPurchaseOrders = getVendorPurchaseHistory();
+  
 export default function Vendors() {
   const { toast } = useToast();
   const [search, setSearch] = useState("");
@@ -132,6 +49,28 @@ export default function Vendors() {
   const [modalOpen, setModalOpen] = useState(false);
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [selectedVendor, setSelectedVendor] = useState<Vendor | null>(null);
+  
+  // New features state
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [exportDialogOpen, setExportDialogOpen] = useState(false);
+  const [activityLogOpen, setActivityLogOpen] = useState(false);
+  const [advancedFilterOpen, setAdvancedFilterOpen] = useState(false);
+  const [activityLogs] = useState<ActivityLog[]>(generateMockActivityLogs());
+  const [filterConditions, setFilterConditions] = useState<FilterCondition[]>([]);
+  const [savedFilters, setSavedFilters] = useState<SavedFilter[]>([
+    {
+      id: "1",
+      name: "Active Vendors",
+      conditions: [{ id: "1", field: "status", operator: "equals", value: "active", fieldType: "select" }],
+      isFavorite: true,
+    },
+    {
+      id: "2",
+      name: "High Spend Vendors",
+      conditions: [{ id: "1", field: "totalSpent", operator: "greater", value: "100000", fieldType: "number" }],
+    },
+  ]);
+  
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -149,7 +88,39 @@ export default function Vendors() {
     return matchesSearch && matchesStatus;
   });
 
+  // Apply advanced filters if any
+  const finalData = filterConditions.length > 0 
+    ? applyAdvancedFilters(filteredData, filterConditions)
+    : filteredData;
+
   const columns: Column<Vendor>[] = [
+    {
+      key: "select",
+      header: () => (
+        <Checkbox
+          checked={selectedItems.length === finalData.length && finalData.length > 0}
+          onCheckedChange={(checked) => {
+            if (checked) {
+              setSelectedItems(finalData.map((item) => item.id));
+            } else {
+              setSelectedItems([]);
+            }
+          }}
+        />
+      ),
+      render: (vendor) => (
+        <Checkbox
+          checked={selectedItems.includes(vendor.id)}
+          onCheckedChange={(checked) => {
+            if (checked) {
+              setSelectedItems([...selectedItems, vendor.id]);
+            } else {
+              setSelectedItems(selectedItems.filter((id) => id !== vendor.id));
+            }
+          }}
+        />
+      ),
+    },
     { key: "code", header: "Code", className: "font-mono text-sm" },
     {
       key: "name",
@@ -253,90 +224,239 @@ export default function Vendors() {
     setFormData({ name: "", email: "", phone: "", address: "", paymentTerms: "" });
   };
 
+  // Bulk operation handlers
+  const handleBulkExport = () => {
+    setExportDialogOpen(true);
+  };
+
+  const handleBulkEmail = () => {
+    toast({
+      title: "Email Sent",
+      description: `Report for ${selectedItems.length} vendors has been sent to your email.`,
+    });
+  };
+
+  const handleBulkStatusChange = (newStatus: string) => {
+    toast({
+      title: "Status Updated",
+      description: `${selectedItems.length} vendors have been updated to ${newStatus}.`,
+    });
+    setSelectedItems([]);
+  };
+
+  const handleBulkDelete = () => {
+    toast({
+      title: "Vendors Deleted",
+      description: `${selectedItems.length} vendors have been deleted successfully.`,
+      variant: "destructive",
+    });
+    setSelectedItems([]);
+  };
+
+  const handleApplyFilters = (conditions: FilterCondition[]) => {
+    setFilterConditions(conditions);
+    toast({
+      title: "Filters Applied",
+      description: `Applied ${conditions.length} filter condition(s).`,
+    });
+  };
+
+  const handleSaveFilter = (name: string, conditions: FilterCondition[]) => {
+    const newFilter: SavedFilter = {
+      id: String(Date.now()),
+      name,
+      conditions,
+    };
+    setSavedFilters([...savedFilters, newFilter]);
+    toast({
+      title: "Filter Saved",
+      description: `Filter \"${name}\" has been saved successfully.`,
+    });
+  };
+
   const totalSpent = mockVendors.reduce((sum, v) => sum + v.totalSpent, 0);
   const activeVendors = mockVendors.filter((v) => v.status === "active").length;
+  const inactiveVendors = mockVendors.filter((v) => v.status === "inactive").length;
+  const totalOrders = mockVendors.reduce((sum, v) => sum + v.totalOrders, 0);
+  const avgOrderValue = totalOrders > 0 ? totalSpent / totalOrders : 0;
 
   return (
     <PageBackground>
-      <div className="p-4 lg:p-6 max-w-[1600px] mx-auto space-y-6">
+      <div className="relative z-10 p-6">
         {/* Page Header */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent">
-              Vendors
-            </h1>
-            <p className="text-muted-foreground mt-1 text-sm sm:text-base">Manage your supplier relationships</p>
-          </div>
-          <Button 
-            onClick={() => setModalOpen(true)} 
-            className="gap-2 hover:shadow-lg hover:scale-105 transition-all duration-200"
-            aria-label="Add new vendor"
-          >
-            <Building2 className="h-4 w-4" />
-            Add Vendor
-          </Button>
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold mb-2">Vendors</h1>
+          <p className="text-muted-foreground">Manage and track supplier relationships</p>
         </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Card className="border-primary/20 hover:border-primary/40 hover:shadow-md transition-all duration-200 cursor-pointer">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-2">
-              <Building2 className="h-4 w-4 text-primary" aria-hidden="true" />
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Total Vendors
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <p className="text-2xl font-bold">{mockVendors.length}</p>
+                <Building2 className="h-8 w-8 text-blue-500" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Active
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <p className="text-2xl font-bold">{activeVendors}</p>
+                <Building2 className="h-8 w-8 text-green-500" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Inactive
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <p className="text-2xl font-bold">{inactiveVendors}</p>
+                <Building2 className="h-8 w-8 text-yellow-500" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Total Spent
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <p className="text-2xl font-bold text-red-600">${(totalSpent / 1000).toFixed(1)}k</p>
+                <DollarSign className="h-8 w-8 text-red-500" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Avg Order
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <p className="text-2xl font-bold text-green-600">${(avgOrderValue / 1000).toFixed(1)}k</p>
+                <TrendingUp className="h-8 w-8 text-green-500" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Toolbar */}
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex flex-col lg:flex-row gap-4">
+              {/* Search */}
+              <div className="flex-1">
+                <SearchFilter
+                  searchValue={search}
+                  onSearchChange={setSearch}
+                  searchPlaceholder="Search vendors..."
+                />
+              </div>
+
+              {/* Filters */}
+              <div className="flex flex-wrap gap-2">
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger className="w-[150px]">
+                    <SelectValue placeholder="Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="All">All Status</SelectItem>
+                    <SelectItem value="Active">Active</SelectItem>
+                    <SelectItem value="Inactive">Inactive</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                <Button
+                  variant="outline"
+                  onClick={() => setAdvancedFilterOpen(true)}
+                >
+                  <Filter className="h-4 w-4 mr-2" />
+                  Advanced
+                  {filterConditions.length > 0 && (
+                    <Badge variant="secondary" className="ml-2">
+                      {filterConditions.length}
+                    </Badge>
+                  )}
+                </Button>
+
+                <Button
+                  variant="outline"
+                  onClick={() => setActivityLogOpen(true)}
+                >
+                  <History className="h-4 w-4 mr-2" />
+                  Activity Log
+                </Button>
+              </div>
+
+              {/* Actions */}
+              <div className="flex gap-2">
+                <Button onClick={() => setModalOpen(true)}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Vendor
+                </Button>
+              </div>
             </div>
-            <p className="text-xs text-muted-foreground font-medium">Total Vendors</p>
-            <p className="text-2xl font-bold mt-1" aria-label={`${mockVendors.length} total vendors`}>{mockVendors.length}</p>
           </CardContent>
         </Card>
-        <Card className="border-green-500/30 bg-gradient-to-br from-green-500/10 to-transparent hover:border-green-500/50 hover:shadow-md transition-all duration-200 cursor-pointer">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-2">
-              <Building2 className="h-4 w-4 text-green-500" aria-hidden="true" />
-            </div>
-            <p className="text-xs text-muted-foreground font-medium">Active Vendors</p>
-            <p className="text-2xl font-bold mt-1 text-green-600" aria-label={`${activeVendors} active vendors`}>{activeVendors}</p>
-          </CardContent>
-        </Card>
-        <Card className="border-blue-500/20 hover:border-blue-500/40 hover:shadow-md transition-all duration-200 cursor-pointer">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-2">
-              <DollarSign className="h-4 w-4 text-blue-500" aria-hidden="true" />
-            </div>
-            <p className="text-xs text-muted-foreground font-medium">Total Spent</p>
-            <p className="text-2xl font-bold mt-1 font-mono" aria-label={`Total spent $${totalSpent.toLocaleString()}`}>${totalSpent.toLocaleString()}</p>
+
+        {/* Bulk Actions */}
+        {selectedItems.length > 0 && (
+          <BulkActions
+            selectedCount={selectedItems.length}
+            onExport={handleBulkExport}
+            onEmail={handleBulkEmail}
+            onStatusChange={handleBulkStatusChange}
+            onDelete={handleBulkDelete}
+            statusOptions={["Active", "Inactive", "Preferred"]}
+          />
+        )}
+
+        {/* Data Table */}
+        <Card>
+          <CardContent className="pt-6">
+            {filteredData.length === 0 ? (
+            <EmptyState
+              icon={Building}
+              title={search || statusFilter !== "All" ? "No vendors found" : "No vendors yet"}
+              description={
+                search || statusFilter !== "All"
+                  ? "No vendors match your search criteria. Try adjusting your filters."
+                  : "Build your supplier network by adding your first vendor."
+              }
+              action={{
+                label: "Add Vendor",
+                onClick: () => setModalOpen(true),
+                icon: Building2,
+              }}
+            />
+            ) : (
+              <DataTable
+                columns={columns}
+                data={finalData}
+                testIdPrefix="vendors"
+              />
+            )}
           </CardContent>
         </Card>
       </div>
-
-      {/* Main Content */}
-      <Card className="border-primary/20">
-        <CardContent className="p-6">
-          <SearchFilter
-            searchPlaceholder="Search vendors..."
-            searchValue={search}
-            onSearchChange={setSearch}
-            filters={[
-              {
-                key: "status",
-                label: "Status",
-                options: [
-                  { value: "All", label: "All Status" },
-                  { value: "Active", label: "Active" },
-                  { value: "Inactive", label: "Inactive" },
-                ],
-                value: statusFilter,
-                onChange: setStatusFilter,
-              },
-            ]}
-          />
-
-          <DataTable
-            columns={columns}
-            data={filteredData}
-            testIdPrefix="vendors"
-          />
-        </CardContent>
-      </Card>
 
       <FormModal
         open={modalOpen}
@@ -672,7 +792,53 @@ export default function Vendors() {
           </Tabs>
         </DialogContent>
       </Dialog>
-      </div>
+
+      {/* Export Dialog */}
+      <ExportDialog
+        open={exportDialogOpen}
+        onOpenChange={setExportDialogOpen}
+        columns={[
+          { key: "code", label: "Code" },
+          { key: "name", label: "Vendor Name" },
+          { key: "email", label: "Email" },
+          { key: "phone", label: "Phone" },
+          { key: "address", label: "Address" },
+          { key: "paymentTerms", label: "Payment Terms" },
+          { key: "totalOrders", label: "Total Orders" },
+          { key: "totalSpent", label: "Total Spent" },
+          { key: "status", label: "Status" },
+        ]}
+        data={finalData.filter((item) => selectedItems.length === 0 || selectedItems.includes(item.id))}
+        filename="vendors"
+      />
+
+      {/* Activity Log Dialog */}
+      <ActivityLogDialog
+        open={activityLogOpen}
+        onOpenChange={setActivityLogOpen}
+        logs={activityLogs}
+        title="Vendor Activity Log"
+      />
+
+      {/* Advanced Filter Dialog */}
+      <AdvancedFilterDialog
+        open={advancedFilterOpen}
+        onOpenChange={setAdvancedFilterOpen}
+        fields={[
+          { value: "code", label: "Code", type: "text" },
+          { value: "name", label: "Vendor Name", type: "text" },
+          { value: "email", label: "Email", type: "text" },
+          { value: "phone", label: "Phone", type: "text" },
+          { value: "address", label: "Address", type: "text" },
+          { value: "paymentTerms", label: "Payment Terms", type: "text" },
+          { value: "totalOrders", label: "Total Orders", type: "number" },
+          { value: "totalSpent", label: "Total Spent", type: "number" },
+          { value: "status", label: "Status", type: "select" },
+        ]}
+        onApplyFilters={handleApplyFilters}
+        savedFilters={savedFilters}
+        onSaveFilter={handleSaveFilter}
+      />
     </PageBackground>
   );
 }
