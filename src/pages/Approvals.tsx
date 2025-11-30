@@ -24,12 +24,10 @@ import {
   CheckCircle2, 
   Clock, 
   XCircle, 
-  AlertCircle,
   FileText,
   ShoppingCart,
   ClipboardList,
   TrendingUp,
-  Filter,
   Eye,
 } from "lucide-react";
 import { EmptyState } from "@/components/EmptyState";
