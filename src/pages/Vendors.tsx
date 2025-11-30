@@ -11,6 +11,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -24,7 +31,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
-import { Building2, Mail, Phone, Package, ShoppingCart, Calendar, DollarSign, TrendingDown, Building, History, Download, Filter, Pencil, Trash2, Eye } from "lucide-react";
+import { Building2, Mail, Phone, Package, ShoppingCart, Calendar, DollarSign, TrendingDown, TrendingUp, Building, History, Download, Filter, Pencil, Trash2, Eye, Plus } from "lucide-react";
 import { EmptyState } from "@/components/EmptyState";
 import { BulkActions } from "@/components/BulkActions";
 import { ExportDialog } from "@/components/ExportDialog";
@@ -365,116 +372,163 @@ export default function Vendors() {
 
   const totalSpent = mockVendors.reduce((sum, v) => sum + v.totalSpent, 0);
   const activeVendors = mockVendors.filter((v) => v.status === "active").length;
+  const inactiveVendors = mockVendors.filter((v) => v.status === "inactive").length;
+  const totalOrders = mockVendors.reduce((sum, v) => sum + v.totalOrders, 0);
+  const avgOrderValue = totalOrders > 0 ? totalSpent / totalOrders : 0;
 
   return (
     <PageBackground>
-      <div className="p-4 lg:p-6 max-w-[1600px] mx-auto space-y-6">
+      <div className="relative z-10 p-6">
         {/* Page Header */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent">
-              Vendors
-            </h1>
-            <p className="text-muted-foreground mt-1 text-sm sm:text-base">Manage your supplier relationships</p>
-          </div>
-          <div className="flex gap-2">
-            <Button 
-              variant="outline"
-              onClick={() => setAdvancedFilterOpen(true)}
-              className="gap-2"
-              aria-label="Open advanced filters"
-            >
-              <Filter className="h-4 w-4" />
-              Filter
-              {filterConditions.length > 0 && (
-                <Badge variant="secondary" className="ml-1">
-                  {filterConditions.length}
-                </Badge>
-              )}
-            </Button>
-            <Button 
-              variant="outline"
-              onClick={() => setActivityLogOpen(true)}
-              className="gap-2"
-              aria-label="View activity log"
-            >
-              <History className="h-4 w-4" />
-              History
-            </Button>
-            <Button 
-              variant="outline"
-              onClick={() => setExportDialogOpen(true)}
-              className="gap-2"
-              aria-label="Export data"
-            >
-              <Download className="h-4 w-4" />
-              Export
-            </Button>
-            <Button 
-              onClick={() => setModalOpen(true)} 
-              className="gap-2 hover:shadow-lg hover:scale-105 transition-all duration-200"
-              aria-label="Add new vendor"
-            >
-              <Building2 className="h-4 w-4" />
-              Add Vendor
-            </Button>
-          </div>
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold mb-2">Vendors</h1>
+          <p className="text-muted-foreground">Manage and track supplier relationships</p>
         </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Card className="border-primary/20 hover:border-primary/40 hover:shadow-md transition-all duration-200 cursor-pointer">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-2">
-              <Building2 className="h-4 w-4 text-primary" aria-hidden="true" />
-            </div>
-            <p className="text-xs text-muted-foreground font-medium">Total Vendors</p>
-            <p className="text-2xl font-bold mt-1" aria-label={`${mockVendors.length} total vendors`}>{mockVendors.length}</p>
-          </CardContent>
-        </Card>
-        <Card className="border-green-500/30 bg-gradient-to-br from-green-500/10 to-transparent hover:border-green-500/50 hover:shadow-md transition-all duration-200 cursor-pointer">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-2">
-              <Building2 className="h-4 w-4 text-green-500" aria-hidden="true" />
-            </div>
-            <p className="text-xs text-muted-foreground font-medium">Active Vendors</p>
-            <p className="text-2xl font-bold mt-1 text-green-600" aria-label={`${activeVendors} active vendors`}>{activeVendors}</p>
-          </CardContent>
-        </Card>
-        <Card className="border-blue-500/20 hover:border-blue-500/40 hover:shadow-md transition-all duration-200 cursor-pointer">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-2">
-              <DollarSign className="h-4 w-4 text-blue-500" aria-hidden="true" />
-            </div>
-            <p className="text-xs text-muted-foreground font-medium">Total Spent</p>
-            <p className="text-2xl font-bold mt-1 font-mono" aria-label={`Total spent $${totalSpent.toLocaleString()}`}>${totalSpent.toLocaleString()}</p>
-          </CardContent>
-        </Card>
-      </div>
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Total Vendors
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <p className="text-2xl font-bold">{mockVendors.length}</p>
+                <Building2 className="h-8 w-8 text-blue-500" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Active
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <p className="text-2xl font-bold">{activeVendors}</p>
+                <Building2 className="h-8 w-8 text-green-500" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Inactive
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <p className="text-2xl font-bold">{inactiveVendors}</p>
+                <Building2 className="h-8 w-8 text-yellow-500" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Total Spent
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <p className="text-2xl font-bold text-red-600">${(totalSpent / 1000).toFixed(1)}k</p>
+                <DollarSign className="h-8 w-8 text-red-500" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Avg Order
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <p className="text-2xl font-bold text-green-600">${(avgOrderValue / 1000).toFixed(1)}k</p>
+                <TrendingUp className="h-8 w-8 text-green-500" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
-      {/* Main Content */}
-      <Card className="border-primary/20">
-        <CardContent className="p-6">
-          <SearchFilter
-            searchPlaceholder="Search vendors..."
-            searchValue={search}
-            onSearchChange={setSearch}
-            filters={[
-              {
-                key: "status",
-                label: "Status",
-                options: [
-                  { value: "All", label: "All Status" },
-                  { value: "Active", label: "Active" },
-                  { value: "Inactive", label: "Inactive" },
-                ],
-                value: statusFilter,
-                onChange: setStatusFilter,
-              },
-            ]}
+        {/* Toolbar */}
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex flex-col lg:flex-row gap-4">
+              {/* Search */}
+              <div className="flex-1">
+                <SearchFilter
+                  searchValue={search}
+                  onSearchChange={setSearch}
+                  searchPlaceholder="Search vendors..."
+                />
+              </div>
+
+              {/* Filters */}
+              <div className="flex flex-wrap gap-2">
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger className="w-[150px]">
+                    <SelectValue placeholder="Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="All">All Status</SelectItem>
+                    <SelectItem value="Active">Active</SelectItem>
+                    <SelectItem value="Inactive">Inactive</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                <Button
+                  variant="outline"
+                  onClick={() => setAdvancedFilterOpen(true)}
+                >
+                  <Filter className="h-4 w-4 mr-2" />
+                  Advanced
+                  {filterConditions.length > 0 && (
+                    <Badge variant="secondary" className="ml-2">
+                      {filterConditions.length}
+                    </Badge>
+                  )}
+                </Button>
+
+                <Button
+                  variant="outline"
+                  onClick={() => setActivityLogOpen(true)}
+                >
+                  <History className="h-4 w-4 mr-2" />
+                  Activity Log
+                </Button>
+              </div>
+
+              {/* Actions */}
+              <div className="flex gap-2">
+                <Button onClick={() => setModalOpen(true)}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Vendor
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Bulk Actions */}
+        {selectedItems.length > 0 && (
+          <BulkActions
+            selectedCount={selectedItems.length}
+            onExport={handleBulkExport}
+            onEmail={handleBulkEmail}
+            onStatusChange={handleBulkStatusChange}
+            onDelete={handleBulkDelete}
+            statusOptions={["Active", "Inactive", "Preferred"]}
           />
+        )}
 
-          {filteredData.length === 0 ? (
+        {/* Data Table */}
+        <Card>
+          <CardContent className="pt-6">
+            {filteredData.length === 0 ? (
             <EmptyState
               icon={Building}
               title={search || statusFilter !== "All" ? "No vendors found" : "No vendors yet"}
@@ -489,26 +543,16 @@ export default function Vendors() {
                 icon: Building2,
               }}
             />
-          ) : (
-            <DataTable
-              columns={columns}
-              data={finalData}
-              testIdPrefix="vendors"
-            />
-          )}
-        </CardContent>
-      </Card>
+            ) : (
+              <DataTable
+                columns={columns}
+                data={finalData}
+                testIdPrefix="vendors"
+              />
+            )}
+          </CardContent>
+        </Card>
       </div>
-
-      {/* Floating Bulk Actions */}
-      <BulkActions
-        selectedCount={selectedItems.length}
-        onExport={handleBulkExport}
-        onEmail={handleBulkEmail}
-        onStatusChange={handleBulkStatusChange}
-        onDelete={handleBulkDelete}
-        statusOptions={["Active", "Inactive", "Preferred"]}
-      />
 
       <FormModal
         open={modalOpen}

@@ -4,7 +4,7 @@ import { SearchFilter } from "@/components/SearchFilter";
 import { DataTable, type Column } from "@/components/DataTable";
 import { StatusBadge, type StatusType } from "@/components/StatusBadge";
 import { FormModal } from "@/components/FormModal";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -23,7 +23,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
-import { Trash2, Plus, ShoppingCart, FileText, DollarSign, Package, FileX, History, Download, Filter } from "lucide-react";
+import { Trash2, Plus, ShoppingCart, FileText, DollarSign, Package, PackageX, FileX, History, Download, Filter } from "lucide-react";
 import { EmptyState } from "@/components/EmptyState";
 import { BulkActions } from "@/components/BulkActions";
 import { ExportDialog } from "@/components/ExportDialog";
@@ -273,119 +273,169 @@ export default function SalesOrders() {
     });
   };
 
-  const pendingOrders = mockSalesOrders.filter((so) => so.status === "pending" || so.status === "approved").length;
+  const pendingOrders = mockSalesOrders.filter((so) => so.status === "pending").length;
+  const approvedOrders = mockSalesOrders.filter((so) => so.status === "approved").length;
+  const deliveredOrders = mockSalesOrders.filter((so) => so.status === "delivered").length;
   const totalRevenue = mockSalesOrders
     .filter((so) => so.status === "completed" || so.status === "delivered")
     .reduce((sum, so) => sum + so.totalAmount, 0);
 
   return (
     <PageBackground>
-      <div className="p-4 lg:p-6 max-w-[1600px] mx-auto space-y-6">
+      <div className="relative z-10 p-6">
         {/* Page Header */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent">
-              Sales Orders
-            </h1>
-            <p className="text-muted-foreground mt-1">Manage orders from your customers</p>
-          </div>
-          <div className="flex gap-2">
-            <Button 
-              variant="outline"
-              onClick={() => setAdvancedFilterOpen(true)}
-              className="gap-2"
-            >
-              <Filter className="h-4 w-4" />
-              Advanced Filter
-              {filterConditions.length > 0 && (
-                <Badge variant="secondary" className="ml-1">
-                  {filterConditions.length}
-                </Badge>
-              )}
-            </Button>
-            <Button 
-              variant="outline"
-              onClick={() => setActivityLogOpen(true)}
-              className="gap-2"
-            >
-              <History className="h-4 w-4" />
-              Activity Log
-            </Button>
-            <Button 
-              variant="outline"
-              onClick={() => setExportDialogOpen(true)}
-              className="gap-2"
-            >
-              <Download className="h-4 w-4" />
-              Export
-            </Button>
-            <Button onClick={() => setModalOpen(true)} className="gap-2">
-              <ShoppingCart className="h-4 w-4" />
-              New Sales Order
-            </Button>
-          </div>
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold mb-2">Sales Orders</h1>
+          <p className="text-muted-foreground">Manage and track customer sales orders</p>
         </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Card>
-          <CardContent className="p-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              Total SOs
-            </p>
-            <p className="text-2xl font-bold mt-1">{mockSalesOrders.length}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              Pending Fulfillment
-            </p>
-            <p className="text-2xl font-bold mt-1 text-amber-600">
-              {pendingOrders}
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              Completed Revenue
-            </p>
-            <p className="text-2xl font-bold mt-1 font-mono">
-              ${totalRevenue.toLocaleString()}
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Total Orders
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <p className="text-2xl font-bold">{mockSalesOrders.length}</p>
+                <ShoppingCart className="h-8 w-8 text-blue-500" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Pending
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <p className="text-2xl font-bold">{pendingOrders}</p>
+                <FileText className="h-8 w-8 text-yellow-500" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Approved
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <p className="text-2xl font-bold">{approvedOrders}</p>
+                <Package className="h-8 w-8 text-green-500" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Delivered
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <p className="text-2xl font-bold">{deliveredOrders}</p>
+                <PackageX className="h-8 w-8 text-blue-500" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Total Revenue
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <p className="text-2xl font-bold text-green-600">${(totalRevenue / 1000).toFixed(1)}k</p>
+                <DollarSign className="h-8 w-8 text-green-500" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
-      {/* Main Content */}
-      <Card className="border-primary/20">
-        <CardContent className="p-6">
-          <div className="space-y-4">
-            <SearchFilter
-              searchPlaceholder="Search by SO number or customer..."
-              searchValue={search}
-              onSearchChange={setSearch}
-              filters={[
-                {
-                  key: "status",
-                  label: "Status",
-                  options: [
-                    { value: "All", label: "All Status" },
-                    { value: "Pending", label: "Pending" },
-                    { value: "Approved", label: "Approved" },
-                    { value: "In Transit", label: "In Transit" },
-                    { value: "Delivered", label: "Delivered" },
-                    { value: "Completed", label: "Completed" },
-                  ],
-                  value: statusFilter,
-                  onChange: setStatusFilter,
-                },
-              ]}
-            />
-          </div>
+        {/* Toolbar */}
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex flex-col lg:flex-row gap-4">
+              {/* Search */}
+              <div className="flex-1">
+                <SearchFilter
+                  searchValue={search}
+                  onSearchChange={setSearch}
+                  searchPlaceholder="Search by SO number or customer..."
+                />
+              </div>
 
-          {filteredData.length === 0 ? (
+              {/* Filters */}
+              <div className="flex flex-wrap gap-2">
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger className="w-[150px]">
+                    <SelectValue placeholder="Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="All">All Status</SelectItem>
+                    <SelectItem value="Pending">Pending</SelectItem>
+                    <SelectItem value="Approved">Approved</SelectItem>
+                    <SelectItem value="In Transit">In Transit</SelectItem>
+                    <SelectItem value="Delivered">Delivered</SelectItem>
+                    <SelectItem value="Completed">Completed</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                <Button
+                  variant="outline"
+                  onClick={() => setAdvancedFilterOpen(true)}
+                >
+                  <Filter className="h-4 w-4 mr-2" />
+                  Advanced
+                  {filterConditions.length > 0 && (
+                    <Badge variant="secondary" className="ml-2">
+                      {filterConditions.length}
+                    </Badge>
+                  )}
+                </Button>
+
+                <Button
+                  variant="outline"
+                  onClick={() => setActivityLogOpen(true)}
+                >
+                  <History className="h-4 w-4 mr-2" />
+                  Activity Log
+                </Button>
+              </div>
+
+              {/* Actions */}
+              <div className="flex gap-2">
+                <Button onClick={() => setModalOpen(true)}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Create SO
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Bulk Actions */}
+        {selectedItems.length > 0 && (
+          <BulkActions
+            selectedCount={selectedItems.length}
+            onExport={handleBulkExport}
+            onEmail={handleBulkEmail}
+            onStatusChange={handleBulkStatusChange}
+            onDelete={handleBulkDelete}
+            statusOptions={["Pending", "Confirmed", "Shipped", "Delivered", "Cancelled"]}
+          />
+        )}
+
+        {/* Data Table */}
+        <Card>
+          <CardContent className="pt-6">
+            {filteredData.length === 0 ? (
             <EmptyState
               icon={FileX}
               title={search || statusFilter !== "All" ? "No orders found" : "No sales orders yet"}
@@ -400,26 +450,16 @@ export default function SalesOrders() {
                 icon: FileText,
               }}
             />
-          ) : (
-            <DataTable
-              columns={columns}
-              data={finalData}
-              testIdPrefix="sales-orders"
-            />
-          )}
-        </CardContent>
-      </Card>
+            ) : (
+              <DataTable
+                columns={columns}
+                data={finalData}
+                testIdPrefix="sales-orders"
+              />
+            )}
+          </CardContent>
+        </Card>
       </div>
-
-      {/* Floating Bulk Actions */}
-      <BulkActions
-        selectedCount={selectedItems.length}
-        onExport={handleBulkExport}
-        onEmail={handleBulkEmail}
-        onStatusChange={handleBulkStatusChange}
-        onDelete={handleBulkDelete}
-        statusOptions={["Pending", "Confirmed", "Shipped", "Delivered", "Cancelled"]}
-      />
 
       <FormModal
         open={modalOpen}

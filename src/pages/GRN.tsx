@@ -4,7 +4,7 @@ import { SearchFilter } from "@/components/SearchFilter";
 import { DataTable, type Column } from "@/components/DataTable";
 import { StatusBadge, type StatusType } from "@/components/StatusBadge";
 import { FormModal } from "@/components/FormModal";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -24,7 +24,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Package, CheckCircle2, AlertTriangle, PackageX, History, Download, Filter } from "lucide-react";
+import { Package, CheckCircle2, AlertTriangle, PackageX, History, Download, Filter, DollarSign, Plus } from "lucide-react";
 import { EmptyState } from "@/components/EmptyState";
 import { BulkActions } from "@/components/BulkActions";
 import { ExportDialog } from "@/components/ExportDialog";
@@ -258,109 +258,164 @@ export default function GRN() {
 
   const completedGRNs = mockGRNs.filter((grn) => grn.status === "completed").length;
   const partialGRNs = mockGRNs.filter((grn) => grn.status === "partial").length;
+  const pendingGRNs = mockGRNs.filter((grn) => grn.status === "pending").length;
+  const totalReceivedValue = mockGRNs
+    .filter((grn) => grn.status === "completed")
+    .reduce((sum, grn) => sum + (grn.receivedQty * 100), 0); // Approximate value
 
   return (
     <PageBackground>
-      <div className="p-4 lg:p-6 max-w-[1600px] mx-auto space-y-6">
+      <div className="relative z-10 p-6">
         {/* Page Header */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent">
-              Goods Receipt Notes
-            </h1>
-            <p className="text-muted-foreground mt-1">Record incoming inventory</p>
-          </div>
-          <div className="flex gap-2">
-            <Button 
-              variant="outline"
-              onClick={() => setAdvancedFilterOpen(true)}
-              className="gap-2"
-            >
-              <Filter className="h-4 w-4" />
-              Advanced Filter
-              {filterConditions.length > 0 && (
-                <Badge variant="secondary" className="ml-1">
-                  {filterConditions.length}
-                </Badge>
-              )}
-            </Button>
-            <Button 
-              variant="outline"
-              onClick={() => setActivityLogOpen(true)}
-              className="gap-2"
-            >
-              <History className="h-4 w-4" />
-              Activity Log
-            </Button>
-            <Button 
-              variant="outline"
-              onClick={() => setExportDialogOpen(true)}
-              className="gap-2"
-            >
-              <Download className="h-4 w-4" />
-              Export
-            </Button>
-            <Button onClick={() => setModalOpen(true)} className="gap-2">
-              <Package className="h-4 w-4" />
-              Create GRN
-            </Button>
-          </div>
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold mb-2">Goods Receipt Notes</h1>
+          <p className="text-muted-foreground">Track and manage incoming inventory receipts</p>
         </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Card className="border-primary/20">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-2">
-              <Package className="h-4 w-4 text-primary" />
-            </div>
-            <p className="text-xs text-muted-foreground font-medium">Total GRNs</p>
-            <p className="text-2xl font-bold mt-1">{mockGRNs.length}</p>
-          </CardContent>
-        </Card>
-        <Card className="border-green-500/30 bg-gradient-to-br from-green-500/10 to-transparent">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-2">
-              <CheckCircle2 className="h-4 w-4 text-green-500" />
-            </div>
-            <p className="text-xs text-muted-foreground font-medium">Complete Receipts</p>
-            <p className="text-2xl font-bold mt-1 text-green-600">{completedGRNs}</p>
-          </CardContent>
-        </Card>
-        <Card className="border-amber-500/30 bg-gradient-to-br from-amber-500/10 to-transparent">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-2">
-              <AlertTriangle className="h-4 w-4 text-amber-500" />
-            </div>
-            <p className="text-xs text-muted-foreground font-medium">Partial Receipts</p>
-            <p className="text-2xl font-bold mt-1 text-amber-600">{partialGRNs}</p>
-          </CardContent>
-        </Card>
-      </div>
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Total GRNs
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <p className="text-2xl font-bold">{mockGRNs.length}</p>
+                <Package className="h-8 w-8 text-blue-500" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Pending
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <p className="text-2xl font-bold">{pendingGRNs}</p>
+                <Package className="h-8 w-8 text-yellow-500" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Completed
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <p className="text-2xl font-bold">{completedGRNs}</p>
+                <CheckCircle2 className="h-8 w-8 text-green-500" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Partial
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <p className="text-2xl font-bold">{partialGRNs}</p>
+                <AlertTriangle className="h-8 w-8 text-orange-500" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Total Value
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <p className="text-2xl font-bold text-green-600">${(totalReceivedValue / 1000).toFixed(1)}k</p>
+                <DollarSign className="h-8 w-8 text-green-500" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
-      {/* Main Content */}
-      <Card className="border-primary/20">
-        <CardContent className="p-6">
-          <SearchFilter
-            searchPlaceholder="Search by GRN, PO number or vendor..."
-            searchValue={search}
-            onSearchChange={setSearch}
-            filters={[
-              {
-                key: "status",
-                label: "Status",
-                options: [
-                  { value: "All", label: "All Status" },
-                  { value: "Completed", label: "Complete" },
-                  { value: "Partial", label: "Partial" },
-                ],
-                value: statusFilter,
-                onChange: setStatusFilter,
-              },
-            ]}
+        {/* Toolbar */}
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex flex-col lg:flex-row gap-4">
+              {/* Search */}
+              <div className="flex-1">
+                <SearchFilter
+                  searchValue={search}
+                  onSearchChange={setSearch}
+                  searchPlaceholder="Search by GRN, PO number or vendor..."
+                />
+              </div>
+
+              {/* Filters */}
+              <div className="flex flex-wrap gap-2">
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger className="w-[150px]">
+                    <SelectValue placeholder="Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="All">All Status</SelectItem>
+                    <SelectItem value="Completed">Complete</SelectItem>
+                    <SelectItem value="Partial">Partial</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                <Button
+                  variant="outline"
+                  onClick={() => setAdvancedFilterOpen(true)}
+                >
+                  <Filter className="h-4 w-4 mr-2" />
+                  Advanced
+                  {filterConditions.length > 0 && (
+                    <Badge variant="secondary" className="ml-2">
+                      {filterConditions.length}
+                    </Badge>
+                  )}
+                </Button>
+
+                <Button
+                  variant="outline"
+                  onClick={() => setActivityLogOpen(true)}
+                >
+                  <History className="h-4 w-4 mr-2" />
+                  Activity Log
+                </Button>
+              </div>
+
+              {/* Actions */}
+              <div className="flex gap-2">
+                <Button onClick={() => setModalOpen(true)}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Create GRN
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Bulk Actions */}
+        {selectedItems.length > 0 && (
+          <BulkActions
+            selectedCount={selectedItems.length}
+            onExport={handleBulkExport}
+            onEmail={handleBulkEmail}
+            onStatusChange={handleBulkStatusChange}
+            onDelete={handleBulkDelete}
+            statusOptions={["Pending", "Received", "Partial", "Completed"]}
           />
+        )}
 
-          {filteredData.length === 0 ? (
+        {/* Data Table */}
+        <Card>
+          <CardContent className="pt-6">
+            {filteredData.length === 0 ? (
             <EmptyState
               icon={PackageX}
               title={search || statusFilter !== "All" ? "No GRN records found" : "No goods receipts yet"}
@@ -375,25 +430,16 @@ export default function GRN() {
                 icon: Package,
               }}
             />
-          ) : (
-            <DataTable
-              columns={columns}
-              data={finalData}
-              testIdPrefix="grn"
-            />
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Floating Bulk Actions */}
-      <BulkActions
-        selectedCount={selectedItems.length}
-        onExport={handleBulkExport}
-        onEmail={handleBulkEmail}
-        onStatusChange={handleBulkStatusChange}
-        onDelete={handleBulkDelete}
-        statusOptions={["Pending", "Received", "Partial", "Completed"]}
-      />
+            ) : (
+              <DataTable
+                columns={columns}
+                data={finalData}
+                testIdPrefix="grn"
+              />
+            )}
+          </CardContent>
+        </Card>
+      </div>
 
       <FormModal
         open={modalOpen}
@@ -545,7 +591,6 @@ export default function GRN() {
         savedFilters={savedFilters}
         onSaveFilter={handleSaveFilter}
       />
-      </div>
     </PageBackground>
   );
 }

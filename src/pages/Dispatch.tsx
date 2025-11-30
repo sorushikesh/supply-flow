@@ -4,7 +4,7 @@ import { SearchFilter } from "@/components/SearchFilter";
 import { DataTable, type Column } from "@/components/DataTable";
 import { StatusBadge, type StatusType } from "@/components/StatusBadge";
 import { FormModal } from "@/components/FormModal";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -19,7 +19,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Truck, MapPin, Package, CheckCircle2, PackageX, History, Download, Filter } from "lucide-react";
+import { Truck, MapPin, Package, CheckCircle2, PackageX, History, Download, Filter, Plus } from "lucide-react";
 import { EmptyState } from "@/components/EmptyState";
 import { BulkActions } from "@/components/BulkActions";
 import { ExportDialog } from "@/components/ExportDialog";
@@ -233,109 +233,162 @@ export default function Dispatch() {
 
   const inTransit = mockDispatches.filter((d) => d.status === "in_transit").length;
   const delivered = mockDispatches.filter((d) => d.status === "delivered").length;
+  const pending = mockDispatches.filter((d) => d.status === "pending").length;
+  const totalItems = mockDispatches.length;
 
   return (
     <PageBackground>
-      <div className="p-4 lg:p-6 max-w-[1600px] mx-auto space-y-6">
+      <div className="relative z-10 p-6">
         {/* Page Header */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent">
-              Dispatch Management
-            </h1>
-            <p className="text-muted-foreground mt-1">Track outgoing shipments</p>
-          </div>
-          <div className="flex gap-2">
-            <Button 
-              variant="outline"
-              onClick={() => setAdvancedFilterOpen(true)}
-              className="gap-2"
-            >
-              <Filter className="h-4 w-4" />
-              Advanced Filter
-              {filterConditions.length > 0 && (
-                <Badge variant="secondary" className="ml-1">
-                  {filterConditions.length}
-                </Badge>
-              )}
-            </Button>
-            <Button 
-              variant="outline"
-              onClick={() => setActivityLogOpen(true)}
-              className="gap-2"
-            >
-              <History className="h-4 w-4" />
-              Activity Log
-            </Button>
-            <Button 
-              variant="outline"
-              onClick={() => setExportDialogOpen(true)}
-              className="gap-2"
-            >
-              <Download className="h-4 w-4" />
-              Export
-            </Button>
-            <Button onClick={() => setModalOpen(true)} className="gap-2">
-              <Package className="h-4 w-4" />
-              Create Dispatch
-            </Button>
-          </div>
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold mb-2">Dispatch Management</h1>
+          <p className="text-muted-foreground">Track and manage outgoing shipments</p>
         </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Card className="border-primary/20">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-2">
-              <Package className="h-4 w-4 text-primary" />
-            </div>
-            <p className="text-xs text-muted-foreground font-medium">Total Dispatches</p>
-            <p className="text-2xl font-bold mt-1">{mockDispatches.length}</p>
-          </CardContent>
-        </Card>
-        <Card className="border-amber-500/30 bg-gradient-to-br from-amber-500/10 to-transparent">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-2">
-              <Truck className="h-4 w-4 text-amber-500" />
-            </div>
-            <p className="text-xs text-muted-foreground font-medium">In Transit</p>
-            <p className="text-2xl font-bold mt-1 text-amber-600">{inTransit}</p>
-          </CardContent>
-        </Card>
-        <Card className="border-green-500/30 bg-gradient-to-br from-green-500/10 to-transparent">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-2">
-              <CheckCircle2 className="h-4 w-4 text-green-500" />
-            </div>
-            <p className="text-xs text-muted-foreground font-medium">Delivered</p>
-            <p className="text-2xl font-bold mt-1 text-green-600">{delivered}</p>
-          </CardContent>
-        </Card>
-      </div>
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Total Dispatches
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <p className="text-2xl font-bold">{mockDispatches.length}</p>
+                <Package className="h-8 w-8 text-blue-500" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Pending
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <p className="text-2xl font-bold">{pending}</p>
+                <Package className="h-8 w-8 text-yellow-500" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                In Transit
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <p className="text-2xl font-bold">{inTransit}</p>
+                <Truck className="h-8 w-8 text-orange-500" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Delivered
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <p className="text-2xl font-bold">{delivered}</p>
+                <CheckCircle2 className="h-8 w-8 text-green-500" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Total Items
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <p className="text-2xl font-bold">{totalItems}</p>
+                <Package className="h-8 w-8 text-blue-500" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
-      {/* Main Content */}
-      <Card className="border-primary/20">
-        <CardContent className="p-6">
-          <SearchFilter
-            searchPlaceholder="Search by dispatch, SO number or customer..."
-            searchValue={search}
-            onSearchChange={setSearch}
-            filters={[
-              {
-                key: "status",
-                label: "Status",
-                options: [
-                  { value: "All", label: "All Status" },
-                  { value: "In Transit", label: "In Transit" },
-                  { value: "Delivered", label: "Delivered" },
-                ],
-                value: statusFilter,
-                onChange: setStatusFilter,
-              },
-            ]}
+        {/* Toolbar */}
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex flex-col lg:flex-row gap-4">
+              {/* Search */}
+              <div className="flex-1">
+                <SearchFilter
+                  searchValue={search}
+                  onSearchChange={setSearch}
+                  searchPlaceholder="Search by dispatch, SO number or customer..."
+                />
+              </div>
+
+              {/* Filters */}
+              <div className="flex flex-wrap gap-2">
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger className="w-[150px]">
+                    <SelectValue placeholder="Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="All">All Status</SelectItem>
+                    <SelectItem value="In Transit">In Transit</SelectItem>
+                    <SelectItem value="Delivered">Delivered</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                <Button
+                  variant="outline"
+                  onClick={() => setAdvancedFilterOpen(true)}
+                >
+                  <Filter className="h-4 w-4 mr-2" />
+                  Advanced
+                  {filterConditions.length > 0 && (
+                    <Badge variant="secondary" className="ml-2">
+                      {filterConditions.length}
+                    </Badge>
+                  )}
+                </Button>
+
+                <Button
+                  variant="outline"
+                  onClick={() => setActivityLogOpen(true)}
+                >
+                  <History className="h-4 w-4 mr-2" />
+                  Activity Log
+                </Button>
+              </div>
+
+              {/* Actions */}
+              <div className="flex gap-2">
+                <Button onClick={() => setModalOpen(true)}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Create Dispatch
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Bulk Actions */}
+        {selectedItems.length > 0 && (
+          <BulkActions
+            selectedCount={selectedItems.length}
+            onExport={handleBulkExport}
+            onEmail={handleBulkEmail}
+            onStatusChange={handleBulkStatusChange}
+            onDelete={handleBulkDelete}
+            statusOptions={["Pending", "In Transit", "Delivered", "Cancelled"]}
           />
+        )}
 
-          {filteredData.length === 0 ? (
+        {/* Data Table */}
+        <Card>
+          <CardContent className="pt-6">
+            {filteredData.length === 0 ? (
             <EmptyState
               icon={PackageX}
               title={search || statusFilter !== "All" ? "No dispatch records found" : "No dispatches yet"}
@@ -350,25 +403,16 @@ export default function Dispatch() {
                 icon: Truck,
               }}
             />
-          ) : (
-            <DataTable
-              columns={columns}
-              data={finalData}
-              testIdPrefix="dispatch"
-            />
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Floating Bulk Actions */}
-      <BulkActions
-        selectedCount={selectedItems.length}
-        onExport={handleBulkExport}
-        onEmail={handleBulkEmail}
-        onStatusChange={handleBulkStatusChange}
-        onDelete={handleBulkDelete}
-        statusOptions={["Pending", "In Transit", "Delivered", "Cancelled"]}
-      />
+            ) : (
+              <DataTable
+                columns={columns}
+                data={finalData}
+                testIdPrefix="dispatch"
+              />
+            )}
+          </CardContent>
+        </Card>
+      </div>
 
       <FormModal
         open={modalOpen}
@@ -547,7 +591,6 @@ export default function Dispatch() {
         savedFilters={savedFilters}
         onSaveFilter={handleSaveFilter}
       />
-      </div>
     </PageBackground>
   );
 }

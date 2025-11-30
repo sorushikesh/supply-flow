@@ -23,6 +23,7 @@ import {
   BarChart3,
   CheckCircle2,
   Settings,
+  Keyboard,
 } from "lucide-react";
 
 const mainNavItems = [
@@ -50,6 +51,7 @@ const financeNavItems = [
 
 const systemNavItems = [
   { title: "Control Panel", url: "/control-panel", icon: Settings },
+  { title: "Settings", url: "/settings", icon: Keyboard },
 ];
 
 export function AppSidebar() {

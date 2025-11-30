@@ -36,33 +36,38 @@ export function TopHeader({ breadcrumb }: TopHeaderProps) {
   const [showShortcuts, setShowShortcuts] = useState(false);
 
   return (
-    <header className="h-14 border-b flex items-center justify-between gap-4 px-4 lg:px-6 bg-background/95 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
-      <div className="flex items-center gap-3">
-        <SidebarTrigger data-testid="button-sidebar-toggle" className="transition-transform duration-200 hover:scale-110 h-8 w-8" />
+    <header className="h-16 border-b flex items-center justify-between gap-4 px-6 bg-background/95 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+      <div className="flex items-center gap-4">
+        <SidebarTrigger data-testid="button-sidebar-toggle" className="h-9 w-9" />
         {breadcrumb && (
           <nav className="text-sm text-muted-foreground hidden md:block" data-testid="breadcrumb">
-            <span className="transition-colors duration-200 hover:text-foreground cursor-pointer">Home</span>
-            <span className="mx-2 text-muted-foreground/50">/</span>
+            <span className="hover:text-foreground cursor-pointer">Home</span>
+            <span className="mx-2">/</span>
             <span className="text-foreground font-medium">{breadcrumb}</span>
           </nav>
         )}
       </div>
 
-      <div className="flex items-center gap-1.5">
+      <div className="flex items-center gap-3">
         {/* Quick Actions Dropdown */}
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button 
-              variant="ghost"
-              size="sm"
-              className="gap-1.5 h-8 px-2.5 font-medium hover:bg-accent transition-all text-xs"
-              data-testid="button-quick-actions"
-              aria-label="Quick actions menu"
-            >
-              <Zap className="h-3.5 w-3.5" />
-              <span className="hidden lg:inline">Quick Actions</span>
-            </Button>
-          </DropdownMenuTrigger>
+          <Tooltip>
+            <DropdownMenuTrigger asChild>
+              <TooltipTrigger asChild>
+                <Button 
+                  variant="default"
+                  size="icon"
+                  className="h-10 w-10"
+                  data-testid="button-quick-actions"
+                >
+                  <Zap className="h-[18px] w-[18px]" />
+                </Button>
+              </TooltipTrigger>
+            </DropdownMenuTrigger>
+            <TooltipContent>
+              <p>Quick Actions</p>
+            </TooltipContent>
+          </Tooltip>
           <DropdownMenuContent align="end" className="w-72">
             <DropdownMenuLabel className="text-xs uppercase tracking-wide text-muted-foreground font-semibold">
               Create New
@@ -123,85 +128,52 @@ export function TopHeader({ breadcrumb }: TopHeaderProps) {
           </DropdownMenuContent>
         </DropdownMenu>
 
-        {/* Divider */}
-        <div className="h-6 w-px bg-border hidden lg:block" />
+        <div className="h-8 w-px bg-border" />
 
-        {/* Approvals - Quick Access */}
+        {/* Approvals */}
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
               variant="ghost"
-              size="sm"
-              className="relative gap-1.5 h-8 px-2.5 hover:bg-accent transition-all"
-              onClick={() => setLocation("/approvals")}
-              aria-label="Pending approvals"
-            >
-              <CheckCircle2 className="h-4 w-4" />
-              <span className="hidden lg:inline text-xs">Approvals</span>
-              <Badge
-                variant="destructive"
-                className="h-4 min-w-[16px] px-1 flex items-center justify-center text-[9px] font-bold"
-                aria-label="5 pending approvals"
-              >
-                5
-              </Badge>
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent side="bottom">
-            <p className="text-xs">5 items pending approval</p>
-          </TooltipContent>
-        </Tooltip>
-
-        {/* Keyboard Shortcuts */}
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
               size="icon"
-              variant="ghost"
-              className="h-8 w-8 hover:bg-accent transition-colors"
-              onClick={() => {
-                // Trigger keyboard shortcut event
-                window.dispatchEvent(
-                  new KeyboardEvent("keydown", {
-                    key: "?",
-                    ctrlKey: true,
-                    shiftKey: true,
-                  })
-                );
-              }}
-              aria-label="Show keyboard shortcuts"
+              className="h-10 w-10 relative"
+              onClick={() => setLocation("/approvals")}
             >
-              <Keyboard className="h-4 w-4" />
+              <CheckCircle2 className="h-[18px] w-[18px]" />
+              <div className="absolute -top-1 -right-1 h-6 min-w-[24px] px-2 rounded-full bg-red-500 text-white text-xs font-bold flex items-center justify-center">
+                5
+              </div>
             </Button>
           </TooltipTrigger>
-          <TooltipContent side="bottom">
-            <p className="text-xs">Keyboard Shortcuts (Ctrl+Shift+?)</p>
+          <TooltipContent>
+            <p>Approvals (5 pending)</p>
           </TooltipContent>
         </Tooltip>
 
-        {/* Divider */}
-        <div className="h-6 w-px bg-border hidden lg:block" />
+        <div className="h-8 w-px bg-border" />
 
         {/* Notifications */}
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button 
-              size="icon" 
-              variant="ghost" 
-              className="relative h-8 w-8 hover:bg-accent transition-colors" 
-              data-testid="button-notifications"
-              aria-label="Notifications (3 unread)"
-            >
-              <Bell className="h-4 w-4" />
-              <Badge
-                variant="destructive"
-                className="absolute -top-0.5 -right-0.5 h-4 w-4 p-0 flex items-center justify-center text-[9px] font-bold"
-                aria-label="4 unread notifications"
-              >
-                4
-              </Badge>
-            </Button>
-          </DropdownMenuTrigger>
+          <Tooltip>
+            <DropdownMenuTrigger asChild>
+              <TooltipTrigger asChild>
+                <Button 
+                  variant="ghost"
+                  size="icon"
+                  className="h-10 w-10 relative" 
+                  data-testid="button-notifications"
+                >
+                  <Bell className="h-[18px] w-[18px]" />
+                  <div className="absolute -top-1 -right-1 h-6 min-w-[24px] px-2 rounded-full bg-red-500 text-white text-xs font-bold flex items-center justify-center">
+                    4
+                  </div>
+                </Button>
+              </TooltipTrigger>
+            </DropdownMenuTrigger>
+            <TooltipContent>
+              <p>Notifications (4 unread)</p>
+            </TooltipContent>
+          </Tooltip>
           <DropdownMenuContent align="end" className="w-80">
             <div className="p-3 border-b">
               <h4 className="font-semibold text-sm">Notifications</h4>
@@ -232,33 +204,34 @@ export function TopHeader({ breadcrumb }: TopHeaderProps) {
           </DropdownMenuContent>
         </DropdownMenu>
 
-        {/* Divider */}
-        <div className="h-6 w-px bg-border hidden lg:block" />
+        <div className="h-8 w-px bg-border" />
 
         {/* Company Settings */}
         <CompanySettingsDialog />
 
-        {/* Divider */}
-        <div className="h-6 w-px bg-border hidden lg:block" />
-
+        {/* User Menu */}
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              className="flex items-center gap-2 h-8 px-2 hover:bg-accent transition-colors"
-              data-testid="button-user-menu"
-              aria-label="User menu - John Doe"
-            >
-              <Avatar className="h-6 w-6 ring-1 ring-border">
-                <AvatarFallback className="bg-gradient-to-br from-primary via-blue-600 to-purple-600 text-primary-foreground text-[10px] font-bold">
-                  JD
-                </AvatarFallback>
-              </Avatar>
-              <div className="text-left hidden xl:block">
-                <p className="text-xs font-medium leading-tight">John Doe</p>
-              </div>
-            </Button>
-          </DropdownMenuTrigger>
+          <Tooltip>
+            <DropdownMenuTrigger asChild>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-10 w-10"
+                  data-testid="button-user-menu"
+                >
+                  <Avatar className="h-[18px] w-[18px]">
+                    <AvatarFallback className="bg-gradient-to-br from-primary to-purple-600 text-white text-[10px] font-bold">
+                      JD
+                    </AvatarFallback>
+                  </Avatar>
+                </Button>
+              </TooltipTrigger>
+            </DropdownMenuTrigger>
+            <TooltipContent>
+              <p>John Doe - User Menu</p>
+            </TooltipContent>
+          </Tooltip>
           <DropdownMenuContent align="end" className="w-48">
             <DropdownMenuItem 
               data-testid="menu-profile" 

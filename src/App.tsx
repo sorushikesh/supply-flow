@@ -23,6 +23,7 @@ import Approvals from "@/pages/Approvals";
 import ControlPanel from "@/pages/ControlPanel";
 import CompanyOverview from "@/pages/CompanyOverview";
 import UserProfile from "@/pages/UserProfile";
+import Settings from "@/pages/Settings";
 
 const routes = [
   { path: "/", component: Dashboard, breadcrumb: "Dashboard" },
@@ -37,6 +38,7 @@ const routes = [
   { path: "/analytics", component: Analytics, breadcrumb: "Analytics" },
   { path: "/approvals", component: Approvals, breadcrumb: "Approvals" },
   { path: "/control-panel", component: ControlPanel, breadcrumb: "Control Panel" },
+  { path: "/settings", component: Settings, breadcrumb: "Settings" },
   { path: "/company-overview", component: CompanyOverview, breadcrumb: "Company Overview" },
   { path: "/user-profile", component: UserProfile, breadcrumb: "User Profile" },
 ];

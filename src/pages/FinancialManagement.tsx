@@ -32,6 +32,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { 
   FileText, 
@@ -91,8 +92,9 @@ interface Invoice {
   amount: number;
   paidAmount: number;
   status: StatusType;
-  approvalStatus: "draft" | "pending_approval" | "approved" | "rejected";
+  approvalStatus: "draft" | "pending_approval" | "partially_approved" | "approved" | "rejected";
   approvalLevel?: number;
+  totalApprovalLevels?: number;
   approvedBy?: string[];
   rejectedBy?: string;
   rejectionReason?: string;
@@ -114,8 +116,10 @@ const mockInvoices: Invoice[] = [
     status: "pending",
     approvalStatus: "pending_approval",
     approvalLevel: 1,
+    totalApprovalLevels: 2,
     approvalHistory: [
-      { level: 1, approver: "John Smith (Finance Manager)", action: "pending" }
+      { level: 1, approver: "John Smith (Finance Manager)", action: "pending" },
+      { level: 2, approver: "Sarah Johnson (CFO)", action: "pending" }
     ],
     payments: []
   },
@@ -130,6 +134,8 @@ const mockInvoices: Invoice[] = [
     paidAmount: 15600, 
     status: "paid",
     approvalStatus: "approved",
+    approvalLevel: 2,
+    totalApprovalLevels: 2,
     approvedBy: ["John Smith", "Sarah Johnson"],
     approvalHistory: [
       { level: 1, approver: "John Smith (Finance Manager)", action: "approved", date: "2024-01-14", comments: "Approved for payment" },
@@ -150,6 +156,8 @@ const mockInvoices: Invoice[] = [
     paidAmount: 12500, 
     status: "paid",
     approvalStatus: "approved",
+    approvalLevel: 1,
+    totalApprovalLevels: 1,
     approvedBy: ["John Smith"],
     approvalHistory: [
       { level: 1, approver: "John Smith (Finance Manager)", action: "approved", date: "2024-01-13", comments: "Verified and approved" }
@@ -169,6 +177,8 @@ const mockInvoices: Invoice[] = [
     paidAmount: 0, 
     status: "overdue",
     approvalStatus: "approved",
+    approvalLevel: 1,
+    totalApprovalLevels: 1,
     approvedBy: ["John Smith"],
     approvalHistory: [
       { level: 1, approver: "John Smith (Finance Manager)", action: "approved", date: "2024-01-12" }
@@ -185,11 +195,13 @@ const mockInvoices: Invoice[] = [
     amount: 8750, 
     paidAmount: 4000, 
     status: "partial",
-    approvalStatus: "approved",
-    approvedBy: ["John Smith", "Sarah Johnson"],
+    approvalStatus: "partially_approved",
+    approvalLevel: 1,
+    totalApprovalLevels: 2,
+    approvedBy: ["John Smith"],
     approvalHistory: [
-      { level: 1, approver: "John Smith (Finance Manager)", action: "approved", date: "2024-01-11" },
-      { level: 2, approver: "Sarah Johnson (CFO)", action: "approved", date: "2024-01-11" }
+      { level: 1, approver: "John Smith (Finance Manager)", action: "approved", date: "2024-01-11", comments: "First level approved" },
+      { level: 2, approver: "Sarah Johnson (CFO)", action: "pending" }
     ],
     payments: [
       { id: "p3", paymentNumber: "PAY-2024-0077", paymentDate: "2024-01-12", amount: 4000, method: "Bank Transfer", reference: "TRF-123456", status: "completed", recordedBy: "Jane Doe" }
@@ -398,10 +410,10 @@ export default function FinancialManagement() {
   const { toast } = useToast();
   
   // State management
+  const [activeTab, setActiveTab] = useState<"customer" | "vendor">("customer");
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
   const [approvalFilter, setApprovalFilter] = useState("all");
-  const [typeFilter, setTypeFilter] = useState("all");
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   
   // Modal states
@@ -425,29 +437,31 @@ export default function FinancialManagement() {
   const [savedFilters, setSavedFilters] = useState<SavedFilter[]>([]);
   const [activeFilters, setActiveFilters] = useState<FilterCondition[]>([]);
 
-  // Filter invoices
+  // Filter invoices based on active tab
   const filteredInvoices = mockInvoices.filter(invoice => {
     const matchesSearch = search === "" || 
       invoice.invoiceNumber.toLowerCase().includes(search.toLowerCase()) ||
       invoice.party.toLowerCase().includes(search.toLowerCase());
     
     const matchesStatus = statusFilter === "All" || invoice.status === statusFilter;
-    const matchesType = typeFilter === "all" || invoice.type === typeFilter;
+    const matchesTab = invoice.type === activeTab;
     const matchesApproval = approvalFilter === "all" || invoice.approvalStatus === approvalFilter;
     
-    return matchesSearch && matchesStatus && matchesType && matchesApproval;
+    return matchesSearch && matchesStatus && matchesTab && matchesApproval;
   });
 
   // Apply advanced filters
   const finalInvoices = applyAdvancedFilters(filteredInvoices, activeFilters);
 
-  // Calculate stats
+  // Calculate stats for active tab
+  const tabInvoices = mockInvoices.filter(i => i.type === activeTab);
   const stats = {
-    totalInvoices: mockInvoices.length,
-    pendingApproval: mockInvoices.filter(i => i.approvalStatus === "pending_approval").length,
-    approved: mockInvoices.filter(i => i.approvalStatus === "approved").length,
-    totalOutstanding: mockInvoices.reduce((sum, inv) => sum + (inv.amount - inv.paidAmount), 0),
-    overdue: mockInvoices.filter(i => i.status === "overdue").length,
+    totalInvoices: tabInvoices.length,
+    pendingApproval: tabInvoices.filter(i => i.approvalStatus === "pending_approval").length,
+    partiallyApproved: tabInvoices.filter(i => i.approvalStatus === "partially_approved").length,
+    approved: tabInvoices.filter(i => i.approvalStatus === "approved").length,
+    totalOutstanding: tabInvoices.reduce((sum, inv) => sum + (inv.amount - inv.paidAmount), 0),
+    overdue: tabInvoices.filter(i => i.status === "overdue").length,
   };
 
   // Table columns
@@ -510,11 +524,21 @@ export default function FinancialManagement() {
         const approvalStatusMap: Record<string, { label: string; variant: StatusType }> = {
           draft: { label: "Draft", variant: "pending" },
           pending_approval: { label: "Pending", variant: "pending" },
+          partially_approved: { label: "Partial", variant: "processing" },
           approved: { label: "Approved", variant: "completed" },
           rejected: { label: "Rejected", variant: "cancelled" },
         };
-        const { variant } = approvalStatusMap[invoice.approvalStatus];
-        return <StatusBadge status={variant} />;
+        const statusInfo = approvalStatusMap[invoice.approvalStatus];
+        return (
+          <div className="flex items-center gap-2">
+            <StatusBadge status={statusInfo.variant} />
+            {invoice.totalApprovalLevels && invoice.totalApprovalLevels > 1 && invoice.approvalStatus !== "rejected" && (
+              <span className="text-xs text-muted-foreground">
+                {invoice.approvalLevel}/{invoice.totalApprovalLevels}
+              </span>
+            )}
+          </div>
+        );
       },
     },
     {
@@ -526,7 +550,7 @@ export default function FinancialManagement() {
       key: "actions",
       header: "Actions",
       render: (invoice) => {
-        const canApprove = invoice.approvalStatus === "pending_approval";
+        const canApprove = invoice.approvalStatus === "pending_approval" || invoice.approvalStatus === "partially_approved";
         const canRecordPayment = invoice.approvalStatus === "approved" && invoice.paidAmount < invoice.amount;
         const canSend = invoice.approvalStatus === "approved";
         
@@ -701,7 +725,6 @@ export default function FinancialManagement() {
     setActiveFilters([]);
     setSearch("");
     setStatusFilter("All");
-    setTypeFilter("all");
     setApprovalFilter("all");
   };
 
@@ -709,15 +732,37 @@ export default function FinancialManagement() {
     <PageBackground>
       <div className="relative z-10 p-6">
         {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold mb-2">Financial Management</h1>
-          <p className="text-muted-foreground">
-            Manage invoices with approval workflow and payment tracking
-          </p>
+        <div className="mb-6 flex items-center justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold mb-2">Financial Management</h1>
+            <p className="text-muted-foreground">
+              Manage invoices with approval workflow and payment tracking
+            </p>
+          </div>
+          
+          {/* Tabs for Vendor and Customer */}
+          <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "customer" | "vendor")}>
+            <TabsList className="h-11 p-1 bg-muted/50">
+              <TabsTrigger 
+                value="customer" 
+                className="px-6 text-sm font-medium data-[state=active]:bg-background data-[state=active]:shadow-sm"
+              >
+                <User className="h-4 w-4 mr-2" />
+                Customer Invoices
+              </TabsTrigger>
+              <TabsTrigger 
+                value="vendor" 
+                className="px-6 text-sm font-medium data-[state=active]:bg-background data-[state=active]:shadow-sm"
+              >
+                <FileText className="h-4 w-4 mr-2" />
+                Vendor Invoices
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-6 gap-4 mb-6">
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
@@ -742,6 +787,20 @@ export default function FinancialManagement() {
               <div className="flex items-center justify-between">
                 <p className="text-2xl font-bold">{stats.pendingApproval}</p>
                 <Clock className="h-8 w-8 text-yellow-500" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Partially Approved
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <p className="text-2xl font-bold">{stats.partiallyApproved}</p>
+                <AlertCircle className="h-8 w-8 text-orange-500" />
               </div>
             </CardContent>
           </Card>
@@ -788,7 +847,7 @@ export default function FinancialManagement() {
             <CardContent>
               <div className="flex items-center justify-between">
                 <p className="text-2xl font-bold text-green-600">
-                  ${mockInvoices.reduce((sum, inv) => sum + inv.paidAmount, 0).toLocaleString()}
+                  ${tabInvoices.reduce((sum, inv) => sum + inv.paidAmount, 0).toLocaleString()}
                 </p>
                 <TrendingUp className="h-8 w-8 text-green-500" />
               </div>
@@ -797,7 +856,7 @@ export default function FinancialManagement() {
         </div>
 
         {/* Toolbar */}
-        <Card className="mb-6">
+        <Card>
           <CardContent className="pt-6">
             <div className="flex flex-col lg:flex-row gap-4">
               {/* Search */}
@@ -837,17 +896,6 @@ export default function FinancialManagement() {
                   </SelectContent>
                 </Select>
 
-                <Select value={typeFilter} onValueChange={setTypeFilter}>
-                  <SelectTrigger className="w-[150px]">
-                    <SelectValue placeholder="Type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Types</SelectItem>
-                    <SelectItem value="customer">Customer</SelectItem>
-                    <SelectItem value="vendor">Vendor</SelectItem>
-                  </SelectContent>
-                </Select>
-
                 <Button
                   variant="outline"
                   onClick={() => setAdvancedFilterOpen(true)}
@@ -869,7 +917,7 @@ export default function FinancialManagement() {
                   Activity Log
                 </Button>
 
-                {(activeFilters.length > 0 || search || statusFilter !== "All" || typeFilter !== "all" || approvalFilter !== "all") && (
+                {(activeFilters.length > 0 || search || statusFilter !== "All" || approvalFilter !== "all") && (
                   <Button variant="ghost" onClick={handleClearFilters}>
                     Clear All
                   </Button>
@@ -989,62 +1037,126 @@ export default function FinancialManagement() {
         {/* Invoice Details Modal */}
         {selectedInvoice && (
           <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
-            <DialogContent className="max-w-3xl max-h-[90vh]">
+            <DialogContent className="max-w-4xl max-h-[90vh]">
               <DialogHeader>
-                <DialogTitle>Invoice Details - {selectedInvoice.invoiceNumber}</DialogTitle>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-primary/10">
+                      <FileText className="h-5 w-5 text-primary" />
+                    </div>
+                    <div>
+                      <DialogTitle className="text-xl">{selectedInvoice.invoiceNumber}</DialogTitle>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        {selectedInvoice.type === "customer" ? "Customer Invoice" : "Vendor Invoice"}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge variant={selectedInvoice.type === "customer" ? "default" : "secondary"}>
+                      {selectedInvoice.type === "customer" ? "Receivable" : "Payable"}
+                    </Badge>
+                    <StatusBadge status={selectedInvoice.status} />
+                  </div>
+                </div>
               </DialogHeader>
               <ScrollArea className="max-h-[calc(90vh-120px)]">
                 <div className="space-y-6 pr-4">
                   {/* Basic Info */}
                   <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm text-muted-foreground">Party</p>
-                      <p className="font-semibold">{selectedInvoice.party}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">Type</p>
-                      <Badge variant={selectedInvoice.type === "customer" ? "default" : "secondary"}>
-                        {selectedInvoice.type === "customer" ? "Customer" : "Vendor"}
-                      </Badge>
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">Issue Date</p>
-                      <p className="font-medium">{selectedInvoice.issueDate}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">Due Date</p>
-                      <p className="font-medium">{selectedInvoice.dueDate}</p>
-                    </div>
+                    <Card className="border-primary/20 hover:border-primary/40 transition-colors">
+                      <CardContent className="pt-4 pb-4">
+                        <div className="flex items-center gap-2 mb-2">
+                          <User className="h-4 w-4 text-muted-foreground" />
+                          <p className="text-sm text-muted-foreground">Party</p>
+                        </div>
+                        <p className="font-semibold text-lg">{selectedInvoice.party}</p>
+                      </CardContent>
+                    </Card>
+                    <Card className="border-primary/20 hover:border-primary/40 transition-colors">
+                      <CardContent className="pt-4 pb-4">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Calendar className="h-4 w-4 text-muted-foreground" />
+                          <p className="text-sm text-muted-foreground">Issue Date</p>
+                        </div>
+                        <p className="font-semibold text-lg">{selectedInvoice.issueDate}</p>
+                      </CardContent>
+                    </Card>
+                    <Card className="border-primary/20 hover:border-primary/40 transition-colors">
+                      <CardContent className="pt-4 pb-4">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Clock className="h-4 w-4 text-muted-foreground" />
+                          <p className="text-sm text-muted-foreground">Due Date</p>
+                        </div>
+                        <p className="font-semibold text-lg">{selectedInvoice.dueDate}</p>
+                      </CardContent>
+                    </Card>
+                    <Card className="border-primary/20 hover:border-primary/40 transition-colors">
+                      <CardContent className="pt-4 pb-4">
+                        <div className="flex items-center gap-2 mb-2">
+                          <History className="h-4 w-4 text-muted-foreground" />
+                          <p className="text-sm text-muted-foreground">Payment Terms</p>
+                        </div>
+                        <p className="font-semibold text-lg">Net 30</p>
+                      </CardContent>
+                    </Card>
                   </div>
 
                   <Separator />
 
                   {/* Financial Summary */}
                   <div>
-                    <h3 className="font-semibold mb-3 flex items-center gap-2">
-                      <DollarSign className="h-5 w-5" />
+                    <h3 className="font-semibold mb-4 flex items-center gap-2">
+                      <div className="p-2 rounded-lg bg-primary/10">
+                        <DollarSign className="h-4 w-4 text-primary" />
+                      </div>
                       Financial Summary
                     </h3>
                     <div className="grid grid-cols-3 gap-4">
-                      <Card>
-                        <CardContent className="pt-4">
-                          <p className="text-sm text-muted-foreground">Total Amount</p>
-                          <p className="text-2xl font-bold">${selectedInvoice.amount.toLocaleString()}</p>
+                      <Card className="border-blue-500/30 bg-gradient-to-br from-blue-500/5 to-blue-500/10 hover:shadow-lg hover:scale-[1.02] transition-all duration-200">
+                        <CardContent className="pt-4 pb-4">
+                          <div className="flex items-center justify-between mb-2">
+                            <p className="text-sm font-medium text-muted-foreground">Total Amount</p>
+                            <FileText className="h-5 w-5 text-blue-500 opacity-50" />
+                          </div>
+                          <p className="text-3xl font-bold">${selectedInvoice.amount.toLocaleString()}</p>
+                          <p className="text-xs text-muted-foreground mt-1">Invoice value</p>
                         </CardContent>
                       </Card>
-                      <Card>
-                        <CardContent className="pt-4">
-                          <p className="text-sm text-muted-foreground">Paid Amount</p>
-                          <p className="text-2xl font-bold text-green-600">
+                      <Card className="border-green-500/30 bg-gradient-to-br from-green-500/5 to-green-500/10 hover:shadow-lg hover:scale-[1.02] transition-all duration-200">
+                        <CardContent className="pt-4 pb-4">
+                          <div className="flex items-center justify-between mb-2">
+                            <p className="text-sm font-medium text-muted-foreground">Paid Amount</p>
+                            <CheckCircle className="h-5 w-5 text-green-500 opacity-50" />
+                          </div>
+                          <p className="text-3xl font-bold text-green-600">
                             ${selectedInvoice.paidAmount.toLocaleString()}
                           </p>
+                          <div className="mt-2">
+                            <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
+                              <span>Payment progress</span>
+                              <span>{Math.round((selectedInvoice.paidAmount / selectedInvoice.amount) * 100)}%</span>
+                            </div>
+                            <div className="h-1.5 bg-muted rounded-full overflow-hidden">
+                              <div 
+                                className="h-full bg-green-500 transition-all duration-500"
+                                style={{ width: `${(selectedInvoice.paidAmount / selectedInvoice.amount) * 100}%` }}
+                              />
+                            </div>
+                          </div>
                         </CardContent>
                       </Card>
-                      <Card>
-                        <CardContent className="pt-4">
-                          <p className="text-sm text-muted-foreground">Balance Due</p>
-                          <p className="text-2xl font-bold text-red-600">
+                      <Card className="border-red-500/30 bg-gradient-to-br from-red-500/5 to-red-500/10 hover:shadow-lg hover:scale-[1.02] transition-all duration-200">
+                        <CardContent className="pt-4 pb-4">
+                          <div className="flex items-center justify-between mb-2">
+                            <p className="text-sm font-medium text-muted-foreground">Balance Due</p>
+                            <AlertTriangle className="h-5 w-5 text-red-500 opacity-50" />
+                          </div>
+                          <p className="text-3xl font-bold text-red-600">
                             ${(selectedInvoice.amount - selectedInvoice.paidAmount).toLocaleString()}
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            {selectedInvoice.paidAmount === 0 ? "Unpaid" : 
+                             selectedInvoice.paidAmount >= selectedInvoice.amount ? "Fully paid" : "Partial payment"}
                           </p>
                         </CardContent>
                       </Card>
@@ -1055,14 +1167,52 @@ export default function FinancialManagement() {
 
                   {/* Approval Workflow */}
                   <div>
-                    <h3 className="font-semibold mb-3 flex items-center gap-2">
-                      <CheckCircle className="h-5 w-5" />
-                      Approval Workflow
-                    </h3>
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="font-semibold flex items-center gap-2">
+                        <CheckCircle className="h-5 w-5" />
+                        Approval Workflow
+                      </h3>
+                      <Badge variant={
+                        selectedInvoice.approvalStatus === "approved" ? "default" :
+                        selectedInvoice.approvalStatus === "partially_approved" ? "secondary" :
+                        selectedInvoice.approvalStatus === "pending_approval" ? "outline" :
+                        selectedInvoice.approvalStatus === "rejected" ? "destructive" : "outline"
+                      }>
+                        {selectedInvoice.approvalStatus === "pending_approval" ? "Pending" :
+                         selectedInvoice.approvalStatus === "partially_approved" ? "Partially Approved" :
+                         selectedInvoice.approvalStatus === "approved" ? "Approved" :
+                         selectedInvoice.approvalStatus === "rejected" ? "Rejected" : "Draft"}
+                      </Badge>
+                    </div>
+
+                    {/* Approval Progress Bar */}
+                    {selectedInvoice.totalApprovalLevels && (
+                      <div className="mb-4 p-3 rounded-lg bg-muted/50 border">
+                        <div className="flex items-center justify-between text-sm mb-2">
+                          <span className="text-muted-foreground">Progress</span>
+                          <span className="font-medium">Level {selectedInvoice.approvalLevel || 1} of {selectedInvoice.totalApprovalLevels}</span>
+                        </div>
+                        <div className="flex gap-1">
+                          {Array.from({ length: selectedInvoice.totalApprovalLevels }).map((_, i) => (
+                            <div
+                              key={i}
+                              className={`h-2 flex-1 rounded-full transition-all ${
+                                i < (selectedInvoice.approvalLevel || 1) - 1
+                                  ? "bg-green-500"
+                                  : i === (selectedInvoice.approvalLevel || 1) - 1
+                                  ? "bg-primary"
+                                  : "bg-muted"
+                              }`}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
                     <div className="space-y-3">
                       {selectedInvoice.approvalHistory?.map((action, index) => (
-                        <div key={index} className="flex items-start gap-3 p-3 rounded-lg border">
-                          <div className="mt-1">
+                        <div key={index} className="group flex items-start gap-3 p-4 rounded-lg border hover:border-primary/40 hover:shadow-md transition-all duration-200 bg-gradient-to-r hover:from-primary/5">
+                          <div className="mt-1 p-2 rounded-lg bg-muted/50 group-hover:scale-110 transition-transform duration-200">
                             {action.action === "approved" && (
                               <CheckCircle className="h-5 w-5 text-green-600" />
                             )}
@@ -1070,34 +1220,116 @@ export default function FinancialManagement() {
                               <XCircle className="h-5 w-5 text-red-600" />
                             )}
                             {action.action === "pending" && (
-                              <Clock className="h-5 w-5 text-yellow-600" />
+                              <Clock className="h-5 w-5 text-yellow-600 animate-pulse" />
                             )}
                           </div>
                           <div className="flex-1">
-                            <div className="flex items-center justify-between">
-                              <p className="font-medium">Level {action.level} - {action.approver}</p>
+                            <div className="flex items-center justify-between mb-1">
+                              <div>
+                                <p className="font-semibold text-sm">Level {action.level}</p>
+                                <p className="text-sm text-muted-foreground">{action.approver}</p>
+                              </div>
                               <Badge variant={
                                 action.action === "approved" ? "default" :
                                 action.action === "rejected" ? "destructive" : "secondary"
-                              }>
-                                {action.action}
+                              } className="font-medium">
+                                {action.action === "approved" ? "✓ Approved" :
+                                 action.action === "rejected" ? "✗ Rejected" : "⏳ Pending"}
                               </Badge>
                             </div>
                             {action.date && (
-                              <p className="text-sm text-muted-foreground mt-1">
-                                <Calendar className="h-3 w-3 inline mr-1" />
+                              <p className="text-xs text-muted-foreground mt-2 flex items-center gap-1">
+                                <Calendar className="h-3 w-3" />
                                 {action.date}
                               </p>
                             )}
                             {action.comments && (
-                              <p className="text-sm mt-2 text-muted-foreground italic">
-                                "{action.comments}"
-                              </p>
+                              <div className="mt-3 p-2 rounded bg-muted/30 border-l-2 border-primary">
+                                <p className="text-sm text-muted-foreground italic">
+                                  "{action.comments}"
+                                </p>
+                              </div>
                             )}
                           </div>
                         </div>
                       ))}
                     </div>
+
+                    {/* Approval Actions */}
+                    {(selectedInvoice.approvalStatus === "pending_approval" || selectedInvoice.approvalStatus === "partially_approved") && (
+                      <Card className="mt-4 border-primary/30 bg-gradient-to-br from-primary/5 via-primary/10 to-blue-500/5">
+                        <CardContent className="pt-6 pb-6">
+                          <div className="flex items-center gap-3 mb-4">
+                            <div className="p-2 rounded-lg bg-primary/20">
+                              <AlertCircle className="h-5 w-5 text-primary" />
+                            </div>
+                            <div>
+                              <p className="font-semibold text-base">Action Required</p>
+                              <p className="text-xs text-muted-foreground">
+                                This invoice is awaiting your approval at Level {selectedInvoice.approvalLevel || 1}
+                              </p>
+                            </div>
+                          </div>
+
+                          <Separator className="mb-4" />
+
+                          {/* Comments Section */}
+                          <div className="mb-4">
+                            <Label htmlFor="approval-comments" className="text-sm font-medium mb-2 flex items-center gap-2">
+                              <FileText className="h-4 w-4" />
+                              Comments (Optional)
+                            </Label>
+                            <Textarea
+                              id="approval-comments"
+                              placeholder="Add your comments or reason for this decision..."
+                              className="min-h-[80px] resize-none"
+                              value={approvalComments}
+                              onChange={(e) => setApprovalComments(e.target.value)}
+                            />
+                            <p className="text-xs text-muted-foreground mt-1">
+                              Your comments will be visible in the approval history
+                            </p>
+                          </div>
+
+                          {/* Action Buttons */}
+                          <div className="grid grid-cols-3 gap-3">
+                            <Button 
+                              className="gap-2 hover:scale-105 transition-transform duration-200 shadow-sm hover:shadow-md" 
+                              variant="default"
+                            >
+                              <CheckCircle className="h-4 w-4" />
+                              <span className="font-semibold">Approve</span>
+                            </Button>
+                            <Button 
+                              className="gap-2 hover:scale-105 transition-transform duration-200 shadow-sm hover:shadow-md" 
+                              variant="destructive"
+                            >
+                              <XCircle className="h-4 w-4" />
+                              <span className="font-semibold">Reject</span>
+                            </Button>
+                            <Button 
+                              className="gap-2 hover:scale-105 transition-transform duration-200 shadow-sm hover:shadow-md" 
+                              variant="outline"
+                            >
+                              <AlertCircle className="h-4 w-4" />
+                              <span className="font-semibold">Request Changes</span>
+                            </Button>
+                          </div>
+
+                          {/* Quick Info */}
+                          <div className="mt-4 p-3 rounded-lg bg-muted/30 border">
+                            <div className="flex items-start gap-2 text-xs text-muted-foreground">
+                              <AlertTriangle className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                              <div className="space-y-1">
+                                <p><strong>Approve:</strong> Move invoice to next approval level or mark as fully approved</p>
+                                <p><strong>Reject:</strong> Decline the invoice and send back to requester</p>
+                                <p><strong>Request Changes:</strong> Ask for modifications before approval</p>
+                              </div>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    )}
                   </div>
 
                   <Separator />
@@ -1110,44 +1342,77 @@ export default function FinancialManagement() {
                     </h3>
                     {selectedInvoice.payments && selectedInvoice.payments.length > 0 ? (
                       <div className="space-y-3">
-                        {selectedInvoice.payments.map((payment) => (
-                          <div key={payment.id} className="p-4 rounded-lg border bg-muted/50">
-                            <div className="flex items-start justify-between mb-2">
-                              <div>
-                                <p className="font-mono font-semibold">{payment.paymentNumber}</p>
-                                <p className="text-sm text-muted-foreground">
-                                  {payment.paymentDate} • {payment.method}
-                                </p>
+                        {selectedInvoice.payments.map((payment, idx) => (
+                          <Card key={payment.id} className="border-green-500/20 hover:border-green-500/40 hover:shadow-lg transition-all duration-200 bg-gradient-to-r from-green-500/5">
+                            <CardContent className="pt-4 pb-4">
+                              <div className="flex items-start justify-between mb-3">
+                                <div className="flex items-center gap-3">
+                                  <div className="p-2 rounded-lg bg-green-500/10">
+                                    <CreditCard className="h-5 w-5 text-green-600" />
+                                  </div>
+                                  <div>
+                                    <p className="font-mono font-semibold text-sm">{payment.paymentNumber}</p>
+                                    <p className="text-xs text-muted-foreground flex items-center gap-2 mt-1">
+                                      <Calendar className="h-3 w-3" />
+                                      {payment.paymentDate}
+                                      <span>•</span>
+                                      {payment.method}
+                                    </p>
+                                  </div>
+                                </div>
+                                <div className="flex flex-col items-end gap-2">
+                                  <StatusBadge status={payment.status} />
+                                  <Badge variant="outline" className="text-xs">Payment {idx + 1}</Badge>
+                                </div>
                               </div>
-                              <StatusBadge status={payment.status} />
-                            </div>
-                            <div className="grid grid-cols-3 gap-4 mt-3">
-                              <div>
-                                <p className="text-xs text-muted-foreground">Amount</p>
-                                <p className="font-bold text-green-600">
-                                  ${payment.amount.toLocaleString()}
-                                </p>
+                              <Separator className="my-3" />
+                              <div className="grid grid-cols-3 gap-4">
+                                <div className="flex items-center gap-2">
+                                  <div className="p-2 rounded bg-green-500/10">
+                                    <DollarSign className="h-4 w-4 text-green-600" />
+                                  </div>
+                                  <div>
+                                    <p className="text-xs text-muted-foreground">Amount</p>
+                                    <p className="font-bold text-green-600 text-lg">
+                                      ${payment.amount.toLocaleString()}
+                                    </p>
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <div className="p-2 rounded bg-muted">
+                                    <FileText className="h-4 w-4 text-muted-foreground" />
+                                  </div>
+                                  <div>
+                                    <p className="text-xs text-muted-foreground">Reference</p>
+                                    <p className="font-mono text-sm font-medium">{payment.reference}</p>
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <div className="p-2 rounded bg-muted">
+                                    <User className="h-4 w-4 text-muted-foreground" />
+                                  </div>
+                                  <div>
+                                    <p className="text-xs text-muted-foreground">Recorded By</p>
+                                    <p className="text-sm font-medium">{payment.recordedBy}</p>
+                                  </div>
+                                </div>
                               </div>
-                              <div>
-                                <p className="text-xs text-muted-foreground">Reference</p>
-                                <p className="font-mono text-sm">{payment.reference}</p>
-                              </div>
-                              <div>
-                                <p className="text-xs text-muted-foreground">Recorded By</p>
-                                <p className="text-sm flex items-center gap-1">
-                                  <User className="h-3 w-3" />
-                                  {payment.recordedBy}
-                                </p>
-                              </div>
-                            </div>
-                          </div>
+                            </CardContent>
+                          </Card>
                         ))}
                       </div>
                     ) : (
-                      <div className="text-center py-8 text-muted-foreground">
-                        <Receipt className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                        <p>No payments recorded yet</p>
-                      </div>
+                      <Card className="border-dashed">
+                        <CardContent className="py-12">
+                          <div className="text-center text-muted-foreground">
+                            <div className="mx-auto w-16 h-16 rounded-full bg-muted/50 flex items-center justify-center mb-4">
+                              <Receipt className="h-8 w-8 opacity-50" />
+                            </div>
+                            <p className="font-medium">No payments recorded yet</p>
+                            <p className="text-sm mt-1">Payment history will appear here</p>
+                          </div>
+                        </CardContent>
+                      </Card>
                     )}
                   </div>
                 </div>
