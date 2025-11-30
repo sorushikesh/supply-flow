@@ -9,10 +9,16 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Bell, Settings, LogOut, Zap, ShoppingCart, FileText, Package, CreditCard } from "lucide-react";
+import { Bell, Settings, LogOut, Zap, ShoppingCart, FileText, Package, CreditCard, Keyboard } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useLocation } from "wouter";
 import { CompanySettingsDialog } from "@/components/CompanySettingsDialog";
+import { useState } from "react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const mockNotifications = [
   { id: 1, title: "Low Stock Alert", description: "Widget A is below reorder level", time: "2 min ago" },
@@ -26,6 +32,7 @@ interface TopHeaderProps {
 
 export function TopHeader({ breadcrumb }: TopHeaderProps) {
   const [, setLocation] = useLocation();
+  const [showShortcuts, setShowShortcuts] = useState(false);
 
   return (
     <header className="h-14 border-b flex items-center justify-between gap-4 px-4 lg:px-6 bg-background/95 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
@@ -114,6 +121,36 @@ export function TopHeader({ breadcrumb }: TopHeaderProps) {
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+
+        {/* Divider */}
+        <div className="h-6 w-px bg-border hidden lg:block" />
+
+        {/* Keyboard Shortcuts Help */}
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              size="icon"
+              variant="ghost"
+              className="h-8 w-8 hover:bg-accent transition-colors"
+              onClick={() => {
+                // Trigger keyboard shortcut event
+                window.dispatchEvent(
+                  new KeyboardEvent("keydown", {
+                    key: "?",
+                    ctrlKey: true,
+                    shiftKey: true,
+                  })
+                );
+              }}
+              aria-label="Show keyboard shortcuts"
+            >
+              <Keyboard className="h-4 w-4" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom">
+            <p className="text-xs">Keyboard Shortcuts (Ctrl+Shift+?)</p>
+          </TooltipContent>
+        </Tooltip>
 
         {/* Divider */}
         <div className="h-6 w-px bg-border hidden lg:block" />

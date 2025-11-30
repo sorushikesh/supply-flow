@@ -15,10 +15,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Truck, MapPin, Package, CheckCircle2 } from "lucide-react";
+import { Truck, MapPin, Package, CheckCircle2, PackageX, History, Download, Filter } from "lucide-react";
+import { EmptyState } from "@/components/EmptyState";
+import { BulkActions } from "@/components/BulkActions";
+import { ExportDialog } from "@/components/ExportDialog";
+import { ActivityLogDialog, generateMockActivityLogs, type ActivityLog } from "@/components/ActivityLog";
+import { AdvancedFilterDialog, applyAdvancedFilters, type FilterCondition, type SavedFilter } from "@/components/AdvancedFilter";
 
 interface DispatchRecord {
   id: string;
@@ -68,6 +74,27 @@ export default function Dispatch() {
   const [carrier, setCarrier] = useState("");
   const [trackingNumber, setTrackingNumber] = useState("");
   const [notes, setNotes] = useState("");
+  
+  // New features state
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [exportDialogOpen, setExportDialogOpen] = useState(false);
+  const [activityLogOpen, setActivityLogOpen] = useState(false);
+  const [advancedFilterOpen, setAdvancedFilterOpen] = useState(false);
+  const [activityLogs] = useState<ActivityLog[]>(generateMockActivityLogs());
+  const [filterConditions, setFilterConditions] = useState<FilterCondition[]>([]);
+  const [savedFilters, setSavedFilters] = useState<SavedFilter[]>([
+    {
+      id: "1",
+      name: "In Transit Shipments",
+      conditions: [{ id: "1", field: "status", operator: "equals", value: "in_transit", fieldType: "select" }],
+      isFavorite: true,
+    },
+    {
+      id: "2",
+      name: "Pending Dispatches",
+      conditions: [{ id: "1", field: "status", operator: "equals", value: "pending", fieldType: "select" }],
+    },
+  ]);
 
   const filteredData = mockDispatches.filter((dispatch) => {
     const matchesSearch =
@@ -78,7 +105,39 @@ export default function Dispatch() {
     return matchesSearch && matchesStatus;
   });
 
+  // Apply advanced filters if any
+  const finalData = filterConditions.length > 0 
+    ? applyAdvancedFilters(filteredData, filterConditions)
+    : filteredData;
+
   const columns: Column<DispatchRecord>[] = [
+    {
+      key: "select",
+      header: () => (
+        <Checkbox
+          checked={selectedItems.length === finalData.length && finalData.length > 0}
+          onCheckedChange={(checked) => {
+            if (checked) {
+              setSelectedItems(finalData.map((item) => item.id));
+            } else {
+              setSelectedItems([]);
+            }
+          }}
+        />
+      ),
+      render: (dispatch) => (
+        <Checkbox
+          checked={selectedItems.includes(dispatch.id)}
+          onCheckedChange={(checked) => {
+            if (checked) {
+              setSelectedItems([...selectedItems, dispatch.id]);
+            } else {
+              setSelectedItems(selectedItems.filter((id) => id !== dispatch.id));
+            }
+          }}
+        />
+      ),
+    },
     { key: "dispatchNumber", header: "Dispatch #", className: "font-mono text-sm font-medium" },
     { key: "soNumber", header: "SO Number", className: "font-mono text-sm" },
     { key: "customer", header: "Customer" },
@@ -122,6 +181,56 @@ export default function Dispatch() {
     setNotes("");
   };
 
+  // Bulk operation handlers
+  const handleBulkExport = () => {
+    setExportDialogOpen(true);
+  };
+
+  const handleBulkEmail = () => {
+    toast({
+      title: "Email Sent",
+      description: `Report for ${selectedItems.length} items has been sent to your email.`,
+    });
+  };
+
+  const handleBulkStatusChange = (newStatus: string) => {
+    toast({
+      title: "Status Updated",
+      description: `${selectedItems.length} dispatches have been updated to ${newStatus}.`,
+    });
+    setSelectedItems([]);
+  };
+
+  const handleBulkDelete = () => {
+    toast({
+      title: "Dispatches Deleted",
+      description: `${selectedItems.length} dispatches have been deleted successfully.`,
+      variant: "destructive",
+    });
+    setSelectedItems([]);
+  };
+
+  const handleApplyFilters = (conditions: FilterCondition[]) => {
+    setFilterConditions(conditions);
+    toast({
+      title: "Filters Applied",
+      description: `Applied ${conditions.length} filter condition(s).`,
+    });
+  };
+
+  const handleSaveFilter = (name: string, conditions: FilterCondition[]) => {
+    const newFilter: SavedFilter = {
+      id: String(Date.now()),
+      name,
+      conditions,
+    };
+    setSavedFilters([...savedFilters, newFilter]);
+    toast({
+      title: "Filter Saved",
+      description: `Filter "${name}" has been saved successfully.`,
+    });
+  };
+
   const inTransit = mockDispatches.filter((d) => d.status === "in_transit").length;
   const delivered = mockDispatches.filter((d) => d.status === "delivered").length;
 
@@ -136,10 +245,41 @@ export default function Dispatch() {
             </h1>
             <p className="text-muted-foreground mt-1">Track outgoing shipments</p>
           </div>
-          <Button onClick={() => setModalOpen(true)} className="gap-2">
-            <Package className="h-4 w-4" />
-            Create Dispatch
-          </Button>
+          <div className="flex gap-2">
+            <Button 
+              variant="outline"
+              onClick={() => setAdvancedFilterOpen(true)}
+              className="gap-2"
+            >
+              <Filter className="h-4 w-4" />
+              Advanced Filter
+              {filterConditions.length > 0 && (
+                <Badge variant="secondary" className="ml-1">
+                  {filterConditions.length}
+                </Badge>
+              )}
+            </Button>
+            <Button 
+              variant="outline"
+              onClick={() => setActivityLogOpen(true)}
+              className="gap-2"
+            >
+              <History className="h-4 w-4" />
+              Activity Log
+            </Button>
+            <Button 
+              variant="outline"
+              onClick={() => setExportDialogOpen(true)}
+              className="gap-2"
+            >
+              <Download className="h-4 w-4" />
+              Export
+            </Button>
+            <Button onClick={() => setModalOpen(true)} className="gap-2">
+              <Package className="h-4 w-4" />
+              Create Dispatch
+            </Button>
+          </div>
         </div>
 
       {/* Stats Grid */}
@@ -195,13 +335,40 @@ export default function Dispatch() {
             ]}
           />
 
-          <DataTable
-            columns={columns}
-            data={filteredData}
-            testIdPrefix="dispatch"
-          />
+          {filteredData.length === 0 ? (
+            <EmptyState
+              icon={PackageX}
+              title={search || statusFilter !== "All" ? "No dispatch records found" : "No dispatches yet"}
+              description={
+                search || statusFilter !== "All"
+                  ? "No dispatch records match your search criteria. Try adjusting your filters."
+                  : "Create your first dispatch to start shipping orders to customers."
+              }
+              action={{
+                label: "Create Dispatch",
+                onClick: () => setModalOpen(true),
+                icon: Truck,
+              }}
+            />
+          ) : (
+            <DataTable
+              columns={columns}
+              data={finalData}
+              testIdPrefix="dispatch"
+            />
+          )}
         </CardContent>
       </Card>
+
+      {/* Floating Bulk Actions */}
+      <BulkActions
+        selectedCount={selectedItems.length}
+        onExport={handleBulkExport}
+        onEmail={handleBulkEmail}
+        onStatusChange={handleBulkStatusChange}
+        onDelete={handleBulkDelete}
+        statusOptions={["Pending", "In Transit", "Delivered", "Cancelled"]}
+      />
 
       <FormModal
         open={modalOpen}
@@ -339,6 +506,47 @@ export default function Dispatch() {
           </div>
         </div>
       </FormModal>
+
+      {/* Export Dialog */}
+      <ExportDialog
+        open={exportDialogOpen}
+        onOpenChange={setExportDialogOpen}
+        columns={[
+          { key: "dispatchNumber", label: "Dispatch #" },
+          { key: "dispatchDate", label: "Date" },
+          { key: "customer", label: "Customer" },
+          { key: "soNumber", label: "SO Number" },
+          { key: "carrier", label: "Carrier" },
+          { key: "trackingNumber", label: "Tracking" },
+          { key: "status", label: "Status" },
+        ]}
+        data={finalData.filter((item) => selectedItems.length === 0 || selectedItems.includes(item.id))}
+        filename="dispatch"
+      />
+
+      {/* Activity Log Dialog */}
+      <ActivityLogDialog
+        open={activityLogOpen}
+        onOpenChange={setActivityLogOpen}
+        logs={activityLogs}
+        title="Dispatch Activity Log"
+      />
+
+      {/* Advanced Filter Dialog */}
+      <AdvancedFilterDialog
+        open={advancedFilterOpen}
+        onOpenChange={setAdvancedFilterOpen}
+        fields={[
+          { value: "dispatchNumber", label: "Dispatch Number", type: "text" },
+          { value: "customer", label: "Customer", type: "text" },
+          { value: "dispatchDate", label: "Date", type: "date" },
+          { value: "carrier", label: "Carrier", type: "text" },
+          { value: "status", label: "Status", type: "select" },
+        ]}
+        onApplyFilters={handleApplyFilters}
+        savedFilters={savedFilters}
+        onSaveFilter={handleSaveFilter}
+      />
       </div>
     </PageBackground>
   );

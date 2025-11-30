@@ -20,10 +20,16 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Package, CheckCircle2, AlertTriangle } from "lucide-react";
+import { Package, CheckCircle2, AlertTriangle, PackageX, History, Download, Filter } from "lucide-react";
+import { EmptyState } from "@/components/EmptyState";
+import { BulkActions } from "@/components/BulkActions";
+import { ExportDialog } from "@/components/ExportDialog";
+import { ActivityLogDialog, generateMockActivityLogs, type ActivityLog } from "@/components/ActivityLog";
+import { AdvancedFilterDialog, applyAdvancedFilters, type FilterCondition, type SavedFilter } from "@/components/AdvancedFilter";
 
 interface GRNRecord {
   id: string;
@@ -67,6 +73,27 @@ export default function GRN() {
   const [selectedPO, setSelectedPO] = useState("");
   const [receivedQty, setReceivedQty] = useState("");
   const [notes, setNotes] = useState("");
+  
+  // New features state
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [exportDialogOpen, setExportDialogOpen] = useState(false);
+  const [activityLogOpen, setActivityLogOpen] = useState(false);
+  const [advancedFilterOpen, setAdvancedFilterOpen] = useState(false);
+  const [activityLogs] = useState<ActivityLog[]>(generateMockActivityLogs());
+  const [filterConditions, setFilterConditions] = useState<FilterCondition[]>([]);
+  const [savedFilters, setSavedFilters] = useState<SavedFilter[]>([
+    {
+      id: "1",
+      name: "Partial Receipts",
+      conditions: [{ id: "1", field: "status", operator: "equals", value: "partial", fieldType: "select" }],
+      isFavorite: true,
+    },
+    {
+      id: "2",
+      name: "Recent GRNs",
+      conditions: [{ id: "1", field: "receivedDate", operator: "greater", value: "2024-01-10", fieldType: "date" }],
+    },
+  ]);
 
   const filteredData = mockGRNs.filter((grn) => {
     const matchesSearch =
@@ -77,7 +104,39 @@ export default function GRN() {
     return matchesSearch && matchesStatus;
   });
 
+  // Apply advanced filters if any
+  const finalData = filterConditions.length > 0 
+    ? applyAdvancedFilters(filteredData, filterConditions)
+    : filteredData;
+
   const columns: Column<GRNRecord>[] = [
+    {
+      key: "select",
+      header: () => (
+        <Checkbox
+          checked={selectedItems.length === finalData.length && finalData.length > 0}
+          onCheckedChange={(checked) => {
+            if (checked) {
+              setSelectedItems(finalData.map((item) => item.id));
+            } else {
+              setSelectedItems([]);
+            }
+          }}
+        />
+      ),
+      render: (grn) => (
+        <Checkbox
+          checked={selectedItems.includes(grn.id)}
+          onCheckedChange={(checked) => {
+            if (checked) {
+              setSelectedItems([...selectedItems, grn.id]);
+            } else {
+              setSelectedItems(selectedItems.filter((id) => id !== grn.id));
+            }
+          }}
+        />
+      ),
+    },
     { 
       key: "grnNumber", 
       header: "GRN Number", 
@@ -147,6 +206,56 @@ export default function GRN() {
     setNotes("");
   };
 
+  // Bulk operation handlers
+  const handleBulkExport = () => {
+    setExportDialogOpen(true);
+  };
+
+  const handleBulkEmail = () => {
+    toast({
+      title: "Email Sent",
+      description: `Report for ${selectedItems.length} GRN records has been sent to your email.`,
+    });
+  };
+
+  const handleBulkStatusChange = (newStatus: string) => {
+    toast({
+      title: "Status Updated",
+      description: `${selectedItems.length} GRN records have been updated to ${newStatus}.`,
+    });
+    setSelectedItems([]);
+  };
+
+  const handleBulkDelete = () => {
+    toast({
+      title: "GRN Records Deleted",
+      description: `${selectedItems.length} GRN records have been deleted successfully.`,
+      variant: "destructive",
+    });
+    setSelectedItems([]);
+  };
+
+  const handleApplyFilters = (conditions: FilterCondition[]) => {
+    setFilterConditions(conditions);
+    toast({
+      title: "Filters Applied",
+      description: `Applied ${conditions.length} filter condition(s).`,
+    });
+  };
+
+  const handleSaveFilter = (name: string, conditions: FilterCondition[]) => {
+    const newFilter: SavedFilter = {
+      id: String(Date.now()),
+      name,
+      conditions,
+    };
+    setSavedFilters([...savedFilters, newFilter]);
+    toast({
+      title: "Filter Saved",
+      description: `Filter "${name}" has been saved successfully.`,
+    });
+  };
+
   const completedGRNs = mockGRNs.filter((grn) => grn.status === "completed").length;
   const partialGRNs = mockGRNs.filter((grn) => grn.status === "partial").length;
 
@@ -161,10 +270,41 @@ export default function GRN() {
             </h1>
             <p className="text-muted-foreground mt-1">Record incoming inventory</p>
           </div>
-          <Button onClick={() => setModalOpen(true)} className="gap-2">
-            <Package className="h-4 w-4" />
-            Create GRN
-          </Button>
+          <div className="flex gap-2">
+            <Button 
+              variant="outline"
+              onClick={() => setAdvancedFilterOpen(true)}
+              className="gap-2"
+            >
+              <Filter className="h-4 w-4" />
+              Advanced Filter
+              {filterConditions.length > 0 && (
+                <Badge variant="secondary" className="ml-1">
+                  {filterConditions.length}
+                </Badge>
+              )}
+            </Button>
+            <Button 
+              variant="outline"
+              onClick={() => setActivityLogOpen(true)}
+              className="gap-2"
+            >
+              <History className="h-4 w-4" />
+              Activity Log
+            </Button>
+            <Button 
+              variant="outline"
+              onClick={() => setExportDialogOpen(true)}
+              className="gap-2"
+            >
+              <Download className="h-4 w-4" />
+              Export
+            </Button>
+            <Button onClick={() => setModalOpen(true)} className="gap-2">
+              <Package className="h-4 w-4" />
+              Create GRN
+            </Button>
+          </div>
         </div>
 
       {/* Stats Grid */}
@@ -220,13 +360,40 @@ export default function GRN() {
             ]}
           />
 
-          <DataTable
-            columns={columns}
-            data={filteredData}
-            testIdPrefix="grn"
-          />
+          {filteredData.length === 0 ? (
+            <EmptyState
+              icon={PackageX}
+              title={search || statusFilter !== "All" ? "No GRN records found" : "No goods receipts yet"}
+              description={
+                search || statusFilter !== "All"
+                  ? "No goods receipt notes match your search criteria. Try adjusting your filters."
+                  : "Record your first goods receipt to track incoming inventory."
+              }
+              action={{
+                label: "Record GRN",
+                onClick: () => setModalOpen(true),
+                icon: Package,
+              }}
+            />
+          ) : (
+            <DataTable
+              columns={columns}
+              data={finalData}
+              testIdPrefix="grn"
+            />
+          )}
         </CardContent>
       </Card>
+
+      {/* Floating Bulk Actions */}
+      <BulkActions
+        selectedCount={selectedItems.length}
+        onExport={handleBulkExport}
+        onEmail={handleBulkEmail}
+        onStatusChange={handleBulkStatusChange}
+        onDelete={handleBulkDelete}
+        statusOptions={["Pending", "Received", "Partial", "Completed"]}
+      />
 
       <FormModal
         open={modalOpen}
@@ -337,6 +504,47 @@ export default function GRN() {
           </div>
         </div>
       </FormModal>
+
+      {/* Export Dialog */}
+      <ExportDialog
+        open={exportDialogOpen}
+        onOpenChange={setExportDialogOpen}
+        columns={[
+          { key: "grnNumber", label: "GRN Number" },
+          { key: "poNumber", label: "PO Number" },
+          { key: "vendor", label: "Vendor" },
+          { key: "receivedDate", label: "Date" },
+          { key: "orderedQty", label: "Ordered Qty" },
+          { key: "receivedQty", label: "Received Qty" },
+          { key: "status", label: "Status" },
+        ]}
+        data={finalData.filter((item) => selectedItems.length === 0 || selectedItems.includes(item.id))}
+        filename="grn-records"
+      />
+
+      {/* Activity Log Dialog */}
+      <ActivityLogDialog
+        open={activityLogOpen}
+        onOpenChange={setActivityLogOpen}
+        logs={activityLogs}
+        title="GRN Activity Log"
+      />
+
+      {/* Advanced Filter Dialog */}
+      <AdvancedFilterDialog
+        open={advancedFilterOpen}
+        onOpenChange={setAdvancedFilterOpen}
+        fields={[
+          { value: "grnNumber", label: "GRN Number", type: "text" },
+          { value: "poNumber", label: "PO Number", type: "text" },
+          { value: "vendor", label: "Vendor", type: "text" },
+          { value: "receivedDate", label: "Date", type: "date" },
+          { value: "status", label: "Status", type: "select" },
+        ]}
+        onApplyFilters={handleApplyFilters}
+        savedFilters={savedFilters}
+        onSaveFilter={handleSaveFilter}
+      />
       </div>
     </PageBackground>
   );

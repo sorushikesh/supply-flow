@@ -8,6 +8,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -21,7 +23,12 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
-import { Trash2, Plus, ShoppingCart, FileText, DollarSign, Package } from "lucide-react";
+import { Trash2, Plus, ShoppingCart, FileText, DollarSign, Package, FileX, History, Download, Filter } from "lucide-react";
+import { EmptyState } from "@/components/EmptyState";
+import { BulkActions } from "@/components/BulkActions";
+import { ExportDialog } from "@/components/ExportDialog";
+import { ActivityLogDialog, generateMockActivityLogs, type ActivityLog } from "@/components/ActivityLog";
+import { AdvancedFilterDialog, applyAdvancedFilters, type FilterCondition, type SavedFilter } from "@/components/AdvancedFilter";
 
 interface SalesOrder {
   id: string;
@@ -78,6 +85,27 @@ export default function SalesOrders() {
     { id: "1", product: "", quantity: "", unitPrice: "" },
   ]);
 
+  // New features state
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [exportDialogOpen, setExportDialogOpen] = useState(false);
+  const [activityLogOpen, setActivityLogOpen] = useState(false);
+  const [advancedFilterOpen, setAdvancedFilterOpen] = useState(false);
+  const [activityLogs] = useState<ActivityLog[]>(generateMockActivityLogs());
+  const [filterConditions, setFilterConditions] = useState<FilterCondition[]>([]);
+  const [savedFilters, setSavedFilters] = useState<SavedFilter[]>([
+    {
+      id: "1",
+      name: "Pending Orders",
+      conditions: [{ id: "1", field: "status", operator: "equals", value: "pending", fieldType: "select" }],
+      isFavorite: true,
+    },
+    {
+      id: "2",
+      name: "High Value Orders",
+      conditions: [{ id: "1", field: "totalAmount", operator: "greater", value: "20000", fieldType: "number" }],
+    },
+  ]);
+
   const filteredData = mockSalesOrders.filter((so) => {
     const matchesSearch =
       so.soNumber.toLowerCase().includes(search.toLowerCase()) ||
@@ -86,7 +114,39 @@ export default function SalesOrders() {
     return matchesSearch && matchesStatus;
   });
 
+  // Apply advanced filters if any
+  const finalData = filterConditions.length > 0 
+    ? applyAdvancedFilters(filteredData, filterConditions)
+    : filteredData;
+
   const columns: Column<SalesOrder>[] = [
+    {
+      key: "select",
+      header: () => (
+        <Checkbox
+          checked={selectedItems.length === finalData.length && finalData.length > 0}
+          onCheckedChange={(checked) => {
+            if (checked) {
+              setSelectedItems(finalData.map((item) => item.id));
+            } else {
+              setSelectedItems([]);
+            }
+          }}
+        />
+      ),
+      render: (so) => (
+        <Checkbox
+          checked={selectedItems.includes(so.id)}
+          onCheckedChange={(checked) => {
+            if (checked) {
+              setSelectedItems([...selectedItems, so.id]);
+            } else {
+              setSelectedItems(selectedItems.filter((id) => id !== so.id));
+            }
+          }}
+        />
+      ),
+    },
     { 
       key: "soNumber", 
       header: "SO Number", 
@@ -163,6 +223,56 @@ export default function SalesOrders() {
     setLineItems([{ id: "1", product: "", quantity: "", unitPrice: "" }]);
   };
 
+  // Bulk operation handlers
+  const handleBulkExport = () => {
+    setExportDialogOpen(true);
+  };
+
+  const handleBulkEmail = () => {
+    toast({
+      title: "Email Sent",
+      description: `Report for ${selectedItems.length} orders has been sent to your email.`,
+    });
+  };
+
+  const handleBulkStatusChange = (newStatus: string) => {
+    toast({
+      title: "Status Updated",
+      description: `${selectedItems.length} orders have been updated to ${newStatus}.`,
+    });
+    setSelectedItems([]);
+  };
+
+  const handleBulkDelete = () => {
+    toast({
+      title: "Orders Deleted",
+      description: `${selectedItems.length} orders have been deleted successfully.`,
+      variant: "destructive",
+    });
+    setSelectedItems([]);
+  };
+
+  const handleApplyFilters = (conditions: FilterCondition[]) => {
+    setFilterConditions(conditions);
+    toast({
+      title: "Filters Applied",
+      description: `Applied ${conditions.length} filter condition(s).`,
+    });
+  };
+
+  const handleSaveFilter = (name: string, conditions: FilterCondition[]) => {
+    const newFilter: SavedFilter = {
+      id: String(Date.now()),
+      name,
+      conditions,
+    };
+    setSavedFilters([...savedFilters, newFilter]);
+    toast({
+      title: "Filter Saved",
+      description: `Filter "${name}" has been saved successfully.`,
+    });
+  };
+
   const pendingOrders = mockSalesOrders.filter((so) => so.status === "pending" || so.status === "approved").length;
   const totalRevenue = mockSalesOrders
     .filter((so) => so.status === "completed" || so.status === "delivered")
@@ -179,10 +289,41 @@ export default function SalesOrders() {
             </h1>
             <p className="text-muted-foreground mt-1">Manage orders from your customers</p>
           </div>
-          <Button onClick={() => setModalOpen(true)} className="gap-2">
-            <ShoppingCart className="h-4 w-4" />
-            New Sales Order
-          </Button>
+          <div className="flex gap-2">
+            <Button 
+              variant="outline"
+              onClick={() => setAdvancedFilterOpen(true)}
+              className="gap-2"
+            >
+              <Filter className="h-4 w-4" />
+              Advanced Filter
+              {filterConditions.length > 0 && (
+                <Badge variant="secondary" className="ml-1">
+                  {filterConditions.length}
+                </Badge>
+              )}
+            </Button>
+            <Button 
+              variant="outline"
+              onClick={() => setActivityLogOpen(true)}
+              className="gap-2"
+            >
+              <History className="h-4 w-4" />
+              Activity Log
+            </Button>
+            <Button 
+              variant="outline"
+              onClick={() => setExportDialogOpen(true)}
+              className="gap-2"
+            >
+              <Download className="h-4 w-4" />
+              Export
+            </Button>
+            <Button onClick={() => setModalOpen(true)} className="gap-2">
+              <ShoppingCart className="h-4 w-4" />
+              New Sales Order
+            </Button>
+          </div>
         </div>
 
       {/* Stats Grid */}
@@ -244,14 +385,41 @@ export default function SalesOrders() {
             />
           </div>
 
-          <DataTable
-            columns={columns}
-            data={filteredData}
-            testIdPrefix="sales-orders"
-          />
+          {filteredData.length === 0 ? (
+            <EmptyState
+              icon={FileX}
+              title={search || statusFilter !== "All" ? "No orders found" : "No sales orders yet"}
+              description={
+                search || statusFilter !== "All"
+                  ? "No sales orders match your search criteria. Try adjusting your filters."
+                  : "Create your first sales order to start tracking customer purchases."
+              }
+              action={{
+                label: "Create Sales Order",
+                onClick: () => setModalOpen(true),
+                icon: FileText,
+              }}
+            />
+          ) : (
+            <DataTable
+              columns={columns}
+              data={finalData}
+              testIdPrefix="sales-orders"
+            />
+          )}
         </CardContent>
       </Card>
       </div>
+
+      {/* Floating Bulk Actions */}
+      <BulkActions
+        selectedCount={selectedItems.length}
+        onExport={handleBulkExport}
+        onEmail={handleBulkEmail}
+        onStatusChange={handleBulkStatusChange}
+        onDelete={handleBulkDelete}
+        statusOptions={["Pending", "Confirmed", "Shipped", "Delivered", "Cancelled"]}
+      />
 
       <FormModal
         open={modalOpen}
@@ -424,6 +592,47 @@ export default function SalesOrders() {
           </div>
         </div>
       </FormModal>
+
+      {/* Export Dialog */}
+      <ExportDialog
+        open={exportDialogOpen}
+        onOpenChange={setExportDialogOpen}
+        columns={[
+          { key: "soNumber", label: "Order Number" },
+          { key: "orderDate", label: "Date" },
+          { key: "customer", label: "Customer" },
+          { key: "items", label: "Items" },
+          { key: "totalAmount", label: "Total Amount" },
+          { key: "status", label: "Status" },
+          { key: "deliveryDate", label: "Delivery Date" },
+        ]}
+        data={finalData.filter((item) => selectedItems.length === 0 || selectedItems.includes(item.id))}
+        filename="sales-orders"
+      />
+
+      {/* Activity Log Dialog */}
+      <ActivityLogDialog
+        open={activityLogOpen}
+        onOpenChange={setActivityLogOpen}
+        logs={activityLogs}
+        title="Sales Orders Activity Log"
+      />
+
+      {/* Advanced Filter Dialog */}
+      <AdvancedFilterDialog
+        open={advancedFilterOpen}
+        onOpenChange={setAdvancedFilterOpen}
+        fields={[
+          { value: "soNumber", label: "Order Number", type: "text" },
+          { value: "customer", label: "Customer", type: "text" },
+          { value: "orderDate", label: "Date", type: "date" },
+          { value: "totalAmount", label: "Total Amount", type: "number" },
+          { value: "status", label: "Status", type: "select" },
+        ]}
+        onApplyFilters={handleApplyFilters}
+        savedFilters={savedFilters}
+        onSaveFilter={handleSaveFilter}
+      />
     </PageBackground>
   );
 }

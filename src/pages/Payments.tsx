@@ -20,10 +20,16 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowDownLeft, ArrowUpRight, CreditCard, DollarSign } from "lucide-react";
+import { ArrowDownLeft, ArrowUpRight, CreditCard, DollarSign, Receipt, History, Download, Filter } from "lucide-react";
+import { EmptyState } from "@/components/EmptyState";
+import { BulkActions } from "@/components/BulkActions";
+import { ExportDialog } from "@/components/ExportDialog";
+import { ActivityLogDialog, generateMockActivityLogs, type ActivityLog } from "@/components/ActivityLog";
+import { AdvancedFilterDialog, applyAdvancedFilters, type FilterCondition, type SavedFilter } from "@/components/AdvancedFilter";
 
 interface Payment {
   id: string;
@@ -75,6 +81,30 @@ export default function Payments() {
   const [amount, setAmount] = useState("");
   const [method, setMethod] = useState("");
   const [reference, setReference] = useState("");
+  
+  // New features state
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [exportDialogOpen, setExportDialogOpen] = useState(false);
+  const [activityLogOpen, setActivityLogOpen] = useState(false);
+  const [advancedFilterOpen, setAdvancedFilterOpen] = useState(false);
+  const [activityLogs] = useState<ActivityLog[]>(generateMockActivityLogs());
+  const [filterConditions, setFilterConditions] = useState<FilterCondition[]>([]);
+  const [savedFilters, setSavedFilters] = useState<SavedFilter[]>([
+    {
+      id: "1",
+      name: "Large Payments",
+      conditions: [{ id: "1", field: "amount", operator: "greater", value: "20000", fieldType: "number" }],
+      isFavorite: true,
+    },
+    {
+      id: "2",
+      name: "Recent Bank Transfers",
+      conditions: [
+        { id: "1", field: "method", operator: "equals", value: "Bank Transfer", fieldType: "select" },
+        { id: "2", field: "paymentDate", operator: "greater", value: "2024-01-01", fieldType: "date" }
+      ],
+    },
+  ]);
 
   const filteredData = mockPayments.filter((payment) => {
     const matchesSearch =
@@ -85,7 +115,39 @@ export default function Payments() {
     return matchesSearch && matchesType;
   });
 
+  // Apply advanced filters if any
+  const finalData = filterConditions.length > 0 
+    ? applyAdvancedFilters(filteredData, filterConditions)
+    : filteredData;
+
   const columns: Column<Payment>[] = [
+    {
+      key: "select",
+      header: () => (
+        <Checkbox
+          checked={selectedItems.length === finalData.length && finalData.length > 0}
+          onCheckedChange={(checked) => {
+            if (checked) {
+              setSelectedItems(finalData.map((item) => item.id));
+            } else {
+              setSelectedItems([]);
+            }
+          }}
+        />
+      ),
+      render: (payment) => (
+        <Checkbox
+          checked={selectedItems.includes(payment.id)}
+          onCheckedChange={(checked) => {
+            if (checked) {
+              setSelectedItems([...selectedItems, payment.id]);
+            } else {
+              setSelectedItems(selectedItems.filter((id) => id !== payment.id));
+            }
+          }}
+        />
+      ),
+    },
     { 
       key: "paymentNumber", 
       header: "Payment #", 
@@ -159,6 +221,56 @@ export default function Payments() {
     setReference("");
   };
 
+  // Bulk operation handlers
+  const handleBulkExport = () => {
+    setExportDialogOpen(true);
+  };
+
+  const handleBulkEmail = () => {
+    toast({
+      title: "Email Sent",
+      description: `Report for ${selectedItems.length} payments has been sent to your email.`,
+    });
+  };
+
+  const handleBulkStatusChange = (newStatus: string) => {
+    toast({
+      title: "Status Updated",
+      description: `${selectedItems.length} payments have been updated to ${newStatus}.`,
+    });
+    setSelectedItems([]);
+  };
+
+  const handleBulkDelete = () => {
+    toast({
+      title: "Payments Deleted",
+      description: `${selectedItems.length} payments have been deleted successfully.`,
+      variant: "destructive",
+    });
+    setSelectedItems([]);
+  };
+
+  const handleApplyFilters = (conditions: FilterCondition[]) => {
+    setFilterConditions(conditions);
+    toast({
+      title: "Filters Applied",
+      description: `Applied ${conditions.length} filter condition(s).`,
+    });
+  };
+
+  const handleSaveFilter = (name: string, conditions: FilterCondition[]) => {
+    const newFilter: SavedFilter = {
+      id: String(Date.now()),
+      name,
+      conditions,
+    };
+    setSavedFilters([...savedFilters, newFilter]);
+    toast({
+      title: "Filter Saved",
+      description: `Filter "${name}" has been saved successfully.`,
+    });
+  };
+
   const totalReceived = mockPayments
     .filter((p) => p.type === "received")
     .reduce((sum, p) => sum + p.amount, 0);
@@ -177,10 +289,41 @@ export default function Payments() {
             </h1>
             <p className="text-muted-foreground mt-1">Track payment receipts and disbursements</p>
           </div>
-          <Button onClick={() => setModalOpen(true)} className="gap-2">
-            <CreditCard className="h-4 w-4" />
-            Record Payment
-          </Button>
+          <div className="flex gap-2">
+            <Button 
+              variant="outline"
+              onClick={() => setAdvancedFilterOpen(true)}
+              className="gap-2"
+            >
+              <Filter className="h-4 w-4" />
+              Advanced Filter
+              {filterConditions.length > 0 && (
+                <Badge variant="secondary" className="ml-1">
+                  {filterConditions.length}
+                </Badge>
+              )}
+            </Button>
+            <Button 
+              variant="outline"
+              onClick={() => setActivityLogOpen(true)}
+              className="gap-2"
+            >
+              <History className="h-4 w-4" />
+              Activity Log
+            </Button>
+            <Button 
+              variant="outline"
+              onClick={() => setExportDialogOpen(true)}
+              className="gap-2"
+            >
+              <Download className="h-4 w-4" />
+              Export
+            </Button>
+            <Button onClick={() => setModalOpen(true)} className="gap-2">
+              <CreditCard className="h-4 w-4" />
+              Record Payment
+            </Button>
+          </div>
         </div>
 
       {/* Stats Grid */}
@@ -231,13 +374,41 @@ export default function Payments() {
             onSearchChange={setSearch}
           />
 
-          <DataTable
-            columns={columns}
-            data={filteredData}
-            testIdPrefix="payments"
-          />
+          {filteredData.length === 0 ? (
+            <EmptyState
+              icon={Receipt}
+              title={search || typeFilter !== "all" ? "No payments found" : "No payments yet"}
+              description={
+                search || typeFilter !== "all"
+                  ? "No payments match your search criteria. Try adjusting your filters."
+                  : "Record your first payment to start tracking financial transactions."
+              }
+              action={{
+                label: "Record Payment",
+                onClick: () => setModalOpen(true),
+                icon: CreditCard,
+              }}
+            />
+          ) : (
+            <DataTable
+              columns={columns}
+              data={finalData}
+              testIdPrefix="payments"
+            />
+          )}
         </CardContent>
       </Card>
+      </div>
+
+      {/* Floating Bulk Actions */}
+      <BulkActions
+        selectedCount={selectedItems.length}
+        onExport={handleBulkExport}
+        onEmail={handleBulkEmail}
+        onStatusChange={handleBulkStatusChange}
+        onDelete={handleBulkDelete}
+        statusOptions={["Pending", "Completed", "Failed", "Refunded"]}
+      />
 
       <FormModal
         open={modalOpen}
@@ -377,7 +548,48 @@ export default function Payments() {
           </div>
         </div>
       </FormModal>
-      </div>
+
+      {/* Export Dialog */}
+      <ExportDialog
+        open={exportDialogOpen}
+        onOpenChange={setExportDialogOpen}
+        columns={[
+          { key: "paymentNumber", label: "Payment #" },
+          { key: "paymentDate", label: "Date" },
+          { key: "party", label: "Customer" },
+          { key: "amount", label: "Amount" },
+          { key: "method", label: "Method" },
+          { key: "type", label: "Status" },
+          { key: "reference", label: "Reference" },
+        ]}
+        data={finalData.filter((item) => selectedItems.length === 0 || selectedItems.includes(item.id))}
+        filename="payments"
+      />
+
+      {/* Activity Log Dialog */}
+      <ActivityLogDialog
+        open={activityLogOpen}
+        onOpenChange={setActivityLogOpen}
+        logs={activityLogs}
+        title="Payment Activity Log"
+      />
+
+      {/* Advanced Filter Dialog */}
+      <AdvancedFilterDialog
+        open={advancedFilterOpen}
+        onOpenChange={setAdvancedFilterOpen}
+        fields={[
+          { value: "paymentNumber", label: "Payment #", type: "text" },
+          { value: "party", label: "Customer", type: "text" },
+          { value: "paymentDate", label: "Date", type: "date" },
+          { value: "amount", label: "Amount", type: "number" },
+          { value: "method", label: "Method", type: "select" },
+          { value: "type", label: "Status", type: "select" },
+        ]}
+        onApplyFilters={handleApplyFilters}
+        savedFilters={savedFilters}
+        onSaveFilter={handleSaveFilter}
+      />
     </PageBackground>
   );
 }

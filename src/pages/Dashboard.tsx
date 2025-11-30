@@ -32,6 +32,8 @@ import {
   Building2,
 } from "lucide-react";
 import { Link } from "wouter";
+import { useState, useEffect } from "react";
+import { LoadingSpinner } from "@/components/LoadingSpinner";
 
 interface RecentOrder {
   id: string;
@@ -71,6 +73,15 @@ const mockOverdueInvoices = [
 ];
 
 export default function Dashboard() {
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Simulate initial data loading
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 800);
+    return () => clearTimeout(timer);
+  }, []);
 
   const orderColumns: Column<RecentOrder>[] = [
     { key: "orderNumber", header: "Order #", className: "font-mono text-sm" },
@@ -117,6 +128,11 @@ export default function Dashboard() {
 
   return (
     <PageBackground>
+      {isLoading ? (
+        <div className="flex items-center justify-center min-h-screen">
+          <LoadingSpinner size="xl" text="Loading dashboard..." />
+        </div>
+      ) : (
       <div className="p-4 lg:p-6 max-w-[1600px] mx-auto space-y-6">
         {/* Hero Header Section */}
         <div className="relative overflow-hidden rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/10 via-blue-500/5 to-purple-500/10 p-6 sm:p-8">
@@ -504,6 +520,7 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+      )}
     </PageBackground>
   );
 }

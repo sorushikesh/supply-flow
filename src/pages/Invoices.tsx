@@ -21,8 +21,15 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { FileText, Download, Send, Eye, DollarSign, AlertTriangle } from "lucide-react";
+import { FileText, Download, Send, Eye, DollarSign, AlertTriangle, FileX, History, Filter } from "lucide-react";
+import { EmptyState } from "@/components/EmptyState";
+import { BulkActions } from "@/components/BulkActions";
+import { ExportDialog } from "@/components/ExportDialog";
+import { ActivityLogDialog, generateMockActivityLogs, type ActivityLog } from "@/components/ActivityLog";
+import { AdvancedFilterDialog, applyAdvancedFilters, type FilterCondition, type SavedFilter } from "@/components/AdvancedFilter";
 
 interface Invoice {
   id: string;
@@ -71,6 +78,30 @@ export default function Invoices() {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
   const [selectedOrder, setSelectedOrder] = useState("");
+  
+  // New features state
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [exportDialogOpen, setExportDialogOpen] = useState(false);
+  const [activityLogOpen, setActivityLogOpen] = useState(false);
+  const [advancedFilterOpen, setAdvancedFilterOpen] = useState(false);
+  const [activityLogs] = useState<ActivityLog[]>(generateMockActivityLogs());
+  const [filterConditions, setFilterConditions] = useState<FilterCondition[]>([]);
+  const [savedFilters, setSavedFilters] = useState<SavedFilter[]>([
+    {
+      id: "1",
+      name: "Overdue Invoices",
+      conditions: [{ id: "1", field: "status", operator: "equals", value: "overdue", fieldType: "select" }],
+      isFavorite: true,
+    },
+    {
+      id: "2",
+      name: "Paid This Month",
+      conditions: [
+        { id: "1", field: "status", operator: "equals", value: "paid", fieldType: "select" },
+        { id: "2", field: "issueDate", operator: "greater", value: new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0], fieldType: "date" }
+      ],
+    },
+  ]);
 
   const filteredData = mockInvoices.filter((invoice) => {
     const matchesSearch =
@@ -81,7 +112,39 @@ export default function Invoices() {
     return matchesSearch && matchesStatus && matchesType;
   });
 
+  // Apply advanced filters if any
+  const finalData = filterConditions.length > 0 
+    ? applyAdvancedFilters(filteredData, filterConditions)
+    : filteredData;
+
   const columns: Column<Invoice>[] = [
+    {
+      key: "select",
+      header: () => (
+        <Checkbox
+          checked={selectedItems.length === finalData.length && finalData.length > 0}
+          onCheckedChange={(checked) => {
+            if (checked) {
+              setSelectedItems(finalData.map((item) => item.id));
+            } else {
+              setSelectedItems([]);
+            }
+          }}
+        />
+      ),
+      render: (invoice) => (
+        <Checkbox
+          checked={selectedItems.includes(invoice.id)}
+          onCheckedChange={(checked) => {
+            if (checked) {
+              setSelectedItems([...selectedItems, invoice.id]);
+            } else {
+              setSelectedItems(selectedItems.filter((id) => id !== invoice.id));
+            }
+          }}
+        />
+      ),
+    },
     { 
       key: "invoiceNumber", 
       header: "Invoice #", 
@@ -200,6 +263,56 @@ export default function Invoices() {
     setSelectedOrder("");
   };
 
+  // Bulk operation handlers
+  const handleBulkExport = () => {
+    setExportDialogOpen(true);
+  };
+
+  const handleBulkEmail = () => {
+    toast({
+      title: "Email Sent",
+      description: `Report for ${selectedItems.length} invoices has been sent to your email.`,
+    });
+  };
+
+  const handleBulkStatusChange = (newStatus: string) => {
+    toast({
+      title: "Status Updated",
+      description: `${selectedItems.length} invoices have been updated to ${newStatus}.`,
+    });
+    setSelectedItems([]);
+  };
+
+  const handleBulkDelete = () => {
+    toast({
+      title: "Invoices Deleted",
+      description: `${selectedItems.length} invoices have been deleted successfully.`,
+      variant: "destructive",
+    });
+    setSelectedItems([]);
+  };
+
+  const handleApplyFilters = (conditions: FilterCondition[]) => {
+    setFilterConditions(conditions);
+    toast({
+      title: "Filters Applied",
+      description: `Applied ${conditions.length} filter condition(s).`,
+    });
+  };
+
+  const handleSaveFilter = (name: string, conditions: FilterCondition[]) => {
+    const newFilter: SavedFilter = {
+      id: String(Date.now()),
+      name,
+      conditions,
+    };
+    setSavedFilters([...savedFilters, newFilter]);
+    toast({
+      title: "Filter Saved",
+      description: `Filter "${name}" has been saved successfully.`,
+    });
+  };
+
   const customerInvoices = mockInvoices.filter((i) => i.type === "customer");
   const vendorInvoices = mockInvoices.filter((i) => i.type === "vendor");
   const totalReceivable = customerInvoices.reduce((sum, i) => sum + (i.amount - i.paidAmount), 0);
@@ -217,10 +330,41 @@ export default function Invoices() {
             </h1>
             <p className="text-muted-foreground mt-1">Manage invoices and billing</p>
           </div>
-          <Button onClick={() => setModalOpen(true)} className="gap-2">
-            <FileText className="h-4 w-4" />
-            Create Invoice
-          </Button>
+          <div className="flex gap-2">
+            <Button 
+              variant="outline"
+              onClick={() => setAdvancedFilterOpen(true)}
+              className="gap-2"
+            >
+              <Filter className="h-4 w-4" />
+              Advanced Filter
+              {filterConditions.length > 0 && (
+                <Badge variant="secondary" className="ml-1">
+                  {filterConditions.length}
+                </Badge>
+              )}
+            </Button>
+            <Button 
+              variant="outline"
+              onClick={() => setActivityLogOpen(true)}
+              className="gap-2"
+            >
+              <History className="h-4 w-4" />
+              Activity Log
+            </Button>
+            <Button 
+              variant="outline"
+              onClick={() => setExportDialogOpen(true)}
+              className="gap-2"
+            >
+              <Download className="h-4 w-4" />
+              Export
+            </Button>
+            <Button onClick={() => setModalOpen(true)} className="gap-2">
+              <FileText className="h-4 w-4" />
+              Create Invoice
+            </Button>
+          </div>
         </div>
 
       {/* Stats Grid */}
@@ -295,11 +439,28 @@ export default function Invoices() {
             ]}
           />
 
-          <DataTable
-            columns={columns}
-            data={filteredData}
-            testIdPrefix="invoices"
-          />
+          {filteredData.length === 0 ? (
+            <EmptyState
+              icon={FileX}
+              title={search || statusFilter !== "All" ? "No invoices found" : "No invoices yet"}
+              description={
+                search || statusFilter !== "All"
+                  ? "No invoices match your search criteria. Try adjusting your filters."
+                  : "Create your first invoice to start billing customers."
+              }
+              action={{
+                label: "Create Invoice",
+                onClick: () => setModalOpen(true),
+                icon: FileText,
+              }}
+            />
+          ) : (
+            <DataTable
+              columns={columns}
+              data={finalData}
+              testIdPrefix="invoices"
+            />
+          )}
         </CardContent>
       </Card>
 
@@ -523,6 +684,58 @@ export default function Invoices() {
         )}
       </FormModal>
       </div>
+
+      {/* Floating Bulk Actions */}
+      <BulkActions
+        selectedCount={selectedItems.length}
+        onExport={handleBulkExport}
+        onEmail={handleBulkEmail}
+        onStatusChange={handleBulkStatusChange}
+        onDelete={handleBulkDelete}
+        statusOptions={["Draft", "Sent", "Paid", "Overdue", "Cancelled"]}
+      />
+
+      {/* Export Dialog */}
+      <ExportDialog
+        open={exportDialogOpen}
+        onOpenChange={setExportDialogOpen}
+        columns={[
+          { key: "invoiceNumber", label: "Invoice Number" },
+          { key: "issueDate", label: "Date" },
+          { key: "party", label: "Customer" },
+          { key: "amount", label: "Amount" },
+          { key: "dueDate", label: "Due Date" },
+          { key: "status", label: "Status" },
+          { key: "paidAmount", label: "Payment Status" },
+        ]}
+        data={finalData.filter((item) => selectedItems.length === 0 || selectedItems.includes(item.id))}
+        filename="invoices"
+      />
+
+      {/* Activity Log Dialog */}
+      <ActivityLogDialog
+        open={activityLogOpen}
+        onOpenChange={setActivityLogOpen}
+        logs={activityLogs}
+        title="Invoice Activity Log"
+      />
+
+      {/* Advanced Filter Dialog */}
+      <AdvancedFilterDialog
+        open={advancedFilterOpen}
+        onOpenChange={setAdvancedFilterOpen}
+        fields={[
+          { value: "invoiceNumber", label: "Invoice Number", type: "text" },
+          { value: "party", label: "Customer", type: "text" },
+          { value: "issueDate", label: "Date", type: "date" },
+          { value: "amount", label: "Amount", type: "number" },
+          { value: "dueDate", label: "Due Date", type: "date" },
+          { value: "status", label: "Status", type: "select" },
+        ]}
+        onApplyFilters={handleApplyFilters}
+        savedFilters={savedFilters}
+        onSaveFilter={handleSaveFilter}
+      />
     </PageBackground>
   );
 }

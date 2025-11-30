@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -23,7 +24,12 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
-import { Users, Mail, Phone, Package, ShoppingCart, Calendar, DollarSign, TrendingUp } from "lucide-react";
+import { Users, Mail, Phone, Package, ShoppingCart, Calendar, DollarSign, TrendingUp, UserX, History, Download, Filter, Pencil, Trash2, Eye } from "lucide-react";
+import { EmptyState } from "@/components/EmptyState";
+import { BulkActions } from "@/components/BulkActions";
+import { ExportDialog } from "@/components/ExportDialog";
+import { ActivityLogDialog, generateMockActivityLogs, type ActivityLog } from "@/components/ActivityLog";
+import { AdvancedFilterDialog, applyAdvancedFilters, type FilterCondition, type SavedFilter } from "@/components/AdvancedFilter";
 
 interface Customer {
   id: string;
@@ -136,6 +142,31 @@ export default function Customers() {
   const [modalOpen, setModalOpen] = useState(false);
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
+  
+  // New features state
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [exportDialogOpen, setExportDialogOpen] = useState(false);
+  const [activityLogOpen, setActivityLogOpen] = useState(false);
+  const [advancedFilterOpen, setAdvancedFilterOpen] = useState(false);
+  const [activityLogs] = useState<ActivityLog[]>(generateMockActivityLogs());
+  const [filterConditions, setFilterConditions] = useState<FilterCondition[]>([]);
+  const [savedFilters, setSavedFilters] = useState<SavedFilter[]>([
+    {
+      id: "1",
+      name: "Active High-Value Customers",
+      conditions: [
+        { id: "1", field: "status", operator: "equals", value: "active", fieldType: "select" },
+        { id: "2", field: "totalRevenue", operator: "greater", value: "300000", fieldType: "number" }
+      ],
+      isFavorite: true,
+    },
+    {
+      id: "2",
+      name: "Inactive Customers",
+      conditions: [{ id: "1", field: "status", operator: "equals", value: "inactive", fieldType: "select" }],
+    },
+  ]);
+  
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -153,7 +184,39 @@ export default function Customers() {
     return matchesSearch && matchesStatus;
   });
 
+  // Apply advanced filters if any
+  const finalData = filterConditions.length > 0 
+    ? applyAdvancedFilters(filteredData, filterConditions)
+    : filteredData;
+
   const columns: Column<Customer>[] = [
+    {
+      key: "select",
+      header: () => (
+        <Checkbox
+          checked={selectedItems.length === finalData.length && finalData.length > 0}
+          onCheckedChange={(checked) => {
+            if (checked) {
+              setSelectedItems(finalData.map((item) => item.id));
+            } else {
+              setSelectedItems([]);
+            }
+          }}
+        />
+      ),
+      render: (customer) => (
+        <Checkbox
+          checked={selectedItems.includes(customer.id)}
+          onCheckedChange={(checked) => {
+            if (checked) {
+              setSelectedItems([...selectedItems, customer.id]);
+            } else {
+              setSelectedItems(selectedItems.filter((id) => id !== customer.id));
+            }
+          }}
+        />
+      ),
+    },
     { key: "code", header: "Code", className: "font-mono text-sm" },
     {
       key: "name",
@@ -241,6 +304,56 @@ export default function Customers() {
     setFormData({ name: "", email: "", phone: "", address: "", creditLimit: "" });
   };
 
+  // Bulk operation handlers
+  const handleBulkExport = () => {
+    setExportDialogOpen(true);
+  };
+
+  const handleBulkEmail = () => {
+    toast({
+      title: "Email Sent",
+      description: `Report for ${selectedItems.length} customers has been sent to your email.`,
+    });
+  };
+
+  const handleBulkStatusChange = (newStatus: string) => {
+    toast({
+      title: "Status Updated",
+      description: `${selectedItems.length} customers have been updated to ${newStatus}.`,
+    });
+    setSelectedItems([]);
+  };
+
+  const handleBulkDelete = () => {
+    toast({
+      title: "Customers Deleted",
+      description: `${selectedItems.length} customers have been deleted successfully.`,
+      variant: "destructive",
+    });
+    setSelectedItems([]);
+  };
+
+  const handleApplyFilters = (conditions: FilterCondition[]) => {
+    setFilterConditions(conditions);
+    toast({
+      title: "Filters Applied",
+      description: `Applied ${conditions.length} filter condition(s).`,
+    });
+  };
+
+  const handleSaveFilter = (name: string, conditions: FilterCondition[]) => {
+    const newFilter: SavedFilter = {
+      id: String(Date.now()),
+      name,
+      conditions,
+    };
+    setSavedFilters([...savedFilters, newFilter]);
+    toast({
+      title: "Filter Saved",
+      description: `Filter "${name}" has been saved successfully.`,
+    });
+  };
+
   const totalRevenue = mockCustomers.reduce((sum, c) => sum + c.totalRevenue, 0);
   const activeCustomers = mockCustomers.filter((c) => c.status === "active").length;
 
@@ -255,10 +368,41 @@ export default function Customers() {
             </h1>
             <p className="text-muted-foreground mt-1">Manage your customer relationships</p>
           </div>
-          <Button onClick={() => setModalOpen(true)} className="gap-2">
-            <Users className="h-4 w-4" />
-            Add Customer
-          </Button>
+          <div className="flex gap-2">
+            <Button 
+              variant="outline"
+              onClick={() => setAdvancedFilterOpen(true)}
+              className="gap-2"
+            >
+              <Filter className="h-4 w-4" />
+              Advanced Filter
+              {filterConditions.length > 0 && (
+                <Badge variant="secondary" className="ml-1">
+                  {filterConditions.length}
+                </Badge>
+              )}
+            </Button>
+            <Button 
+              variant="outline"
+              onClick={() => setActivityLogOpen(true)}
+              className="gap-2"
+            >
+              <History className="h-4 w-4" />
+              Activity Log
+            </Button>
+            <Button 
+              variant="outline"
+              onClick={() => setExportDialogOpen(true)}
+              className="gap-2"
+            >
+              <Download className="h-4 w-4" />
+              Export
+            </Button>
+            <Button onClick={() => setModalOpen(true)} className="gap-2">
+              <Users className="h-4 w-4" />
+              Add Customer
+            </Button>
+          </div>
         </div>
 
       {/* Stats Grid */}
@@ -314,14 +458,41 @@ export default function Customers() {
             ]}
           />
 
-          <DataTable
-            columns={columns}
-            data={filteredData}
-            testIdPrefix="customers"
-          />
+          {filteredData.length === 0 ? (
+            <EmptyState
+              icon={UserX}
+              title={search || statusFilter !== "All" ? "No customers found" : "No customers yet"}
+              description={
+                search || statusFilter !== "All"
+                  ? "No customers match your search criteria. Try adjusting your filters."
+                  : "Start building your customer base by adding your first customer."
+              }
+              action={{
+                label: "Add Customer",
+                onClick: () => setModalOpen(true),
+                icon: Users,
+              }}
+            />
+          ) : (
+            <DataTable
+              columns={columns}
+              data={finalData}
+              testIdPrefix="customers"
+            />
+          )}
         </CardContent>
       </Card>
       </div>
+
+      {/* Floating Bulk Actions */}
+      <BulkActions
+        selectedCount={selectedItems.length}
+        onExport={handleBulkExport}
+        onEmail={handleBulkEmail}
+        onStatusChange={handleBulkStatusChange}
+        onDelete={handleBulkDelete}
+        statusOptions={["Active", "Inactive"]}
+      />
 
       <FormModal
         open={modalOpen}
@@ -663,6 +834,52 @@ export default function Customers() {
           </Tabs>
         </DialogContent>
       </Dialog>
+
+      {/* Export Dialog */}
+      <ExportDialog
+        open={exportDialogOpen}
+        onOpenChange={setExportDialogOpen}
+        columns={[
+          { key: "code", label: "Code" },
+          { key: "name", label: "Company Name" },
+          { key: "email", label: "Email" },
+          { key: "phone", label: "Phone" },
+          { key: "address", label: "Address" },
+          { key: "creditLimit", label: "Credit Limit" },
+          { key: "totalOrders", label: "Total Orders" },
+          { key: "totalRevenue", label: "Total Revenue" },
+          { key: "status", label: "Status" },
+        ]}
+        data={finalData.filter((item) => selectedItems.length === 0 || selectedItems.includes(item.id))}
+        filename="customers"
+      />
+
+      {/* Activity Log Dialog */}
+      <ActivityLogDialog
+        open={activityLogOpen}
+        onOpenChange={setActivityLogOpen}
+        logs={activityLogs}
+        title="Customer Activity Log"
+      />
+
+      {/* Advanced Filter Dialog */}
+      <AdvancedFilterDialog
+        open={advancedFilterOpen}
+        onOpenChange={setAdvancedFilterOpen}
+        fields={[
+          { value: "code", label: "Code", type: "text" },
+          { value: "name", label: "Company Name", type: "text" },
+          { value: "email", label: "Email", type: "text" },
+          { value: "phone", label: "Phone", type: "text" },
+          { value: "creditLimit", label: "Credit Limit", type: "number" },
+          { value: "totalOrders", label: "Total Orders", type: "number" },
+          { value: "totalRevenue", label: "Total Revenue", type: "number" },
+          { value: "status", label: "Status", type: "select" },
+        ]}
+        onApplyFilters={handleApplyFilters}
+        savedFilters={savedFilters}
+        onSaveFilter={handleSaveFilter}
+      />
     </PageBackground>
   );
 }

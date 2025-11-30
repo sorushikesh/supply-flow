@@ -15,16 +15,7 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { ConfirmDialog } from "@/components/ConfirmDialog";
 import {
   Dialog,
   DialogContent,
@@ -38,8 +29,14 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
-import { Pencil, Trash2, Package, ArrowUp, ArrowDown, Calendar, TrendingUp, DollarSign } from "lucide-react";
+import { Pencil, Trash2, Package, ArrowUp, ArrowDown, Calendar, TrendingUp, DollarSign, PackageX, History, Download, Filter } from "lucide-react";
+import { EmptyState } from "@/components/EmptyState";
+import { BulkActions } from "@/components/BulkActions";
+import { ExportDialog } from "@/components/ExportDialog";
+import { ActivityLogDialog, generateMockActivityLogs, type ActivityLog } from "@/components/ActivityLog";
+import { AdvancedFilterDialog, applyAdvancedFilters, type FilterCondition, type SavedFilter } from "@/components/AdvancedFilter";
 
 interface InventoryItem {
   id: string;
@@ -124,6 +121,28 @@ export default function Inventory() {
   const [editingItem, setEditingItem] = useState<InventoryItem | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<InventoryItem | null>(null);
+  
+  // New features state
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [exportDialogOpen, setExportDialogOpen] = useState(false);
+  const [activityLogOpen, setActivityLogOpen] = useState(false);
+  const [advancedFilterOpen, setAdvancedFilterOpen] = useState(false);
+  const [activityLogs] = useState<ActivityLog[]>(generateMockActivityLogs());
+  const [filterConditions, setFilterConditions] = useState<FilterCondition[]>([]);
+  const [savedFilters, setSavedFilters] = useState<SavedFilter[]>([
+    {
+      id: "1",
+      name: "Low Stock Items",
+      conditions: [{ id: "1", field: "currentStock", operator: "less", value: "20", fieldType: "number" }],
+      isFavorite: true,
+    },
+    {
+      id: "2",
+      name: "High Value Products",
+      conditions: [{ id: "1", field: "unitPrice", operator: "greater", value: "100", fieldType: "number" }],
+    },
+  ]);
+  
   const [formData, setFormData] = useState({
     sku: "",
     name: "",
@@ -143,7 +162,39 @@ export default function Inventory() {
     return matchesSearch && matchesCategory && matchesLocation;
   });
 
+  // Apply advanced filters if any
+  const finalData = filterConditions.length > 0 
+    ? applyAdvancedFilters(filteredData, filterConditions)
+    : filteredData;
+
   const columns: Column<InventoryItem>[] = [
+    {
+      key: "select",
+      header: () => (
+        <Checkbox
+          checked={selectedItems.length === finalData.length && finalData.length > 0}
+          onCheckedChange={(checked) => {
+            if (checked) {
+              setSelectedItems(finalData.map((item) => item.id));
+            } else {
+              setSelectedItems([]);
+            }
+          }}
+        />
+      ),
+      render: (item) => (
+        <Checkbox
+          checked={selectedItems.includes(item.id)}
+          onCheckedChange={(checked) => {
+            if (checked) {
+              setSelectedItems([...selectedItems, item.id]);
+            } else {
+              setSelectedItems(selectedItems.filter((id) => id !== item.id));
+            }
+          }}
+        />
+      ),
+    },
     { key: "sku", header: "SKU", className: "font-mono text-sm" },
     { 
       key: "name", 
@@ -331,6 +382,64 @@ export default function Inventory() {
     });
   };
 
+  // Bulk operation handlers
+  const handleBulkExport = () => {
+    setExportDialogOpen(true);
+  };
+
+  const handleBulkEmail = () => {
+    toast({
+      title: "Email Sent",
+      description: `Report for ${selectedItems.length} items has been sent to your email.`,
+    });
+  };
+
+  const handleBulkStatusChange = (newStatus: string) => {
+    toast({
+      title: "Status Updated",
+      description: `${selectedItems.length} items have been updated to ${newStatus}.`,
+    });
+    setSelectedItems([]);
+  };
+
+  const handleBulkDelete = () => {
+    toast({
+      title: "Items Deleted",
+      description: `${selectedItems.length} items have been deleted successfully.`,
+      variant: "destructive",
+    });
+    setSelectedItems([]);
+  };
+
+  const handleExport = (format: "csv" | "json", selectedColumns: string[], includeHeaders: boolean) => {
+    const selectedData = finalData.filter((item) => selectedItems.length === 0 || selectedItems.includes(item.id));
+    toast({
+      title: "Export Successful",
+      description: `Exported ${selectedData.length} items in ${format.toUpperCase()} format.`,
+    });
+  };
+
+  const handleApplyFilters = (conditions: FilterCondition[]) => {
+    setFilterConditions(conditions);
+    toast({
+      title: "Filters Applied",
+      description: `Applied ${conditions.length} filter condition(s).`,
+    });
+  };
+
+  const handleSaveFilter = (name: string, conditions: FilterCondition[]) => {
+    const newFilter: SavedFilter = {
+      id: String(Date.now()),
+      name,
+      conditions,
+    };
+    setSavedFilters([...savedFilters, newFilter]);
+    toast({
+      title: "Filter Saved",
+      description: `Filter "${name}" has been saved successfully.`,
+    });
+  };
+
   const handleModalClose = (open: boolean) => {
     setModalOpen(open);
     if (!open) {
@@ -369,14 +478,48 @@ export default function Inventory() {
             </h1>
             <p className="text-muted-foreground mt-1 text-sm sm:text-base">Track and manage your product inventory</p>
           </div>
-          <Button 
-            onClick={() => setModalOpen(true)} 
-            className="gap-2 hover:shadow-lg hover:scale-105 transition-all duration-200"
-            aria-label="Add new product"
-          >
-            <Package className="h-4 w-4" />
-            Add Product
-          </Button>
+          <div className="flex gap-2">
+            <Button 
+              variant="outline"
+              onClick={() => setAdvancedFilterOpen(true)}
+              className="gap-2"
+              aria-label="Open advanced filters"
+            >
+              <Filter className="h-4 w-4" />
+              Advanced Filter
+              {filterConditions.length > 0 && (
+                <Badge variant="secondary" className="ml-1">
+                  {filterConditions.length}
+                </Badge>
+              )}
+            </Button>
+            <Button 
+              variant="outline"
+              onClick={() => setActivityLogOpen(true)}
+              className="gap-2"
+              aria-label="View activity log"
+            >
+              <History className="h-4 w-4" />
+              Activity Log
+            </Button>
+            <Button 
+              variant="outline"
+              onClick={() => setExportDialogOpen(true)}
+              className="gap-2"
+              aria-label="Export data"
+            >
+              <Download className="h-4 w-4" />
+              Export
+            </Button>
+            <Button 
+              onClick={() => setModalOpen(true)} 
+              className="gap-2 hover:shadow-lg hover:scale-105 transition-all duration-200"
+              aria-label="Add new product"
+            >
+              <Package className="h-4 w-4" />
+              Add Product
+            </Button>
+          </div>
         </div>
 
       {/* Stats Grid */}
@@ -444,14 +587,41 @@ export default function Inventory() {
             ]}
           />
 
-          <DataTable
-            columns={columns}
-            data={filteredData}
-            testIdPrefix="inventory"
-          />
+          {filteredData.length === 0 ? (
+            <EmptyState
+              icon={PackageX}
+              title={search || category !== "All" || location !== "All" ? "No products found" : "No inventory items yet"}
+              description={
+                search || category !== "All" || location !== "All"
+                  ? "No products match your search criteria. Try adjusting your filters."
+                  : "Get started by adding your first product to the inventory."
+              }
+              action={{
+                label: "Add Product",
+                onClick: () => setModalOpen(true),
+                icon: Package,
+              }}
+            />
+          ) : (
+            <DataTable
+              columns={columns}
+              data={finalData}
+              testIdPrefix="inventory"
+            />
+          )}
         </CardContent>
       </Card>
       </div>
+
+      {/* Floating Bulk Actions */}
+      <BulkActions
+        selectedCount={selectedItems.length}
+        onExport={handleBulkExport}
+        onEmail={handleBulkEmail}
+        onStatusChange={handleBulkStatusChange}
+        onDelete={handleBulkDelete}
+        statusOptions={["In Stock", "Low Stock", "Out of Stock", "Discontinued"]}
+      />
 
       <FormModal
         open={modalOpen}
@@ -628,26 +798,16 @@ export default function Inventory() {
         </div>
       </FormModal>
 
-      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete Product</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to delete <strong>{itemToDelete?.name}</strong>?
-              This action cannot be undone and will permanently remove this product from your inventory.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDelete}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <ConfirmDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        onConfirm={handleDelete}
+        title="Delete Product"
+        description="Are you sure you want to delete this product? This action cannot be undone and will permanently remove this product from your inventory."
+        variant="destructive"
+        confirmLabel="Delete Product"
+        itemName={itemToDelete?.name}
+      />
 
       {/* Item Details Dialog */}
       <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
@@ -827,6 +987,51 @@ export default function Inventory() {
           </Tabs>
         </DialogContent>
       </Dialog>
+
+      {/* Export Dialog */}
+      <ExportDialog
+        open={exportDialogOpen}
+        onOpenChange={setExportDialogOpen}
+        columns={[
+          { key: "sku", label: "SKU" },
+          { key: "name", label: "Product Name" },
+          { key: "category", label: "Category" },
+          { key: "currentStock", label: "Stock" },
+          { key: "reorderLevel", label: "Reorder Level" },
+          { key: "unitPrice", label: "Unit Price" },
+          { key: "location", label: "Location" },
+          { key: "lastUpdated", label: "Last Updated" },
+        ]}
+        data={finalData.filter((item) => selectedItems.length === 0 || selectedItems.includes(item.id))}
+        filename="inventory"
+      />
+
+      {/* Activity Log Dialog */}
+      <ActivityLogDialog
+        open={activityLogOpen}
+        onOpenChange={setActivityLogOpen}
+        logs={activityLogs}
+        title="Inventory Activity Log"
+      />
+
+      {/* Advanced Filter Dialog */}
+      <AdvancedFilterDialog
+        open={advancedFilterOpen}
+        onOpenChange={setAdvancedFilterOpen}
+        fields={[
+          { value: "sku", label: "SKU", type: "text" },
+          { value: "name", label: "Product Name", type: "text" },
+          { value: "category", label: "Category", type: "select" },
+          { value: "currentStock", label: "Current Stock", type: "number" },
+          { value: "reorderLevel", label: "Reorder Level", type: "number" },
+          { value: "unitPrice", label: "Unit Price", type: "number" },
+          { value: "location", label: "Location", type: "select" },
+          { value: "lastUpdated", label: "Last Updated", type: "date" },
+        ]}
+        onApplyFilters={handleApplyFilters}
+        savedFilters={savedFilters}
+        onSaveFilter={handleSaveFilter}
+      />
     </PageBackground>
   );
 }

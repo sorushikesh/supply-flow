@@ -7,7 +7,7 @@ import { TopHeader } from "@/components/TopHeader";
 import { FuturisticBackground } from "@/components/FuturisticBackground";
 import { FloatingParticles } from "@/components/FloatingParticles";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
-import { useGlobalShortcuts } from "@/components/KeyboardShortcuts";
+import { useGlobalShortcuts, KeyboardShortcutsDialog } from "@/components/KeyboardShortcuts";
 import NotFound from "@/pages/not-found";
 import Dashboard from "@/pages/Dashboard";
 import Inventory from "@/pages/Inventory";
@@ -82,6 +82,7 @@ function App() {
           </div>
         </SidebarProvider>
         <Toaster />
+        <KeyboardShortcutsDialog />
       </TooltipProvider>
     </ErrorBoundary>
   );
