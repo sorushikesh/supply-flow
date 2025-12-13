@@ -37,7 +37,7 @@
   "devDependencies": {
     "@swc/plugin-emotion": "^14.0.1",
     "@tailwindcss/typography": "^0.5.15",
-    "@tailwindcss/vite": "^4.1.3",
+    "@tailwindcss/vite": "^4.1.18",
     "@types/node": "^25.0.0",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
